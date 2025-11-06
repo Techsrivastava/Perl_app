@@ -3,6 +3,8 @@ import 'package:university_app_2/config/theme.dart';
 
 enum ButtonVariant { primary, secondary, success, danger }
 
+enum ButtonSize { small, medium, large }
+
 class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -11,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final bool isFullWidth;
   final IconData? icon;
   final double? width;
+  final ButtonSize size;
 
   const CustomButton({
     super.key,
@@ -21,6 +24,7 @@ class CustomButton extends StatelessWidget {
     this.isFullWidth = false,
     this.icon,
     this.width,
+    this.size = ButtonSize.medium,
   });
 
   @override
@@ -43,7 +47,7 @@ class CustomButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: 18),
+                  Icon(icon, size: size == ButtonSize.large ? 20 : 16),
                   const SizedBox(width: 8),
                 ],
                 Text(label),
@@ -61,17 +65,27 @@ class CustomButton extends StatelessWidget {
   }
 
   ButtonStyle _getButtonStyle() {
-    switch (variant) {
-      case ButtonVariant.primary:
-        return ElevatedButton.styleFrom(
+    final padding = switch (size) {
+      ButtonSize.small => const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ButtonSize.medium => const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      ButtonSize.large => const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    };
+    
+    final textStyle = switch (size) {
+      ButtonSize.small => const TextStyle(fontSize: 13),
+      ButtonSize.medium => const TextStyle(fontSize: 14),
+      ButtonSize.large => const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    };
+
+    final buttonStyle = switch (variant) {
+      ButtonVariant.primary => ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryBlue,
           foregroundColor: AppTheme.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        );
-      case ButtonVariant.secondary:
-        return ElevatedButton.styleFrom(
+          padding: padding,
+        ),
+      ButtonVariant.secondary => ElevatedButton.styleFrom(
           backgroundColor: AppTheme.lightGray,
           foregroundColor: AppTheme.charcoal,
           elevation: 0,
@@ -79,24 +93,26 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             side: const BorderSide(color: Color(0xFFE0E0E0)),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        );
-      case ButtonVariant.success:
-        return ElevatedButton.styleFrom(
+          padding: padding,
+        ),
+      ButtonVariant.success => ElevatedButton.styleFrom(
           backgroundColor: AppTheme.success,
           foregroundColor: AppTheme.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        );
-      case ButtonVariant.danger:
-        return ElevatedButton.styleFrom(
+          padding: padding,
+        ),
+      ButtonVariant.danger => ElevatedButton.styleFrom(
           backgroundColor: AppTheme.error,
           foregroundColor: AppTheme.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        );
-    }
+          padding: padding,
+        ),
+    };
+
+    return buttonStyle.copyWith(
+      textStyle: MaterialStateProperty.all<TextStyle>(textStyle),
+    );
   }
 }

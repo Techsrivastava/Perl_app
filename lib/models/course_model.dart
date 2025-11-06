@@ -1,9 +1,14 @@
+import 'stream_model.dart';
+
 // Main Course class for database/API interactions
 class Course {
   final String? id;
   final String? universityId;
   String? name;
+  String? abbreviation; // Short form of course name
   String? code;
+  String? status; // 'draft' or 'published'
+  List<CourseStream>? streams; // Associated streams
   String? department;
   String? degreeType;
   String? duration;
@@ -88,7 +93,10 @@ class Course {
     this.id,
     this.universityId,
     this.name,
+    this.abbreviation,
     this.code,
+    this.status,
+    this.streams,
     this.department,
     this.degreeType,
     this.duration,
@@ -170,7 +178,10 @@ class Course {
     String? id,
     String? universityId,
     String? name,
+    String? abbreviation,
     String? code,
+    String? status,
+    List<CourseStream>? streams,
     String? department,
     String? degreeType,
     String? duration,
@@ -204,7 +215,10 @@ class Course {
       id: id ?? this.id,
       universityId: universityId ?? this.universityId,
       name: name ?? this.name,
+      abbreviation: abbreviation ?? this.abbreviation,
       code: code ?? this.code,
+      status: status ?? this.status,
+      streams: streams ?? this.streams,
       department: department ?? this.department,
       degreeType: degreeType ?? this.degreeType,
       duration: duration ?? this.duration,
@@ -235,6 +249,14 @@ class Course {
       researchOpportunities: researchOpportunities ?? this.researchOpportunities,
     );
   }
+
+  // Helper methods for status
+  bool get isDraft => (status ?? 'draft') == 'draft';
+  bool get isPublished => status == 'published';
+  
+  // Update status methods
+  Course publish() => copyWith(status: 'published');
+  Course saveToDraft() => copyWith(status: 'draft');
 }
 
 // Detailed course information class

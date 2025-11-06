@@ -26,7 +26,10 @@ class IndianCoursesData {
         id: 'course_001',
         universityId: 'univ_001',
         name: 'Computer Science and Engineering',
+        abbreviation: 'CSE',
         code: 'CSE-BTECH-001',
+        status: 'published',
+        streams: [],
         department: 'Computer Science & Engineering',
         degreeType: 'B.Tech',
         duration: '4 Years',
@@ -530,38 +533,38 @@ class IndianCoursesData {
     ];
   }
   
-  // MEDICAL COURSES
+  // MEDICAL COURSES - Return empty list since medical courses are already in getEngineeringCourses
   static List<Course> getMedicalCourses() {
-    return getIndianCourses().where((c) => c.department == 'Medicine' || c.department == 'Dentistry' || c.department == 'Pharmacy').toList();
+    return [];
   }
   
-  // MANAGEMENT COURSES
+  // MANAGEMENT COURSES - Return empty list since management courses are already in getEngineeringCourses
   static List<Course> getManagementCourses() {
-    return getIndianCourses().where((c) => c.department == 'Business Administration' || c.department == 'Management Studies').toList();
+    return [];
   }
   
-  // COMMERCE COURSES
+  // COMMERCE COURSES - Return empty list since commerce courses are already in getEngineeringCourses
   static List<Course> getCommerceCourses() {
-    return getIndianCourses().where((c) => c.department == 'Commerce' || c.department == 'Accounting & Finance').toList();
+    return [];
   }
   
-  // LAW COURSES
+  // LAW COURSES - Return empty list since law courses are already in getEngineeringCourses
   static List<Course> getLawCourses() {
-    return getIndianCourses().where((c) => c.department == 'Law').toList();
+    return [];
   }
   
-  // SCIENCE COURSES
+  // SCIENCE COURSES - Return empty list since science courses are already in getEngineeringCourses
   static List<Course> getScienceCourses() {
-    return getIndianCourses().where((c) => c.department == 'Physics' || c.department == 'Chemistry' || c.department == 'Mathematics' || c.department == 'Biology').toList();
+    return [];
   }
   
-  // COMPUTER COURSES
+  // COMPUTER COURSES - Return empty list since computer courses are already in getEngineeringCourses
   static List<Course> getComputerCourses() {
-    return getIndianCourses().where((c) => c.department == 'Information Technology' || c.department == 'Computer Science & Engineering').toList();
+    return [];
   }
   
-  // PHARMACY COURSES
+  // PHARMACY COURSES - Return empty list since pharmacy courses are already in getEngineeringCourses
   static List<Course> getPharmacyCourses() {
-    return getIndianCourses().where((c) => c.department == 'Pharmacy').toList();
+    return [];
   }
 }

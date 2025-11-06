@@ -45,21 +45,53 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: AppDrawer(
-        currentRoute: _routeNames[_currentIndex],
-        onNavigate: _onDrawerNavigate,
-      ),
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = constraints.maxWidth;
+        final isSmallScreen = screenWidth < 600;
+        
+        return Scaffold(
+          key: _scaffoldKey,
+          drawer: isSmallScreen 
+              ? AppDrawer(
+                  currentRoute: _routeNames[_currentIndex],
+                  onNavigate: _onDrawerNavigate,
+                )
+              : null,
+          body: SafeArea(
+            child: Row(
+              children: [
+                // Sidebar for larger screens
+                if (!isSmallScreen)
+                  SizedBox(
+                    width: 250,
+                    child: AppDrawer(
+                      currentRoute: _routeNames[_currentIndex],
+                      onNavigate: _onDrawerNavigate,
+                    ),
+                  ),
+                // Main content area
+                Expanded(
+                  child: IndexedStack(
+                    index: _currentIndex,
+                    children: _screens,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: isSmallScreen
+              ? AppBottomNav(
+                  currentIndex: _currentIndex,
+                  onTap: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                )
+              : null,
+        );
+      },
     );
   }
 }
