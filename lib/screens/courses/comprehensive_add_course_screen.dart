@@ -62,6 +62,24 @@ class _ComprehensiveAddCourseScreenState extends State<ComprehensiveAddCourseScr
   File? _syllabusPdfFile;
   File? _certificateFormatFile;
   
+  // 3.1 Documents & Requirements Module
+  String _documentTemplateName = 'Default UG Admission Docs';
+  final List<Map<String, dynamic>> _documentRequirements = [];
+  
+  // Default Master Document List
+  final List<Map<String, dynamic>> _defaultDocuments = [
+    {'doc_id': 1, 'name': '10th Marksheet', 'type': 'File', 'mandatory': true, 'status': 'Active', 'description': 'Class 10 board marksheet'},
+    {'doc_id': 2, 'name': '12th Marksheet', 'type': 'File', 'mandatory': true, 'status': 'Active', 'description': 'Class 12 board marksheet'},
+    {'doc_id': 3, 'name': 'Transfer Certificate (TC)', 'type': 'File', 'mandatory': true, 'status': 'Active', 'description': 'Original TC from previous institution'},
+    {'doc_id': 4, 'name': 'Migration Certificate', 'type': 'File', 'mandatory': false, 'status': 'Active', 'description': 'For students from other boards'},
+    {'doc_id': 5, 'name': 'Aadhar Card', 'type': 'File', 'mandatory': true, 'status': 'Active', 'description': 'Government ID proof'},
+    {'doc_id': 6, 'name': 'Passport Size Photo', 'type': 'Image', 'mandatory': true, 'status': 'Active', 'description': 'Recent passport size photograph'},
+    {'doc_id': 7, 'name': 'Caste Certificate', 'type': 'File', 'mandatory': false, 'status': 'Active', 'description': 'For reserved category students'},
+    {'doc_id': 8, 'name': 'Domicile Certificate', 'type': 'File', 'mandatory': false, 'status': 'Active', 'description': 'State domicile certificate'},
+    {'doc_id': 9, 'name': 'Medical Fitness Certificate', 'type': 'File', 'mandatory': false, 'status': 'Active', 'description': 'From registered medical practitioner'},
+    {'doc_id': 10, 'name': 'Entrance Exam Score Card', 'type': 'File', 'mandatory': false, 'status': 'Active', 'description': 'If applicable for the course'},
+  ];
+  
   // 4. Facilities
   final TextEditingController _attachedHospitalController = TextEditingController();
   bool _internshipAvailable = false;
@@ -534,10 +552,15 @@ class _ComprehensiveAddCourseScreenState extends State<ComprehensiveAddCourseScr
         filled: true,
         fillColor: Colors.white,
       ),
+      isExpanded: true,
       items: _masterCoursesList.map((course) {
         return DropdownMenuItem(
           value: course.id,
-          child: Text('${course.abbreviation ?? course.name} - ${course.level ?? ''}'),
+          child: Text(
+            '${course.abbreviation ?? course.name} - ${course.level ?? ''}',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         );
       }).toList(),
       onChanged: (value) => setState(() => _selectedMasterCourse = _masterCoursesList.firstWhere((course) => course.id == value)),
@@ -574,8 +597,24 @@ class _ComprehensiveAddCourseScreenState extends State<ComprehensiveAddCourseScr
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 140, child: Text('$label:', style: TextStyle(fontSize: 13, color: Colors.grey.shade700))),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+          Flexible(
+            flex: 2,
+            child: Text(
+              '$label:',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            flex: 3,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
         ],
       ),
     );
@@ -891,16 +930,332 @@ class _ComprehensiveAddCourseScreenState extends State<ComprehensiveAddCourseScr
   }
 
   Widget _buildDocumentsFields() {
+    final mandatoryCount = _documentRequirements.where((d) => d['mandatory'] == true).length;
+    final optionalCount = _documentRequirements.where((d) => d['mandatory'] == false).length;
+    
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFileUploadButton(label: 'Course Prospectus', file: _prospectusFile, onTap: () => _pickFile((file) => setState(() => _prospectusFile = file), allowedExtensions: ['pdf'])),
+        // University Reference Documents - Compact Grid
+        const Row(
+          children: [
+            Icon(Icons.folder_special, color: AppTheme.primaryBlue, size: 18),
+            SizedBox(width: 6),
+            Text('📁 University Documents', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        
+        // Compact 2x2 Grid for university documents
+        Row(
+          children: [
+            Expanded(child: _buildCompactFileButton('Prospectus', _prospectusFile, () => _pickFile((file) => setState(() => _prospectusFile = file), allowedExtensions: ['pdf']), Icons.description)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildCompactFileButton('Fee Structure', _feeStructurePdfFile, () => _pickFile((file) => setState(() => _feeStructurePdfFile = file), allowedExtensions: ['pdf']), Icons.attach_money)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: _buildCompactFileButton('Syllabus', _syllabusPdfFile, () => _pickFile((file) => setState(() => _syllabusPdfFile = file), allowedExtensions: ['pdf']), Icons.book)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildCompactFileButton('Certificate', _certificateFormatFile, () => _pickFile((file) => setState(() => _certificateFormatFile = file), allowedExtensions: ['pdf', 'jpg', 'png']), Icons.workspace_premium)),
+          ],
+        ),
+        
         const SizedBox(height: 16),
-        _buildFileUploadButton(label: 'Fee Structure PDF', file: _feeStructurePdfFile, onTap: () => _pickFile((file) => setState(() => _feeStructurePdfFile = file), allowedExtensions: ['pdf'])),
+        const Divider(height: 1),
         const SizedBox(height: 16),
-        _buildFileUploadButton(label: 'Syllabus / Curriculum PDF', file: _syllabusPdfFile, onTap: () => _pickFile((file) => setState(() => _syllabusPdfFile = file), allowedExtensions: ['pdf'])),
-        const SizedBox(height: 16),
-        _buildFileUploadButton(label: 'Certificate / Degree Format', file: _certificateFormatFile, onTap: () => _pickFile((file) => setState(() => _certificateFormatFile = file), allowedExtensions: ['pdf', 'jpg', 'png'])),
+        
+        // Student Requirements Header with inline stats
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primaryBlue.withValues(alpha: 0.1), AppTheme.primaryBlue.withValues(alpha: 0.05)],
+            ),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.3)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.checklist_rtl, color: AppTheme.primaryBlue, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Student Document Checklist', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+                        Text('Required documents', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Stats row - separate to prevent overflow
+              Row(
+                children: [
+                  Expanded(child: _buildInlineStatFull('${_documentRequirements.length}', 'Total', AppTheme.primaryBlue)),
+                  Expanded(child: _buildInlineStatFull('$mandatoryCount', 'Required', Colors.red)),
+                  Expanded(child: _buildInlineStatFull('$optionalCount', 'Optional', Colors.orange)),
+                ],
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Compact Action Buttons Row
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ElevatedButton.icon(
+              onPressed: _showSelectDocumentsDialog,
+              icon: const Icon(Icons.library_add, size: 16),
+              label: const Text('Template', style: TextStyle(fontSize: 12)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryBlue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                minimumSize: const Size(0, 0),
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: _showAddCustomDocumentDialog,
+              icon: const Icon(Icons.add_circle_outline, size: 16),
+              label: const Text('Custom', style: TextStyle(fontSize: 12)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.success,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                minimumSize: const Size(0, 0),
+              ),
+            ),
+            if (_documentRequirements.isNotEmpty)
+              OutlinedButton.icon(
+                onPressed: _showDocumentPreviewDialog,
+                icon: const Icon(Icons.visibility, size: 16),
+                label: const Text('Preview', style: TextStyle(fontSize: 12)),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  minimumSize: const Size(0, 0),
+                  side: BorderSide(color: Colors.grey[400]!),
+                ),
+              ),
+          ],
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Document List - More compact
+        if (_documentRequirements.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[200]!, style: BorderStyle.solid, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.folder_open, size: 32, color: Colors.grey[400]),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('No documents added', style: TextStyle(color: Colors.grey[700], fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text('Add from template or create custom documents', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ..._documentRequirements.asMap().entries.map((entry) {
+            final index = entry.key;
+            final doc = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: _buildCompactDocumentCard(doc, index),
+            );
+          }),
       ],
+    );
+  }
+  
+  Widget _buildCompactFileButton(String label, File? file, VoidCallback onTap, IconData icon) {
+    final hasFile = file != null;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color: hasFile ? AppTheme.success.withValues(alpha: 0.1) : Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: hasFile ? AppTheme.success : Colors.grey[300]!, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Icon(hasFile ? Icons.check_circle : icon, 
+              color: hasFile ? AppTheme.success : Colors.grey[600], 
+              size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: hasFile ? AppTheme.success : Colors.grey[700],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (hasFile)
+                    Text(
+                      '✓ Uploaded',
+                      style: TextStyle(fontSize: 9, color: AppTheme.success.withValues(alpha: 0.7)),
+                    ),
+                ],
+              ),
+            ),
+            Icon(hasFile ? Icons.edit : Icons.upload, 
+              size: 14, 
+              color: hasFile ? AppTheme.primaryBlue : Colors.grey[500]),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildInlineStatFull(String value, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Column(
+        children: [
+          Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color, height: 1)),
+          const SizedBox(height: 3),
+          Text(label, style: TextStyle(fontSize: 9, color: Colors.grey[600], height: 1), overflow: TextOverflow.ellipsis),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCompactDocumentCard(Map<String, dynamic> doc, int index) {
+    final isMandatory = doc['mandatory'] as bool;
+    final hasDescription = doc['description'] != null && (doc['description'] as String).isNotEmpty;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: isMandatory ? Colors.red[300]! : Colors.orange[300]!, width: 1.5),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Icon
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isMandatory ? Colors.red[50] : Colors.orange[50],
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(
+                doc['type'] == 'Image' ? Icons.image : Icons.description,
+                color: isMandatory ? Colors.red[700] : Colors.orange[700],
+                size: 16,
+              ),
+            ),
+            const SizedBox(width: 10),
+            
+            // Content - Flexible
+            Flexible(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    doc['name'] as String,
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (hasDescription) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      doc['description'] as String,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600], height: 1.2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            
+            const SizedBox(width: 6),
+            
+            // Badges and actions - Fixed width
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: isMandatory ? Colors.red[600] : Colors.orange[600],
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Text(
+                    isMandatory ? 'REQ' : 'OPT',
+                    style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Text(
+                    doc['type'] as String,
+                    style: TextStyle(fontSize: 9, color: Colors.grey[700], fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const SizedBox(width: 2),
+                InkWell(
+                  onTap: () => _removeDocument(index),
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(Icons.delete_outline, color: Colors.red[400], size: 16),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -999,6 +1354,511 @@ class _ComprehensiveAddCourseScreenState extends State<ComprehensiveAddCourseScr
             Expanded(child: Text(date != null ? '${date.day}/${date.month}/${date.year}' : label, style: TextStyle(color: date != null ? Colors.black : Colors.grey))),
           ],
         ),
+      ),
+    );
+  }
+
+  // ==================== DOCUMENTS & REQUIREMENTS MODULE METHODS ====================
+  
+  void _showSelectDocumentsDialog() {
+    // Track selected document IDs
+    Set<int> selectedIds = _documentRequirements
+        .map((d) => d['doc_id'] as int)
+        .toSet();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.primaryBlue, AppTheme.primaryBlue.withValues(alpha: 0.8)],
+                    ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.checklist, color: Colors.white, size: 24),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Select from Document Template', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            SizedBox(height: 2),
+                            Text('Choose documents required for admission', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Mandatory Documents
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.red[200]!),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.check_circle, color: Colors.red, size: 18),
+                              SizedBox(width: 8),
+                              Text('Mandatory Documents', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ..._defaultDocuments.where((d) => d['mandatory'] == true).map((doc) {
+                          final isSelected = selectedIds.contains(doc['doc_id']);
+                          return CheckboxListTile(
+                            dense: true,
+                            title: Text(doc['name'] as String, style: const TextStyle(fontSize: 13)),
+                            subtitle: Text(doc['description'] as String, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                            value: isSelected,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                if (value == true) {
+                                  selectedIds.add(doc['doc_id'] as int);
+                                } else {
+                                  selectedIds.remove(doc['doc_id']);
+                                }
+                              });
+                            },
+                          );
+                        }),
+
+                        const SizedBox(height: 16),
+
+                        // Optional Documents
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.orange[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.orange[200]!),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.info, color: Colors.orange, size: 18),
+                              SizedBox(width: 8),
+                              Text('Optional Documents', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.orange)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ..._defaultDocuments.where((d) => d['mandatory'] == false).map((doc) {
+                          final isSelected = selectedIds.contains(doc['doc_id']);
+                          return CheckboxListTile(
+                            dense: true,
+                            title: Text(doc['name'] as String, style: const TextStyle(fontSize: 13)),
+                            subtitle: Text(doc['description'] as String, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                            value: isSelected,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                if (value == true) {
+                                  selectedIds.add(doc['doc_id'] as int);
+                                } else {
+                                  selectedIds.remove(doc['doc_id']);
+                                }
+                              });
+                            },
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Footer
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              // Add selected documents that aren't already added
+                              for (var doc in _defaultDocuments) {
+                                if (selectedIds.contains(doc['doc_id']) &&
+                                    !_documentRequirements.any((d) => d['doc_id'] == doc['doc_id'])) {
+                                  _documentRequirements.add(Map<String, dynamic>.from(doc));
+                                }
+                              }
+                              // Remove deselected documents
+                              _documentRequirements.removeWhere((d) => !selectedIds.contains(d['doc_id']));
+                            });
+                            Navigator.pop(context);
+                            _showSnackBar('✅ Documents added successfully!', AppTheme.success);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.success,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          icon: const Icon(Icons.check, color: Colors.white),
+                          label: Text('Add ${selectedIds.length} Documents', style: const TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddCustomDocumentDialog() {
+    final formKey = GlobalKey<FormState>();
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    String selectedType = 'File';
+    bool isMandatory = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 550),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.success, AppTheme.success.withValues(alpha: 0.8)],
+                    ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.add_circle, color: Colors.white, size: 24),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Add Custom Document', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            SizedBox(height: 2),
+                            Text('Create a new document requirement', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Form
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Document Name *',
+                              hintText: 'e.g., Gap Certificate, Experience Letter',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              prefixIcon: const Icon(Icons.document_scanner, size: 20),
+                            ),
+                            validator: (v) => v!.isEmpty ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            value: selectedType,
+                            decoration: InputDecoration(
+                              labelText: 'Document Type *',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              prefixIcon: const Icon(Icons.category, size: 20),
+                            ),
+                            items: ['File', 'Image', 'PDF'].map((t) {
+                              return DropdownMenuItem(value: t, child: Text(t));
+                            }).toList(),
+                            onChanged: (v) => setDialogState(() => selectedType = v!),
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: descriptionController,
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                              labelText: 'Description',
+                              hintText: 'Purpose or note about this document',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SwitchListTile(
+                            dense: true,
+                            title: const Text('Mandatory Document', style: TextStyle(fontSize: 13)),
+                            subtitle: const Text('Required for admission', style: TextStyle(fontSize: 11)),
+                            value: isMandatory,
+                            onChanged: (v) => setDialogState(() => isMandatory = v),
+                            activeTrackColor: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Footer
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              setState(() {
+                                _documentRequirements.add({
+                                  'doc_id': DateTime.now().millisecondsSinceEpoch,
+                                  'name': nameController.text,
+                                  'type': selectedType,
+                                  'mandatory': isMandatory,
+                                  'status': 'Active',
+                                  'description': descriptionController.text,
+                                });
+                              });
+                              Navigator.pop(context);
+                              _showSnackBar('✅ Custom document added!', AppTheme.success);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.success,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          label: const Text('Add Document', style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDocumentPreviewDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryBlue, AppTheme.primaryBlue.withValues(alpha: 0.8)],
+                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.preview, color: Colors.white, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Document Checklist Preview', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                          const SizedBox(height: 2),
+                          Text('$_documentTemplateName - ${_documentRequirements.length} documents', style: const TextStyle(fontSize: 11, color: Colors.white70)),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: DataTable(
+                    columnSpacing: 16,
+                    headingRowColor: WidgetStateProperty.all(Colors.grey[100]),
+                    columns: const [
+                      DataColumn(label: Text('Document', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                      DataColumn(label: Text('Type', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                      DataColumn(label: Text('Mandatory', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                      DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                    ],
+                    rows: _documentRequirements.map((doc) {
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(doc['name'] as String, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                                if (doc['description'] != null && (doc['description'] as String).isNotEmpty)
+                                  Text(doc['description'] as String, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+                              ],
+                            ),
+                          ),
+                          DataCell(Text(doc['type'] as String, style: const TextStyle(fontSize: 12))),
+                          DataCell(
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: doc['mandatory'] ? Colors.red : Colors.orange,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                doc['mandatory'] ? 'YES' : 'NO',
+                                style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          DataCell(
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppTheme.success,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                doc['status'] as String,
+                                style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+              // Footer
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.check, size: 18),
+                        label: const Text('Close'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _removeDocument(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Document?'),
+        content: Text('Are you sure you want to remove "${_documentRequirements[index]['name']}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() => _documentRequirements.removeAt(index));
+              Navigator.pop(context);
+              _showSnackBar('Document removed', Colors.orange);
+            },
+            child: const Text('Remove', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

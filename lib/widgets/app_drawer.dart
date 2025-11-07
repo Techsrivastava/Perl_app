@@ -162,6 +162,13 @@ class AppDrawer extends StatelessWidget {
                   route: '/fee-student-reports',
                   isSelected: currentRoute == '/fee-student-reports' || currentRoute == '/fee-reports',
                 ),
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.receipt_long,
+                  title: 'One-Time Fee Template',
+                  route: '/fee-template',
+                  isSelected: currentRoute == '/fee-template',
+                ),
                 const Divider(),
                 _buildDrawerItem(
                   context: context,
