@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:university_app_2/config/theme.dart';
 import 'package:university_app_2/config/constants.dart';
+import 'package:university_app_2/models/course_model.dart';
+import 'package:university_app_2/widgets/app_header.dart';
 import 'package:university_app_2/widgets/fee_structure_widget.dart';
 
-class AddCourseScreen extends StatefulWidget {
-  const AddCourseScreen({Key? key}) : super(key: key);
+class SimpleAddCourseScreen extends StatefulWidget {
+  const SimpleAddCourseScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddCourseScreen> createState() => _AddCourseScreenState();
+  State<SimpleAddCourseScreen> createState() => _SimpleAddCourseScreenState();
 }
 
-class _AddCourseScreenState extends State<AddCourseScreen> with SingleTickerProviderStateMixin {
+class _SimpleAddCourseScreenState extends State<SimpleAddCourseScreen> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   late TabController _tabController;
@@ -69,7 +71,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> with SingleTickerProv
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('âœ… Course saved successfully with detailed fee structure!'),
+            content: Text('✅ Course saved successfully with detailed fee structure!'),
             backgroundColor: AppTheme.success,
             duration: Duration(seconds: 3),
           ),
@@ -450,7 +452,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> with SingleTickerProv
                   _buildSummaryRow('Duration', '${_courseDurationController.text} years'),
                   _buildSummaryRow('Total Seats', _totalSeatsController.text.isEmpty ? '0' : _totalSeatsController.text),
                   _buildSummaryRow('Fee Items', _feeStructure.isEmpty ? 'Not configured' : '${_feeStructure.length} items'),
-                  _buildSummaryRow('Status', _isActive ? 'âœ… Active' : 'âŒ Inactive'),
+                  _buildSummaryRow('Status', _isActive ? '✅ Active' : '❌ Inactive'),
                 ],
               ),
             ),

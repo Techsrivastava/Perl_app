@@ -61,6 +61,28 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   String? _state;
   String? _yearOfEstablishment;
   bool _autoApproval = false;
+  
+  // Authorization Type: 'individual' or 'firm'
+  String _authorizationType = 'individual';
+  final TextEditingController _firmNameController = TextEditingController();
+  
+  // Company/Agency Tie-Up Details
+  bool _operatedViaAgency = false;
+  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _registrationNumberController = TextEditingController();
+  final TextEditingController _companyAddressController = TextEditingController();
+  final TextEditingController _companyEmailController = TextEditingController();
+  final TextEditingController _companyContactController = TextEditingController();
+  final TextEditingController _authorizedCompanyPersonController = TextEditingController();
+  final TextEditingController _authorizedPersonDesignationController = TextEditingController();
+  final TextEditingController _authorizedPersonContactController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
+  String? _registrationType;
+  DateTime? _agreementFromDate;
+  DateTime? _agreementToDate;
+  File? _companyRegistrationCertFile;
+  File? _companyPanGstFile;
+  File? _mouAgreementFile;
 
   // List of Indian states for dropdown
   final List<String> _indianStates = [
@@ -86,6 +108,15 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
     'AICTE',
     'State Board',
     'Others',
+  ];
+  
+  // List of registration types for company/agency
+  final List<String> _registrationTypes = [
+    'Pvt. Ltd.',
+    'LLP',
+    'Proprietorship',
+    'NGO',
+    'Trust',
   ];
 
   // Generate list of years (last 100 years)
@@ -120,6 +151,16 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
     _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _firmNameController.dispose();
+    _companyNameController.dispose();
+    _registrationNumberController.dispose();
+    _companyAddressController.dispose();
+    _companyEmailController.dispose();
+    _companyContactController.dispose();
+    _authorizedCompanyPersonController.dispose();
+    _authorizedPersonDesignationController.dispose();
+    _authorizedPersonContactController.dispose();
+    _remarksController.dispose();
     super.dispose();
   }
 
@@ -300,6 +341,111 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
     }
   }
 
+  // Pick Company Registration Certificate
+  Future<void> _pickCompanyRegistrationCert() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = File(result.files.single.path!);
+        final fileSize = await file.length();
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        
+        if (fileSize > maxSize) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('File size should be less than 10MB'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+        
+        setState(() {
+          _companyRegistrationCertFile = file;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking company registration certificate: $e');
+    }
+  }
+
+  // Pick Company PAN/GST Certificate
+  Future<void> _pickCompanyPanGst() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = File(result.files.single.path!);
+        final fileSize = await file.length();
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        
+        if (fileSize > maxSize) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('File size should be less than 10MB'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+        
+        setState(() {
+          _companyPanGstFile = file;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking company PAN/GST certificate: $e');
+    }
+  }
+
+  // Pick MOU Agreement
+  Future<void> _pickMouAgreement() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = File(result.files.single.path!);
+        final fileSize = await file.length();
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        
+        if (fileSize > maxSize) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('File size should be less than 10MB'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+        
+        setState(() {
+          _mouAgreementFile = file;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking MOU agreement: $e');
+    }
+  }
+
   // Handle form submission
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -419,14 +565,411 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         isActive: _currentStep >= 1,
         state: _currentStep > 1 ? StepState.complete : StepState.indexed,
       ),
-      // Step 3: Authorized Person
+      // Step 3: Company/Agency Tie-Up (Optional)
+      Step(
+        title: const Text('Agency Tie-Up'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Is university operated via an agency/company?',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            // Tab Selector for Agency Operation
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _operatedViaAgency = false),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: !_operatedViaAgency
+                            ? AppTheme.primaryBlue
+                            : Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
+                        border: Border.all(
+                          color: !_operatedViaAgency
+                              ? AppTheme.primaryBlue
+                              : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.close,
+                            size: 18,
+                            color: !_operatedViaAgency
+                                ? Colors.white
+                                : Colors.grey.shade700,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: !_operatedViaAgency
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _operatedViaAgency = true),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: _operatedViaAgency
+                            ? AppTheme.primaryBlue
+                            : Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        border: Border.all(
+                          color: _operatedViaAgency
+                              ? AppTheme.primaryBlue
+                              : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.check,
+                            size: 18,
+                            color: _operatedViaAgency
+                                ? Colors.white
+                                : Colors.grey.shade700,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: _operatedViaAgency
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (_operatedViaAgency) ...[
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 12),
+              const Text(
+                'Company / Agency Details',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField('Company / Agency Name*', 'Enter company name', _companyNameController, true),
+              const SizedBox(height: 16),
+              _buildDropdown('Registration Type*', _registrationType, _registrationTypes, (value) {
+                setState(() {
+                  _registrationType = value;
+                });
+              }),
+              const SizedBox(height: 16),
+              _buildTextField('Registration / CIN / GST No.*', 'Enter registration number', _registrationNumberController, true),
+              const SizedBox(height: 16),
+              _buildFilePicker('Upload Company Registration Certificate*', _companyRegistrationCertFile, _pickCompanyRegistrationCert, required: true),
+              const SizedBox(height: 16),
+              _buildFilePicker('Upload Company PAN / GST Certificate', _companyPanGstFile, _pickCompanyPanGst),
+              const SizedBox(height: 16),
+              _buildTextField('Office Address*', 'Full office address including city, state, PIN', _companyAddressController, true, maxLines: 3),
+              const SizedBox(height: 16),
+              _buildTextField('Company Email*', 'company@example.com', _companyEmailController, true, keyboardType: TextInputType.emailAddress),
+              const SizedBox(height: 16),
+              _buildTextField('Company Contact Number*', '10-digit contact number', _companyContactController, true, keyboardType: TextInputType.phone),
+              const SizedBox(height: 20),
+              const Text(
+                'Authorized Company Person',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField('Authorized Person Name*', 'Representative name', _authorizedCompanyPersonController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Designation*', 'e.g., Director, Admission Head', _authorizedPersonDesignationController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Contact Number*', '10-digit mobile number', _authorizedPersonContactController, true, keyboardType: TextInputType.phone),
+              const SizedBox(height: 20),
+              const Text(
+                'Agreement Details',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+              ),
+              const SizedBox(height: 16),
+              _buildFilePicker('Upload MOU / Agreement*', _mouAgreementFile, _pickMouAgreement, required: true),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _agreementFromDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _agreementFromDate = picked;
+                          });
+                        }
+                      },
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Agreement From Date*',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Text(
+                          _agreementFromDate != null
+                              ? '${_agreementFromDate!.day}/${_agreementFromDate!.month}/${_agreementFromDate!.year}'
+                              : 'Select date',
+                          style: TextStyle(
+                            color: _agreementFromDate != null ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _agreementToDate ?? DateTime.now().add(const Duration(days: 365)),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _agreementToDate = picked;
+                          });
+                        }
+                      },
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Agreement To Date*',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Text(
+                          _agreementToDate != null
+                              ? '${_agreementToDate!.day}/${_agreementToDate!.month}/${_agreementToDate!.year}'
+                              : 'Select date',
+                          style: TextStyle(
+                            color: _agreementToDate != null ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildTextField('Remarks / Additional Note', 'Optional internal remarks', _remarksController, false, maxLines: 3),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: AppTheme.primaryBlue, size: 20),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'All documents will be verified by the admin before approval',
+                        style: TextStyle(fontSize: 12, color: Colors.black87),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (!_operatedViaAgency) ...[
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  'Toggle above if your university is operated via an agency/company',
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ],
+        ),
+        isActive: _currentStep >= 2,
+        state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+      ),
+      // Step 4: Authorized Person
       Step(
         title: const Text('Authorized Person'),
         content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTextField('Full Name*', 'Enter full name', _authPersonNameController, true),
+            const Text(
+              'Select who will represent the university',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Designation*', 'e.g., Admission Incharge', _designationController, true),
+            // Tab Selector
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _authorizationType = 'individual'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: _authorizationType == 'individual'
+                            ? AppTheme.primaryBlue
+                            : Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
+                        border: Border.all(
+                          color: _authorizationType == 'individual'
+                              ? AppTheme.primaryBlue
+                              : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.person,
+                            size: 18,
+                            color: _authorizationType == 'individual'
+                                ? Colors.white
+                                : Colors.grey.shade700,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Individual',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: _authorizationType == 'individual'
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _authorizationType = 'firm'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: _authorizationType == 'firm'
+                            ? AppTheme.primaryBlue
+                            : Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        border: Border.all(
+                          color: _authorizationType == 'firm'
+                              ? AppTheme.primaryBlue
+                              : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.business,
+                            size: 18,
+                            color: _authorizationType == 'firm'
+                                ? Colors.white
+                                : Colors.grey.shade700,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Firm/Organization',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: _authorizationType == 'firm'
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Individual Form
+            if (_authorizationType == 'individual') ...[
+              _buildTextField('Full Name*', 'Enter full name', _authPersonNameController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Designation*', 'e.g., Admission Incharge', _designationController, true),
+            ],
+            // Firm/Organization Form
+            if (_authorizationType == 'firm') ...[
+              _buildTextField('Firm/Organization Name*', 'e.g., University Trust, Management Board', _firmNameController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Representative Name*', 'Enter representative name', _authPersonNameController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Representative Designation*', 'e.g., Managing Director, CEO', _designationController, true),
+            ],
             const SizedBox(height: 16),
             _buildTextField('Personal Email*', 'person@example.com', _personalEmailController, true, keyboardType: TextInputType.emailAddress),
             const SizedBox(height: 16),
@@ -435,10 +978,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             _buildTextField('Alternate Contact', '10-digit mobile number', _altContactNumberController, false, keyboardType: TextInputType.phone),
           ],
         ),
-        isActive: _currentStep >= 2,
-        state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+        isActive: _currentStep >= 3,
+        state: _currentStep > 3 ? StepState.complete : StepState.indexed,
       ),
-      // Step 4: Bank Details
+      // Step 5: Bank Details
       Step(
         title: const Text('Bank Details'),
         content: Column(
@@ -458,10 +1001,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             _buildFilePicker('Upload QR Code (Optional)', _qrCodeFile, _pickQRCode),
           ],
         ),
-        isActive: _currentStep >= 3,
-        state: _currentStep > 3 ? StepState.complete : StepState.indexed,
+        isActive: _currentStep >= 4,
+        state: _currentStep > 4 ? StepState.complete : StepState.indexed,
       ),
-      // Step 5: Media Uploads
+      // Step 6: Media Uploads
       Step(
         title: const Text('Media & Documents'),
         content: Column(
@@ -480,10 +1023,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             ),
           ],
         ),
-        isActive: _currentStep >= 4,
-        state: _currentStep > 4 ? StepState.complete : StepState.indexed,
+        isActive: _currentStep >= 5,
+        state: _currentStep > 5 ? StepState.complete : StepState.indexed,
       ),
-      // Step 6: Account Setup
+      // Step 7: Account Setup
       Step(
         title: const Text('Account'),
         content: Column(
@@ -534,8 +1077,8 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             ),
           ],
         ),
-        isActive: _currentStep >= 5,
-        state: _currentStep > 5 ? StepState.complete : StepState.indexed,
+        isActive: _currentStep >= 6,
+        state: _currentStep > 6 ? StepState.complete : StepState.indexed,
       ),
     ];
   }
@@ -770,7 +1313,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('University Registration'),
+        title: const Text('University Registration  Edit' ),
         elevation: 0,
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
@@ -784,9 +1327,11 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                   // Wrap Stepper in Expanded to prevent overflow
                   Expanded(
                     child: Stepper(
+                      type: StepperType.vertical,
                       currentStep: _currentStep,
                       onStepContinue: () {
-                        if (_currentStep < _buildSteps().length - 1) {
+                        final steps = _buildSteps();
+                        if (_currentStep < steps.length - 1) {
                           setState(() {
                             _currentStep++;
                           });

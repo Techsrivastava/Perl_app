@@ -275,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 12),
 
-                // University Registration Button
+                // Registration Button
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -303,24 +303,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       borderRadius: BorderRadius.circular(12),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.business_rounded,
-                              size: 20,
-                              color: AppTheme.primaryBlue,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Register Your University',
-                              style: TextStyle(
-                                color: AppTheme.primaryBlue,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                            Icon(Icons.business_rounded, size: 20, color: AppTheme.primaryBlue),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Text(
+                                'Register University / College / Institute',
+                                style: TextStyle(
+                                  color: AppTheme.primaryBlue,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                               ),
                             ),
+                            Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.primaryBlue),
                           ],
                         ),
                       ),

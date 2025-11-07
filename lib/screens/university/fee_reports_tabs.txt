@@ -1,0 +1,113 @@
+  // TAB IMPLEMENTATIONS
+  
+  Widget _buildTotalFeesTab() {
+    final filtered = _feeRecords.where((r) {
+      return (_selectedCourse == 'All Courses' || r['courseName'] == _selectedCourse) &&
+             (_selectedYear == 'All Years' || r['year'] == _selectedYear);
+    }).toList();
+    
+    final totalExp = filtered.fold<double>(0, (sum, r) => sum + r['totalFee']);
+    final totalRec = filtered.fold<double>(0, (sum, r) => sum + r['feeReceived']);
+    final totalPend = filtered.fold<double>(0, (sum, r) => sum + r['pendingFee']);
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: AppTheme.white, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              children: [
+                Expanded(child: DropdownButtonFormField<String>(
+                  value: _selectedCourse,
+                  decoration: const InputDecoration(labelText: 'Course', isDense: true),
+                  items: ['All Courses', 'BNYS', 'BPT', 'B.Tech CS'].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                  onChanged: (v) => setState(() => _selectedCourse = v!),
+                )),
+                const SizedBox(width: 10),
+                Expanded(child: DropdownButtonFormField<String>(
+                  value: _selectedYear,
+                  decoration: const InputDecoration(labelText: 'Year', isDense: true),
+                  items: ['All Years', '2025', '2024'].map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
+                  onChanged: (v) => setState(() => _selectedYear = v!),
+                )),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(child: _buildStatCard('💰 Expected', '₹${NumberFormat('#,##,###').format(totalExp)}', AppTheme.primaryBlue)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildStatCard('✅ Received', '₹${NumberFormat('#,##,###').format(totalRec)}', AppTheme.success)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildStatCard('⏳ Pending', '₹${NumberFormat('#,##,###').format(totalPend)}', AppTheme.warning)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _exportReport('Total Fees'),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue, padding: const EdgeInsets.all(10)),
+              icon: const Icon(Icons.download, size: 16, color: AppTheme.white),
+              label: const Text('Download Report', style: TextStyle(fontSize: 11, color: AppTheme.white)),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ...filtered.map((r) => Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: AppTheme.white, borderRadius: BorderRadius.circular(8)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(r['courseName'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    Text('Year: ${r['year']}', style: const TextStyle(fontSize: 10, color: AppTheme.mediumGray)),
+                  ],
+                ),
+                const Divider(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: Column(children: [
+                      const Text('Total', style: TextStyle(fontSize: 9, color: AppTheme.mediumGray)),
+                      Text('₹${NumberFormat('#,##,###').format(r['totalFee'])}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                    ])),
+                    Expanded(child: Column(children: [
+                      const Text('Received', style: TextStyle(fontSize: 9, color: AppTheme.mediumGray)),
+                      Text('₹${NumberFormat('#,##,###').format(r['feeReceived'])}', style: const TextStyle(fontSize: 10, color: AppTheme.success, fontWeight: FontWeight.bold)),
+                    ])),
+                    Expanded(child: Column(children: [
+                      const Text('Pending', style: TextStyle(fontSize: 9, color: AppTheme.mediumGray)),
+                      Text('₹${NumberFormat('#,##,###').format(r['pendingFee'])}', style: TextStyle(fontSize: 10, color: r['pendingFee'] > 0 ? AppTheme.warning : AppTheme.mediumGray, fontWeight: FontWeight.bold)),
+                    ])),
+                  ],
+                ),
+              ],
+            ),
+          )).toList(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildPendingPaymentsTab() {
+    return const Center(child: Text('Pending Payments - To be implemented'));
+  }
+  
+  Widget _buildCommissionReportTab() {
+    return const Center(child: Text('Commission Report - To be implemented'));
+  }
+  
+  Widget _buildAdmissionStatusTab() {
+    return const Center(child: Text('Admission Status - To be implemented'));
+  }
+  
+  Widget _buildStudentExportTab() {
+    return const Center(child: Text('Export - To be implemented'));
+  }
+}

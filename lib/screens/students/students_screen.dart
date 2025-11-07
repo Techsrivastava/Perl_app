@@ -20,6 +20,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
   final mockData = MockDataService();
   String _searchQuery = '';
   String _selectedStatus = 'All';
+  String _selectedYear = 'All Years';
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,22 @@ class _StudentsScreenState extends State<StudentsScreen> {
           student.courseName.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesStatus =
           _selectedStatus == 'All' || student.status == _selectedStatus;
-      return matchesSearch && matchesStatus;
+      
+      // Year filter
+      final matchesYear = _selectedYear == 'All Years' || 
+          student.appliedDate.year.toString() == _selectedYear;
+      
+      // Date range filter
+      final matchesDateRange = (_startDate == null && _endDate == null) ||
+          (_startDate != null && _endDate != null &&
+              student.appliedDate.isAfter(_startDate!.subtract(const Duration(days: 1))) &&
+              student.appliedDate.isBefore(_endDate!.add(const Duration(days: 1)))) ||
+          (_startDate != null && _endDate == null &&
+              student.appliedDate.isAfter(_startDate!.subtract(const Duration(days: 1)))) ||
+          (_startDate == null && _endDate != null &&
+              student.appliedDate.isBefore(_endDate!.add(const Duration(days: 1))));
+      
+      return matchesSearch && matchesStatus && matchesYear && matchesDateRange;
     }).toList();
 
     // Calculate statistics
@@ -144,43 +162,217 @@ class _StudentsScreenState extends State<StudentsScreen> {
 
                 const SizedBox(height: 8),
 
-                // Status Filter
+                // Filters Row
                 Row(
                   children: [
-                    const Text(
-                      'Status: ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.charcoal,
+                    // Status Filter
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Status',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.mediumGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: DropdownButton<String>(
+                              value: _selectedStatus,
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              style: const TextStyle(fontSize: 12, color: AppTheme.charcoal),
+                              items: [
+                                'All',
+                                AppConstants.statusPending,
+                                AppConstants.statusApproved,
+                                AppConstants.statusRejected,
+                              ].map((status) {
+                                return DropdownMenuItem<String>(
+                                  value: status,
+                                  child: Text(status),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedStatus = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    // Year Filter
                     Expanded(
-                      child: DropdownMenu<String>(
-                        initialSelection: _selectedStatus,
-                        expandedInsets: EdgeInsets.zero,
-                        textStyle: const TextStyle(fontSize: 12),
-                        dropdownMenuEntries:
-                            [
-                              'All',
-                              AppConstants.statusPending,
-                              AppConstants.statusApproved,
-                              AppConstants.statusRejected,
-                            ].map((status) {
-                              return DropdownMenuEntry<String>(
-                                value: status,
-                                label: status,
-                              );
-                            }).toList(),
-                        onSelected: (value) {
-                          setState(() {
-                            _selectedStatus = value!;
-                          });
-                        },
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Year',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.mediumGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: DropdownButton<String>(
+                              value: _selectedYear,
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              style: const TextStyle(fontSize: 12, color: AppTheme.charcoal),
+                              items: _getYearList().map((year) {
+                                return DropdownMenuItem<String>(
+                                  value: year,
+                                  child: Text(year),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedYear = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
+                
+                const SizedBox(height: 8),
+                
+                // Date Range Filter
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'From Date',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.mediumGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          InkWell(
+                            onTap: () => _selectDate(true),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _startDate != null
+                                        ? DateFormat('MMM dd, yyyy').format(_startDate!)
+                                        : 'Select date',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: _startDate != null ? AppTheme.charcoal : AppTheme.mediumGray,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 14,
+                                    color: AppTheme.mediumGray,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'To Date',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.mediumGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          InkWell(
+                            onTap: () => _selectDate(false),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _endDate != null
+                                        ? DateFormat('MMM dd, yyyy').format(_endDate!)
+                                        : 'Select date',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: _endDate != null ? AppTheme.charcoal : AppTheme.mediumGray,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 14,
+                                    color: AppTheme.mediumGray,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // Clear Filters Button
+                if (_selectedStatus != 'All' || _selectedYear != 'All Years' || _startDate != null || _endDate != null)
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      onPressed: _clearFilters,
+                      icon: const Icon(Icons.clear_all, size: 16),
+                      label: const Text('Clear All Filters', style: TextStyle(fontSize: 12)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppTheme.error,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -224,6 +416,45 @@ class _StudentsScreenState extends State<StudentsScreen> {
     );
   }
 
+  List<String> _getYearList() {
+    final currentYear = DateTime.now().year;
+    final years = <String>['All Years'];
+    for (int i = currentYear; i >= currentYear - 5; i--) {
+      years.add(i.toString());
+    }
+    return years;
+  }
+
+  Future<void> _selectDate(bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStartDate 
+          ? (_startDate ?? DateTime.now()) 
+          : (_endDate ?? DateTime.now()),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    
+    if (picked != null) {
+      setState(() {
+        if (isStartDate) {
+          _startDate = picked;
+        } else {
+          _endDate = picked;
+        }
+      });
+    }
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _selectedStatus = 'All';
+      _selectedYear = 'All Years';
+      _startDate = null;
+      _endDate = null;
+    });
+  }
+
   Widget _buildStatCard(String title, String value, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -259,9 +490,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
 
   Widget _buildStudentCard(dynamic student) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.only(bottom: 10),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -271,15 +502,38 @@ class _StudentsScreenState extends State<StudentsScreen> {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Section
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Profile Avatar
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3), width: 2),
+                    ),
+                    child: Center(
+                      child: Text(
+                        student.name.substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryBlue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  
+                  // Name & Email
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,94 +541,234 @@ class _StudentsScreenState extends State<StudentsScreen> {
                         Text(
                           student.name,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.charcoal,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 3),
+                        Row(
+                          children: [
+                            const Icon(Icons.email, size: 12, color: AppTheme.mediumGray),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                student.email,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppTheme.mediumGray,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 2),
-                        Text(
-                          student.email,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppTheme.mediumGray,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            const Icon(Icons.phone, size: 12, color: AppTheme.mediumGray),
+                            const SizedBox(width: 4),
+                            Text(
+                              student.phone,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppTheme.mediumGray,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
+                  
+                  // Status Badge
                   StatusBadge(status: student.status),
                 ],
               ),
 
-              const SizedBox(height: 8),
+              const Divider(height: 20, thickness: 1),
 
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  _buildInfoChip(Icons.school, student.courseName),
-                  _buildInfoChip(Icons.business, student.consultancyName),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
+              // Course & Consultant Info
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    child: Text(
-                      'Applied: ${DateFormat('MMM dd, yyyy').format(student.appliedDate)}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppTheme.mediumGray,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryBlue.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.school, size: 12, color: AppTheme.primaryBlue),
+                              SizedBox(width: 4),
+                              Text(
+                                'Course',
+                                style: TextStyle(fontSize: 9, color: AppTheme.mediumGray, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            student.courseName,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.charcoal,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Flexible(
-                    child: Text(
-                      'Documents: ${student.documents.length}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppTheme.mediumGray,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.success.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.success.withOpacity(0.2)),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.business, size: 12, color: AppTheme.success),
+                              SizedBox(width: 4),
+                              Text(
+                                'Consultant',
+                                style: TextStyle(fontSize: 9, color: AppTheme.mediumGray, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            student.consultancyName,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.charcoal,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
+              // Additional Details Grid
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightGray.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildDetailItem('📅 Applied', DateFormat('dd MMM yyyy').format(student.appliedDate))),
+                        Expanded(child: _buildDetailItem('📄 Documents', '${student.documents.length} files')),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildDetailItem('📧 Email', student.email)),
+                        Expanded(child: _buildDetailItem('📞 Phone', student.phone)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildDetailItem('🆔 Student ID', student.id)),
+                        Expanded(child: _buildDetailItem('🕐 Updated', DateFormat('dd MMM').format(student.updatedAt))),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Action Buttons
               if (student.status == AppConstants.statusPending)
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _showStatusUpdateDialog(
+                            student,
+                            AppConstants.statusApproved,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.success,
+                          foregroundColor: AppTheme.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        icon: const Icon(Icons.check_circle, size: 16),
+                        label: const Text('Approve', style: TextStyle(fontSize: 12)),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          _showStatusUpdateDialog(
+                            student,
+                            AppConstants.statusRejected,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppTheme.error,
+                          side: const BorderSide(color: AppTheme.error),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        icon: const Icon(Icons.cancel, size: 16),
+                        label: const Text('Reject', style: TextStyle(fontSize: 12)),
+                      ),
+                    ),
+                  ],
+                )
+              else
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(
+                    TextButton.icon(
                       onPressed: () {
-                        _showStatusUpdateDialog(
-                          student,
-                          AppConstants.statusRejected,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StudentDetailsScreen(student: student),
+                          ),
                         );
                       },
+                      icon: const Icon(Icons.visibility, size: 14),
+                      label: const Text('View Full Details', style: TextStyle(fontSize: 11)),
                       style: TextButton.styleFrom(
-                        foregroundColor: AppTheme.error,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                      ),
-                      child: const Text(
-                        'Reject',
-                        style: TextStyle(fontSize: 12),
+                        foregroundColor: AppTheme.primaryBlue,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -411,27 +805,30 @@ class _StudentsScreenState extends State<StudentsScreen> {
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String text) {
-    return Chip(
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: AppTheme.mediumGray),
-          const SizedBox(width: 4),
-          Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 10, color: AppTheme.mediumGray),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
+  Widget _buildDetailItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 9,
+            color: AppTheme.mediumGray,
+            fontWeight: FontWeight.w600,
           ),
-        ],
-      ),
-      backgroundColor: AppTheme.lightGray,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-      labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 11,
+            color: AppTheme.charcoal,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 

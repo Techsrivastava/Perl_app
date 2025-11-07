@@ -7,17 +7,46 @@ import 'package:university_app_2/widgets/status_badge.dart';
 import 'package:university_app_2/models/course_model.dart';
 import 'package:intl/intl.dart';
 
-class CourseDetailsScreen extends StatelessWidget {
+class CourseDetailsScreen extends StatefulWidget {
   final Course? course;
 
   const CourseDetailsScreen({Key? key, this.course}) : super(key: key);
+
+  @override
+  State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
+}
+
+class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
+  late bool _isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    _isActive = widget.course?.isActive ?? true;
+  }
+
+  void _toggleActiveStatus() {
+    setState(() {
+      _isActive = !_isActive;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _isActive ? 'Course activated successfully' : 'Course deactivated successfully',
+          style: const TextStyle(fontSize: 12),
+        ),
+        backgroundColor: _isActive ? AppTheme.success : AppTheme.warning,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 400;
 
     // ✅ Handle null course (prevent crash)
-    if (course == null) {
+    if (widget.course == null) {
       return Scaffold(
         backgroundColor: AppTheme.lightGray,
         appBar: const AppHeader(title: "Course Details"),
@@ -71,7 +100,7 @@ class CourseDetailsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                course!.name ?? "Course Name",
+                                widget.course!.name ?? "Course Name",
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 18 : 20,
                                   fontWeight: FontWeight.bold,
@@ -82,7 +111,7 @@ class CourseDetailsScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${course!.code ?? "NA"} • ${course!.department ?? "NA"}',
+                                '${widget.course!.code ?? "NA"} • ${widget.course!.department ?? "NA"}',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 11 : 13,
                                   color: AppTheme.mediumGray,
@@ -92,10 +121,33 @@ class CourseDetailsScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        if (course!.isActive != null)
-                          StatusBadge(
-                            status: course!.isActive! ? "Active" : "Inactive",
-                          ),
+                        Column(
+                          children: [
+                            StatusBadge(
+                              status: widget.course!.status ?? "Draft",
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: _isActive ? Colors.green.shade50 : Colors.orange.shade50,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: _isActive ? Colors.green : Colors.orange,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                _isActive ? 'Active' : 'Inactive',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: _isActive ? Colors.green.shade700 : Colors.orange.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -105,17 +157,17 @@ class CourseDetailsScreen extends StatelessWidget {
                       children: [
                         buildInfoChip(
                           Icons.timelapse_rounded,
-                          course!.duration ?? "NA",
+                          widget.course!.duration ?? "NA",
                           isSmallScreen,
                         ),
                         buildInfoChip(
                           Icons.school_rounded,
-                          course!.degreeType ?? "NA",
+                          widget.course!.degreeType ?? "NA",
                           isSmallScreen,
                         ),
                         buildInfoChip(
                           Icons.people_alt_rounded,
-                          "${course!.availableSeats ?? 0}/${course!.totalSeats ?? 0} seats",
+                          "${widget.course!.availableSeats ?? 0}/${widget.course!.totalSeats ?? 0} seats",
                           isSmallScreen,
                         ),
                       ],
@@ -126,7 +178,7 @@ class CourseDetailsScreen extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            "\$${NumberFormat("#,0").format(course!.fees ?? 0)}/year",
+                            "\$${NumberFormat("#,0").format(widget.course!.fees ?? 0)}/year",
                             style: TextStyle(
                               fontSize: isSmallScreen ? 14 : 16,
                               fontWeight: FontWeight.bold,
@@ -138,13 +190,13 @@ class CourseDetailsScreen extends StatelessWidget {
                         Wrap(
                           spacing: 4,
                           children: [
-                            if (course!.scholarshipAvailable ?? false)
+                            if (widget.course!.scholarshipAvailable ?? false)
                               buildTag(
                                 "Scholarship",
                                 AppTheme.warning,
                                 Icons.card_giftcard_rounded,
                               ),
-                            if (course!.placementSupport ?? false)
+                            if (widget.course!.placementSupport ?? false)
                               buildTag(
                                 "Placement",
                                 AppTheme.success,
@@ -159,6 +211,58 @@ class CourseDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            
+            // Active/Inactive Toggle Card
+            FadeInUp(
+              duration: const Duration(milliseconds: 400),
+              delay: const Duration(milliseconds: 100),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Course Status',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.charcoal,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _isActive ? 'Currently Active' : 'Currently Inactive',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _isActive ? AppTheme.success : AppTheme.warning,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Transform.scale(
+                        scale: 0.9,
+                        child: Switch(
+                          value: _isActive,
+                          onChanged: (value) => _toggleActiveStatus(),
+                          activeColor: AppTheme.success,
+                          inactiveThumbColor: AppTheme.warning,
+                          inactiveTrackColor: AppTheme.warning.withOpacity(0.3),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 16),
             FadeInUp(
               duration: const Duration(milliseconds: 400),
               delay: const Duration(milliseconds: 200),
@@ -166,24 +270,24 @@ class CourseDetailsScreen extends StatelessWidget {
                 title: "Course Information",
                 isSmallScreen: isSmallScreen,
                 children: [
-                  buildInfoRow("Mode of Study", course!.modeOfStudy ?? "NA"),
-                  buildInfoRow("Level", course!.level ?? "NA"),
+                  buildInfoRow("Mode of Study", widget.course!.modeOfStudy ?? "NA"),
+                  buildInfoRow("Level", widget.course!.level ?? "NA"),
                   buildInfoRow(
                     "Total Seats",
-                    (course!.totalSeats ?? 0).toString(),
+                    (widget.course!.totalSeats ?? 0).toString(),
                   ),
                   buildInfoRow(
                     "Available Seats",
-                    (course!.availableSeats ?? 0).toString(),
+                    (widget.course!.availableSeats ?? 0).toString(),
                   ),
                   buildInfoRow(
                     "Status",
-                    (course!.isActive ?? false) ? "Active" : "Inactive",
+                    (widget.course!.isActive ?? false) ? "Active" : "Inactive",
                   ),
                 ],
               ),
             ),
-            if (course!.description != null && course!.description!.isNotEmpty)
+            if (widget.course!.description != null && widget.course!.description!.isNotEmpty)
               FadeInUp(
                 duration: const Duration(milliseconds: 400),
                 delay: const Duration(milliseconds: 300),
@@ -192,7 +296,7 @@ class CourseDetailsScreen extends StatelessWidget {
                   isSmallScreen: isSmallScreen,
                   children: [
                     Text(
-                      course!.description!,
+                      widget.course!.description!,
                       style: TextStyle(
                         fontSize: isSmallScreen ? 11 : 12,
                         color: AppTheme.charcoal,
@@ -202,14 +306,14 @@ class CourseDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            if (course!.eligibility != null && course!.eligibility!.isNotEmpty)
+            if (widget.course!.eligibility != null && widget.course!.eligibility!.isNotEmpty)
               FadeInUp(
                 duration: const Duration(milliseconds: 400),
                 delay: const Duration(milliseconds: 400),
                 child: buildInfoSection(
                   title: "Eligibility Criteria",
                   isSmallScreen: isSmallScreen,
-                  children: course!.eligibility!
+                  children: widget.course!.eligibility!
                       .map(
                         (criteria) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),

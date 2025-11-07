@@ -476,3 +476,7 @@ lib/
 **Last Updated**: November 2024  
 **Version**: 2.0  
 **Maintained By**: University App Development Team
+
+
+
+Authrize Person Name:  or Firm Name OR Detail of Authrize Person

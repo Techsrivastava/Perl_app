@@ -7,7 +7,7 @@ import 'package:university_app_2/widgets/custom_button.dart';
 import 'package:university_app_2/widgets/status_badge.dart';
 import 'package:university_app_2/services/mock_data_service.dart';
 import 'package:university_app_2/models/course_model.dart';
-import 'package:university_app_2/screens/courses/add_course_screen.dart';
+import 'package:university_app_2/screens/courses/comprehensive_add_course_screen.dart';
 import 'package:university_app_2/screens/courses/course_details_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -19,7 +19,7 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
-  final mockData = MockDataService();
+  final mockData = MockDataService(); 
   late List<Course> _allCourses;
   List<Course> _filteredCourses = [];
 
@@ -91,11 +91,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddCourseScreen())),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ComprehensiveAddCourseScreen())),
         backgroundColor: AppTheme.primaryBlue,
-        mini: true,
-        child: const Icon(Icons.add_rounded, color: AppTheme.white, size: 20),
+        icon: const Icon(Icons.add_rounded, color: AppTheme.white, size: 20),
+        label: const Text('Add Course', style: TextStyle(color: AppTheme.white)),
       ),
     );
   }

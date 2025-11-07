@@ -1,0 +1,396 @@
+  Widget _buildAgencyTieUpPage() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Company / Agency Tie-Up',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.charcoal,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Is university operated via an agency/company?',
+            style: TextStyle(color: AppTheme.mediumGray, fontSize: 13),
+          ),
+          const SizedBox(height: 16),
+          
+          // Tab Selector for Agency Operation
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _operatedViaAgency = false),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: !_operatedViaAgency ? AppTheme.primaryBlue : Colors.white,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      border: Border.all(
+                        color: !_operatedViaAgency ? AppTheme.primaryBlue : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.close,
+                          size: 18,
+                          color: !_operatedViaAgency ? Colors.white : Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'No',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: !_operatedViaAgency ? Colors.white : Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _operatedViaAgency = true),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: _operatedViaAgency ? AppTheme.primaryBlue : Colors.white,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                      border: Border.all(
+                        color: _operatedViaAgency ? AppTheme.primaryBlue : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check,
+                          size: 18,
+                          color: _operatedViaAgency ? Colors.white : Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Yes',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: _operatedViaAgency ? Colors.white : Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          if (_operatedViaAgency) ...[
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Company / Agency Name *',
+              hint: 'Enter company name',
+              controller: _companyNameController,
+            ),
+            const SizedBox(height: 16),
+            
+            // Registration Type Dropdown
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Registration Type *',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.charcoal,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: _registrationType,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  hint: const Text('Select type'),
+                  items: _registrationTypes.map((type) {
+                    return DropdownMenuItem(value: type, child: Text(type));
+                  }).toList(),
+                  onChanged: (value) => setState(() => _registrationType = value),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Registration / CIN / GST No. *',
+              hint: 'Enter registration number',
+              controller: _registrationNumberController,
+            ),
+            const SizedBox(height: 16),
+            
+            // File upload for company registration certificate
+            _buildFileUploadButton(
+              'Upload Company Registration Certificate *',
+              _companyRegistrationCertFile,
+              _pickCompanyRegistrationCert,
+            ),
+            const SizedBox(height: 16),
+            
+            _buildFileUploadButton(
+              'Upload Company PAN / GST Certificate',
+              _companyPanGstFile,
+              _pickCompanyPanGst,
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Office Address *',
+              hint: 'Full office address including city, state, PIN',
+              controller: _companyAddressController,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Company Email *',
+              hint: 'company@example.com',
+              controller: _companyEmailController,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Company Contact Number *',
+              hint: '10-digit contact number',
+              controller: _companyContactController,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 20),
+            
+            const Text(
+              'Authorized Company Person',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Authorized Person Name *',
+              hint: 'Representative name',
+              controller: _authorizedCompanyPersonController,
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Designation *',
+              hint: 'e.g., Director, Admission Head',
+              controller: _authorizedPersonDesignationController,
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Contact Number *',
+              hint: '10-digit mobile number',
+              controller: _authorizedPersonContactController,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 20),
+            
+            const Text(
+              'Agreement Details',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            _buildFileUploadButton(
+              'Upload MOU / Agreement *',
+              _mouAgreementFile,
+              _pickMouAgreement,
+            ),
+            const SizedBox(height: 16),
+            
+            // Date pickers
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _agreementFromDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() => _agreementFromDate = picked);
+                      }
+                    },
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Agreement From Date *',
+                        border: OutlineInputBorder(),
+                      ),
+                      child: Text(
+                        _agreementFromDate != null
+                            ? '${_agreementFromDate!.day}/${_agreementFromDate!.month}/${_agreementFromDate!.year}'
+                            : 'Select date',
+                        style: TextStyle(
+                          color: _agreementFromDate != null ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _agreementToDate ?? DateTime.now().add(const Duration(days: 365)),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() => _agreementToDate = picked);
+                      }
+                    },
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Agreement To Date *',
+                        border: OutlineInputBorder(),
+                      ),
+                      child: Text(
+                        _agreementToDate != null
+                            ? '${_agreementToDate!.day}/${_agreementToDate!.month}/${_agreementToDate!.year}'
+                            : 'Select date',
+                        style: TextStyle(
+                          color: _agreementToDate != null ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            CustomTextField(
+              label: 'Remarks / Additional Note',
+              hint: 'Optional internal remarks',
+              controller: _remarksController,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 12),
+            
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: AppTheme.primaryBlue, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'All documents will be verified by the admin before approval',
+                      style: TextStyle(fontSize: 12, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
+          if (!_operatedViaAgency) ...[
+            const SizedBox(height: 24),
+            const Center(
+              child: Text(
+                'Select "Yes" above if your university is operated via an agency/company',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildFileUploadButton(String label, File? file, VoidCallback onTap) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppTheme.charcoal,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.attach_file, size: 20, color: Colors.grey),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    file != null ? file.path.split('/').last.split('\\').last : 'Tap to select file',
+                    style: TextStyle(
+                      color: file != null ? Colors.black : Colors.grey,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
