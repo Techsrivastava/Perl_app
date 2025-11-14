@@ -6,27 +6,32 @@ class ConsultantProfileScreen extends StatefulWidget {
   const ConsultantProfileScreen({super.key});
 
   @override
-  State<ConsultantProfileScreen> createState() => _ConsultantProfileScreenState();
+  State<ConsultantProfileScreen> createState() =>
+      _ConsultantProfileScreenState();
 }
 
 class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Basic Information
   final _consultantId = 'CONS2001';
   final _nameController = TextEditingController(text: 'Rajesh Kumar');
   final _contactController = TextEditingController(text: '9876543210');
   final _altContactController = TextEditingController();
-  final _emailController = TextEditingController(text: 'rajesh@consultancy.com');
+  final _emailController = TextEditingController(
+    text: 'rajesh@consultancy.com',
+  );
   final _whatsappController = TextEditingController(text: '9876543210');
   final _addressController = TextEditingController();
   final _cityController = TextEditingController(text: 'Dehradun');
   String _selectedState = 'Uttarakhand';
   final _pincodeController = TextEditingController();
   File? _profilePhoto;
-  
+
   // Business Details
-  final _businessNameController = TextEditingController(text: 'Rajesh Consultancy');
+  final _businessNameController = TextEditingController(
+    text: 'Rajesh Consultancy',
+  );
   String _registrationType = 'Individual';
   final _registrationNoController = TextEditingController();
   File? _registrationProof;
@@ -36,7 +41,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   final _officeAddressController = TextEditingController();
   final _websiteController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   // Bank Details
   final _accountHolderController = TextEditingController();
   final _accountNumberController = TextEditingController();
@@ -47,7 +52,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   File? _qrCode;
   final _panController = TextEditingController();
   File? _cancelledCheque;
-  
+
   // Documents
   final _aadharNumberController = TextEditingController();
   File? _aadharFront;
@@ -57,7 +62,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   File? _gstCertificate;
   File? _consultantAgreement;
   String _verificationStatus = 'Pending';
-  
+
   // Settings
   bool _twoFactorAuth = false;
   bool _appNotifications = true;
@@ -65,14 +70,39 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   bool _smsNotifications = false;
   String _language = 'English';
   bool _darkMode = false;
-  
+
   final List<String> _indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
-    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-    'Delhi', 'Jammu and Kashmir', 'Ladakh'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh',
   ];
 
   @override
@@ -119,7 +149,9 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Submit for Verification'),
-        content: const Text('Are you sure you want to submit your profile for admin verification?'),
+        content: const Text(
+          'Are you sure you want to submit your profile for admin verification?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -135,7 +167,9 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryBlue,
+            ),
             child: const Text('Submit', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -158,7 +192,10 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
               Navigator.pushReplacementNamed(context, '/consultant-dashboard');
             },
             icon: const Icon(Icons.skip_next, color: Colors.white, size: 20),
-            label: const Text('Skip for now', style: TextStyle(color: Colors.white, fontSize: 13)),
+            label: const Text(
+              'Skip for now',
+              style: TextStyle(color: Colors.white, fontSize: 13),
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.save),
@@ -177,7 +214,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
               // Verification Status Banner
               _buildStatusBanner(),
               const SizedBox(height: 16),
-              
+
               // Section 1: Basic Information
               _buildSectionCard(
                 title: '1️⃣ Basic Information',
@@ -185,77 +222,171 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                 children: [
                   _buildReadOnlyField('Consultant ID', _consultantId),
                   const SizedBox(height: 16),
-                  _buildTextField('Consultant / Owner Name *', _nameController, Icons.person_outline),
+                  _buildTextField(
+                    'Consultant / Owner Name *',
+                    _nameController,
+                    Icons.person_outline,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Contact Number *', _contactController, Icons.phone, readOnly: true),
+                  _buildTextField(
+                    'Contact Number *',
+                    _contactController,
+                    Icons.phone,
+                    readOnly: true,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Alternate Contact No.', _altContactController, Icons.phone_android),
+                  _buildTextField(
+                    'Alternate Contact No.',
+                    _altContactController,
+                    Icons.phone_android,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Email Address *', _emailController, Icons.email, readOnly: true),
+                  _buildTextField(
+                    'Email Address *',
+                    _emailController,
+                    Icons.email,
+                    readOnly: true,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('WhatsApp Number', _whatsappController, Icons.chat),
+                  _buildTextField(
+                    'WhatsApp Number',
+                    _whatsappController,
+                    Icons.chat,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Address', _addressController, Icons.location_on, maxLines: 2),
+                  _buildTextField(
+                    'Address',
+                    _addressController,
+                    Icons.location_on,
+                    maxLines: 2,
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                        child: _buildTextField('City *', _cityController, Icons.location_city),
+                        child: _buildTextField(
+                          'City *',
+                          _cityController,
+                          Icons.location_city,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _buildDropdown('State *', _selectedState, _indianStates, (v) => setState(() => _selectedState = v!)),
+                        child: _buildDropdown(
+                          'State *',
+                          _selectedState,
+                          _indianStates,
+                          (v) => setState(() => _selectedState = v!),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField('Pincode', _pincodeController, Icons.pin_drop, keyboardType: TextInputType.number),
+                  _buildTextField(
+                    'Pincode',
+                    _pincodeController,
+                    Icons.pin_drop,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Profile Photo', _profilePhoto, (file) => setState(() => _profilePhoto = file)),
+                  _buildFileUpload(
+                    'Profile Photo',
+                    _profilePhoto,
+                    (file) => setState(() => _profilePhoto = file),
+                  ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Section 2: Business Details
               _buildSectionCard(
                 title: '2️⃣ Business / Consultancy Details',
                 icon: Icons.business,
                 children: [
-                  _buildTextField('Business / Consultancy Name *', _businessNameController, Icons.business_center),
+                  _buildTextField(
+                    'Business / Consultancy Name *',
+                    _businessNameController,
+                    Icons.business_center,
+                  ),
                   const SizedBox(height: 16),
                   _buildDropdown(
                     'Registration Type *',
                     _registrationType,
-                    ['Individual', 'Proprietorship', 'LLP', 'Pvt. Ltd.', 'NGO', 'Trust'],
+                    [
+                      'Individual',
+                      'Proprietorship',
+                      'LLP',
+                      'Pvt. Ltd.',
+                      'NGO',
+                      'Trust',
+                    ],
                     (v) => setState(() => _registrationType = v!),
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField('Registration / GST / CIN Number', _registrationNoController, Icons.confirmation_number),
+                  _buildTextField(
+                    'Registration / GST / CIN Number',
+                    _registrationNoController,
+                    Icons.confirmation_number,
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Upload Registration Proof', _registrationProof, (file) => setState(() => _registrationProof = file)),
+                  _buildFileUpload(
+                    'Upload Registration Proof',
+                    _registrationProof,
+                    (file) => setState(() => _registrationProof = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Consultancy Logo', _consultancyLogo, (file) => setState(() => _consultancyLogo = file)),
+                  _buildFileUpload(
+                    'Consultancy Logo',
+                    _consultancyLogo,
+                    (file) => setState(() => _consultancyLogo = file),
+                  ),
                   const SizedBox(height: 16),
                   _buildDropdown(
                     'Consultancy Type *',
                     _consultancyType,
-                    ['Admission', 'Education', 'Training', 'Abroad Study', 'Mixed'],
+                    [
+                      'Admission',
+                      'Education',
+                      'Training',
+                      'Abroad Study',
+                      'Mixed',
+                    ],
                     (v) => setState(() => _consultancyType = v!),
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField('Establishment Year', _establishedYearController, Icons.calendar_today, keyboardType: TextInputType.number),
+                  _buildTextField(
+                    'Establishment Year',
+                    _establishedYearController,
+                    Icons.calendar_today,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Office Address', _officeAddressController, Icons.location_on, maxLines: 2),
+                  _buildTextField(
+                    'Office Address',
+                    _officeAddressController,
+                    Icons.location_on,
+                    maxLines: 2,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Website / Social Links', _websiteController, Icons.link),
+                  _buildTextField(
+                    'Website / Social Links',
+                    _websiteController,
+                    Icons.link,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Consultancy Description', _descriptionController, Icons.description, maxLines: 4, hint: 'Max 250 words'),
+                  _buildTextField(
+                    'Consultancy Description',
+                    _descriptionController,
+                    Icons.description,
+                    maxLines: 4,
+                    hint: 'Max 250 words',
+                  ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Section 3: Bank & Payment Details
               _buildSectionCard(
                 title: '3️⃣ Bank & Payment Details',
@@ -270,84 +401,164 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.orange[700],
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Bank details must be verified by Admin before commission transfer',
-                            style: TextStyle(fontSize: 12, color: Colors.orange[900]),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.orange[900],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField('Account Holder Name *', _accountHolderController, Icons.person),
+                  _buildTextField(
+                    'Account Holder Name *',
+                    _accountHolderController,
+                    Icons.person,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Account Number *', _accountNumberController, Icons.account_balance_wallet, keyboardType: TextInputType.number),
+                  _buildTextField(
+                    'Account Number *',
+                    _accountNumberController,
+                    Icons.account_balance_wallet,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Bank Name *', _bankNameController, Icons.account_balance),
+                  _buildTextField(
+                    'Bank Name *',
+                    _bankNameController,
+                    Icons.account_balance,
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('Branch Name', _branchController, Icons.location_city),
+                  _buildTextField(
+                    'Branch Name',
+                    _branchController,
+                    Icons.location_city,
+                  ),
                   const SizedBox(height: 16),
                   _buildTextField('IFSC Code *', _ifscController, Icons.code),
                   const SizedBox(height: 16),
                   _buildTextField('UPI ID', _upiController, Icons.payment),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Upload QR Code (UPI/Paytm/GPay)', _qrCode, (file) => setState(() => _qrCode = file)),
+                  _buildFileUpload(
+                    'Upload QR Code (UPI/Paytm/GPay)',
+                    _qrCode,
+                    (file) => setState(() => _qrCode = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildTextField('PAN Number', _panController, Icons.credit_card),
+                  _buildTextField(
+                    'PAN Number',
+                    _panController,
+                    Icons.credit_card,
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Upload Cancelled Cheque', _cancelledCheque, (file) => setState(() => _cancelledCheque = file)),
+                  _buildFileUpload(
+                    'Upload Cancelled Cheque',
+                    _cancelledCheque,
+                    (file) => setState(() => _cancelledCheque = file),
+                  ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Section 4: Documents & Verification
               _buildSectionCard(
                 title: '4️⃣ Documents & Verification',
                 icon: Icons.verified_user,
                 children: [
-                  _buildTextField('Aadhar Card Number', _aadharNumberController, Icons.credit_card, keyboardType: TextInputType.number),
+                  _buildTextField(
+                    'Aadhar Card Number',
+                    _aadharNumberController,
+                    Icons.credit_card,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                        child: _buildFileUpload('Aadhar Front', _aadharFront, (file) => setState(() => _aadharFront = file)),
+                        child: _buildFileUpload(
+                          'Aadhar Front',
+                          _aadharFront,
+                          (file) => setState(() => _aadharFront = file),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _buildFileUpload('Aadhar Back', _aadharBack, (file) => setState(() => _aadharBack = file)),
+                        child: _buildFileUpload(
+                          'Aadhar Back',
+                          _aadharBack,
+                          (file) => setState(() => _aadharBack = file),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField('PAN Card Number', _panNumberController, Icons.credit_card),
+                  _buildTextField(
+                    'PAN Card Number',
+                    _panNumberController,
+                    Icons.credit_card,
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Upload PAN Card', _panCard, (file) => setState(() => _panCard = file)),
+                  _buildFileUpload(
+                    'Upload PAN Card',
+                    _panCard,
+                    (file) => setState(() => _panCard = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Business Registration Proof', _registrationProof, (file) => setState(() => _registrationProof = file)),
+                  _buildFileUpload(
+                    'Business Registration Proof',
+                    _registrationProof,
+                    (file) => setState(() => _registrationProof = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Upload GST Certificate (if applicable)', _gstCertificate, (file) => setState(() => _gstCertificate = file)),
+                  _buildFileUpload(
+                    'Upload GST Certificate (if applicable)',
+                    _gstCertificate,
+                    (file) => setState(() => _gstCertificate = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildFileUpload('Consultant Agreement (MOU)', _consultantAgreement, (file) => setState(() => _consultantAgreement = file)),
+                  _buildFileUpload(
+                    'Consultant Agreement (MOU)',
+                    _consultantAgreement,
+                    (file) => setState(() => _consultantAgreement = file),
+                  ),
                   const SizedBox(height: 16),
-                  _buildReadOnlyField('Verification Status', _verificationStatus, 
-                    color: _verificationStatus == 'Verified' ? Colors.green : Colors.orange),
+                  _buildReadOnlyField(
+                    'Verification Status',
+                    _verificationStatus,
+                    color: _verificationStatus == 'Verified'
+                        ? Colors.green
+                        : Colors.orange,
+                  ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Section 5: Account Settings
               _buildSectionCard(
                 title: '5️⃣ Account Settings',
                 icon: Icons.settings,
                 children: [
                   SwitchListTile(
-                    title: const Text('Enable Two-Factor Authentication', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Adds login security', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'Enable Two-Factor Authentication',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Adds login security',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     value: _twoFactorAuth,
                     onChanged: (v) => setState(() => _twoFactorAuth = v),
                     activeColor: AppTheme.primaryBlue,
@@ -355,29 +566,47 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(12),
-                    child: Text('Notification Preferences', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    child: Text(
+                      'Notification Preferences',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                   CheckboxListTile(
-                    title: const Text('App Notifications', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'App Notifications',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: _appNotifications,
                     onChanged: (v) => setState(() => _appNotifications = v!),
                     activeColor: AppTheme.primaryBlue,
                   ),
                   CheckboxListTile(
-                    title: const Text('Email Notifications', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'Email Notifications',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: _emailNotifications,
                     onChanged: (v) => setState(() => _emailNotifications = v!),
                     activeColor: AppTheme.primaryBlue,
                   ),
                   CheckboxListTile(
-                    title: const Text('SMS Notifications', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'SMS Notifications',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: _smsNotifications,
                     onChanged: (v) => setState(() => _smsNotifications = v!),
                     activeColor: AppTheme.primaryBlue,
                   ),
                   const Divider(),
                   ListTile(
-                    title: const Text('Language Preference', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'Language Preference',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     trailing: DropdownButton<String>(
                       value: _language,
                       items: ['English', 'Hindi'].map((lang) {
@@ -388,26 +617,43 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    title: const Text('Dark Mode', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'Dark Mode',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: _darkMode,
                     onChanged: (v) => setState(() => _darkMode = v),
                     activeColor: AppTheme.primaryBlue,
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.download, color: AppTheme.primaryBlue),
-                    title: const Text('Export Profile Data', style: TextStyle(fontSize: 14)),
+                    leading: const Icon(
+                      Icons.download,
+                      color: AppTheme.primaryBlue,
+                    ),
+                    title: const Text(
+                      'Export Profile Data',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Downloading profile data as PDF...')),
+                        const SnackBar(
+                          content: Text('Downloading profile data as PDF...'),
+                        ),
                       );
                     },
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.lock, color: AppTheme.primaryBlue),
-                    title: const Text('Change Password', style: TextStyle(fontSize: 14)),
+                    leading: const Icon(
+                      Icons.lock,
+                      color: AppTheme.primaryBlue,
+                    ),
+                    title: const Text(
+                      'Change Password',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       // Navigate to change password screen
@@ -416,14 +662,19 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.block, color: Colors.red),
-                    title: const Text('Deactivate Account', style: TextStyle(fontSize: 14, color: Colors.red)),
+                    title: const Text(
+                      'Deactivate Account',
+                      style: TextStyle(fontSize: 14, color: Colors.red),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Deactivate Account'),
-                          content: const Text('Are you sure you want to request account deactivation?'),
+                          content: const Text(
+                            'Are you sure you want to request account deactivation?',
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
@@ -433,10 +684,17 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                               onPressed: () {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Deactivation request sent to admin')),
+                                  const SnackBar(
+                                    content: Text(
+                                      'Deactivation request sent to admin',
+                                    ),
+                                  ),
                                 );
                               },
-                              child: const Text('Request Deactivation', style: TextStyle(color: Colors.red)),
+                              child: const Text(
+                                'Request Deactivation',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ),
                           ],
                         ),
@@ -445,9 +703,9 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Action Buttons
               Row(
                 children: [
@@ -477,7 +735,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
             ],
           ),
@@ -491,7 +749,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
     Color textColor;
     IconData icon;
     String message;
-    
+
     switch (_verificationStatus) {
       case 'Verified':
         bgColor = Colors.green[50]!;
@@ -503,7 +761,8 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
         bgColor = Colors.red[50]!;
         textColor = Colors.red[700]!;
         icon = Icons.cancel;
-        message = 'Your profile verification was rejected. Please update and resubmit';
+        message =
+            'Your profile verification was rejected. Please update and resubmit';
         break;
       default:
         bgColor = Colors.orange[50]!;
@@ -511,7 +770,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
         icon = Icons.pending;
         message = 'Your profile is pending verification';
     }
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -529,13 +788,14 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
               children: [
                 Text(
                   'Verification Status: $_verificationStatus',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 12, color: textColor),
-                ),
+                Text(message, style: TextStyle(fontSize: 12, color: textColor)),
               ],
             ),
           ),
@@ -544,7 +804,11 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
     );
   }
 
-  Widget _buildSectionCard({required String title, required IconData icon, required List<Widget> children}) {
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -575,7 +839,11 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryBlue,
+                  ),
                 ),
               ),
             ],
@@ -622,7 +890,10 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller,
+    IconData icon, {
     bool readOnly = false,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
@@ -641,36 +912,53 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
         filled: readOnly,
         fillColor: readOnly ? Colors.grey[100] : null,
       ),
-      validator: label.contains('*') ? (v) => v!.isEmpty ? 'Required' : null : null,
+      validator: label.contains('*')
+          ? (v) => v!.isEmpty ? 'Required' : null
+          : null,
     );
   }
 
-  Widget _buildDropdown(String label, String value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropdown(
+    String label,
+    String value,
+    List<String> items,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
       onChanged: onChanged,
     );
   }
 
-  Widget _buildFileUpload(String label, File? file, Function(File?) onFilePicked) {
+  Widget _buildFileUpload(
+    String label,
+    File? file,
+    Function(File?) onFilePicked,
+  ) {
     return InkWell(
       onTap: () {
         // Simulate file picker
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File picker for $label')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('File picker for $label')));
       },
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: file != null ? AppTheme.success.withValues(alpha: 0.1) : Colors.grey[100],
+          color: file != null
+              ? AppTheme.success.withValues(alpha: 0.1)
+              : Colors.grey[100],
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: file != null ? AppTheme.success : Colors.grey[300]!),
+          border: Border.all(
+            color: file != null ? AppTheme.success : Colors.grey[300]!,
+          ),
         ),
         child: Row(
           children: [
@@ -686,7 +974,9 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   color: file != null ? AppTheme.success : Colors.grey[700],
-                  fontWeight: file != null ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: file != null
+                      ? FontWeight.w600
+                      : FontWeight.normal,
                 ),
               ),
             ),

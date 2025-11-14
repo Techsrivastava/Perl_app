@@ -10,7 +10,7 @@ class PendingPaymentsScreen extends StatefulWidget {
 
 class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
   String _statusFilter = 'All';
-  
+
   final List<Map<String, dynamic>> _payments = [
     {
       'student': 'Rahul Sharma',
@@ -38,7 +38,7 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
   Widget build(BuildContext context) {
     final pending = _payments.where((p) => p['status'] == 'Pending').length;
     final verified = _payments.where((p) => p['status'] == 'Verified').length;
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -57,11 +57,19 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Pending Verification', pending.toString(), Colors.orange),
+                      child: _buildStatCard(
+                        'Pending Verification',
+                        pending.toString(),
+                        Colors.orange,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildStatCard('Verified', verified.toString(), Colors.green),
+                      child: _buildStatCard(
+                        'Verified',
+                        verified.toString(),
+                        Colors.green,
+                      ),
                     ),
                   ],
                 ),
@@ -80,33 +88,39 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
               ],
             ),
           ),
-          
+
           // Filter
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                const Text('Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Status: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Expanded(
                   child: DropdownButton<String>(
                     value: _statusFilter,
                     isExpanded: true,
                     underline: const SizedBox(),
-                    items: ['All', 'Pending', 'Verified', 'Reverted'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                    items: ['All', 'Pending', 'Verified', 'Reverted']
+                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                        .toList(),
                     onChanged: (v) => setState(() => _statusFilter = v!),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Payments List
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _payments.length,
-              itemBuilder: (context, index) => _buildPaymentCard(_payments[index]),
+              itemBuilder: (context, index) =>
+                  _buildPaymentCard(_payments[index]),
             ),
           ),
         ],
@@ -129,7 +143,14 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
         children: [
           Text(title, style: TextStyle(fontSize: 11, color: Colors.grey[700])),
           const SizedBox(height: 8),
-          Text(count, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -138,7 +159,7 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
   Widget _buildPaymentCard(Map<String, dynamic> payment) {
     final isPending = payment['status'] == 'Pending';
     final statusColor = isPending ? Colors.orange : Colors.green;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -152,25 +173,41 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
                 Expanded(
                   child: Text(
                     payment['student'],
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     payment['status'],
-                    style: TextStyle(fontSize: 11, color: statusColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(payment['course'], style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-            Text(payment['university'], style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              payment['course'],
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+            Text(
+              payment['university'],
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
             const Divider(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,21 +215,40 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Amount', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                    Text('₹${payment['amount']}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.success)),
+                    Text(
+                      'Amount',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      '₹${payment['amount']}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.success,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Agent', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                    Text(payment['agent'], style: const TextStyle(fontSize: 12)),
+                    Text(
+                      'Agent',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      payment['agent'],
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('Date', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                    Text(
+                      'Date',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
                     Text(payment['date'], style: const TextStyle(fontSize: 12)),
                   ],
                 ),
@@ -206,7 +262,10 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
                     child: OutlinedButton.icon(
                       onPressed: () => _showProofDialog(payment),
                       icon: const Icon(Icons.visibility, size: 16),
-                      label: const Text('View Proof', style: TextStyle(fontSize: 12)),
+                      label: const Text(
+                        'View Proof',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                       ),
@@ -217,7 +276,10 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => _approvePayment(payment),
                       icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Approve', style: TextStyle(fontSize: 12)),
+                      label: const Text(
+                        'Approve',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.success,
                         foregroundColor: Colors.white,
@@ -269,7 +331,9 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Approve Payment'),
-        content: Text('Approve payment of ₹${payment['amount']} from ${payment['student']}?'),
+        content: Text(
+          'Approve payment of ₹${payment['amount']} from ${payment['student']}?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -280,7 +344,10 @@ class _PendingPaymentsScreenState extends State<PendingPaymentsScreen> {
               setState(() => payment['status'] = 'Verified');
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Payment approved!'), backgroundColor: AppTheme.success),
+                const SnackBar(
+                  content: Text('Payment approved!'),
+                  backgroundColor: AppTheme.success,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),

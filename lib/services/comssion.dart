@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 class CommissionService {
   /// Stores commission rates for different courses
   final Map<String, double> _courseCommissions = {
-    'computer_science': 0.10,  // 10% commission
-    'business': 0.12,          // 12% commission
-    'engineering': 0.15,       // 15% commission
-    'arts': 0.08,              // 8% commission
+    'computer_science': 0.10, // 10% commission
+    'business': 0.12, // 12% commission
+    'engineering': 0.15, // 15% commission
+    'arts': 0.08, // 8% commission
   };
 
   /// Default commission rate for courses not in the map
@@ -20,8 +20,9 @@ class CommissionService {
   /// Returns the commission amount
   double calculateCourseCommission(String courseName, double amount) {
     if (amount <= 0) return 0.0;
-    
-    final commissionRate = _courseCommissions[courseName.toLowerCase()] ?? defaultCommissionRate;
+
+    final commissionRate =
+        _courseCommissions[courseName.toLowerCase()] ?? defaultCommissionRate;
     return amount * commissionRate;
   }
 

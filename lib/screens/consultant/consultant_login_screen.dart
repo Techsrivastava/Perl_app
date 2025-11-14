@@ -14,7 +14,7 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLogin = true; // Toggle between login and signup
-  
+
   // Signup fields
   final _nameController = TextEditingController();
   final _businessNameController = TextEditingController();
@@ -103,7 +103,7 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // Auth Form Card
                   Container(
                     constraints: const BoxConstraints(maxWidth: 450),
@@ -131,7 +131,9 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Full Name *',
                                 prefixIcon: const Icon(Icons.person),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                               validator: (v) => v!.isEmpty ? 'Required' : null,
                             ),
@@ -141,7 +143,9 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Business Name *',
                                 prefixIcon: const Icon(Icons.business),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                               validator: (v) => v!.isEmpty ? 'Required' : null,
                             ),
@@ -151,7 +155,9 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Email *',
                                 prefixIcon: const Icon(Icons.email),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -162,42 +168,54 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Registration Type *',
                                 prefixIcon: const Icon(Icons.category),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
-                              items: ['Individual', 'Agency', 'Company'].map((type) {
-                                return DropdownMenuItem(value: type, child: Text(type));
+                              items: ['Individual', 'Agency', 'Company'].map((
+                                type,
+                              ) {
+                                return DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                );
                               }).toList(),
-                              onChanged: (v) => setState(() => _registrationType = v!),
+                              onChanged: (v) =>
+                                  setState(() => _registrationType = v!),
                             ),
                             const SizedBox(height: 16),
                           ],
-                          
+
                           // Mobile Number
                           TextFormField(
                             controller: _mobileController,
                             decoration: InputDecoration(
                               labelText: 'Mobile Number *',
                               prefixIcon: const Icon(Icons.phone),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                             keyboardType: TextInputType.phone,
                             validator: (v) => v!.isEmpty ? 'Required' : null,
                           ),
                           const SizedBox(height: 16),
-                          
+
                           if (!_isLogin) ...[
                             TextFormField(
                               controller: _whatsappController,
                               decoration: InputDecoration(
                                 labelText: 'WhatsApp Number',
                                 prefixIcon: const Icon(Icons.chat),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                               keyboardType: TextInputType.phone,
                             ),
                             const SizedBox(height: 16),
                           ],
-                          
+
                           // Password
                           TextFormField(
                             controller: _passwordController,
@@ -206,46 +224,70 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                               labelText: 'Password *',
                               prefixIcon: const Icon(Icons.lock),
                               suffixIcon: IconButton(
-                                icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () => setState(
+                                  () =>
+                                      _isPasswordVisible = !_isPasswordVisible,
+                                ),
                               ),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                             validator: (v) => v!.isEmpty ? 'Required' : null,
                           ),
                           const SizedBox(height: 24),
-                          
+
                           // Submit Button
                           ElevatedButton(
                             onPressed: _handleAuth,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppTheme.primaryBlue,
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                             child: Text(
                               _isLogin ? 'Login' : 'Register',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Toggle Login/Signup
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(_isLogin ? "Don't have an account?" : "Already have account?"),
+                              Text(
+                                _isLogin
+                                    ? "Don't have an account?"
+                                    : "Already have account?",
+                              ),
                               TextButton(
                                 onPressed: () {
                                   if (_isLogin) {
-                                    Navigator.pushNamed(context, '/consultant-comprehensive-register');
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/consultant-comprehensive-register',
+                                    );
                                   } else {
                                     setState(() => _isLogin = true);
                                   }
                                 },
                                 child: Text(
                                   _isLogin ? 'Register Now' : 'Login',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -254,12 +296,13 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Back to Home
                   TextButton.icon(
-                    onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     label: const Text(
                       'Back to University Panel',

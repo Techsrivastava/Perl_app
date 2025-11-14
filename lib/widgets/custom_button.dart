@@ -66,49 +66,61 @@ class CustomButton extends StatelessWidget {
 
   ButtonStyle _getButtonStyle() {
     final padding = switch (size) {
-      ButtonSize.small => const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      ButtonSize.medium => const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      ButtonSize.large => const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      ButtonSize.small => const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
+      ButtonSize.medium => const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 10,
+      ),
+      ButtonSize.large => const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 12,
+      ),
     };
-    
+
     final textStyle = switch (size) {
       ButtonSize.small => const TextStyle(fontSize: 13),
       ButtonSize.medium => const TextStyle(fontSize: 14),
-      ButtonSize.large => const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      ButtonSize.large => const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
     };
 
     final buttonStyle = switch (variant) {
       ButtonVariant.primary => ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryBlue,
-          foregroundColor: AppTheme.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: padding,
-        ),
+        backgroundColor: AppTheme.primaryBlue,
+        foregroundColor: AppTheme.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        padding: padding,
+      ),
       ButtonVariant.secondary => ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.lightGray,
-          foregroundColor: AppTheme.charcoal,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-            side: const BorderSide(color: Color(0xFFE0E0E0)),
-          ),
-          padding: padding,
+        backgroundColor: AppTheme.lightGray,
+        foregroundColor: AppTheme.charcoal,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+          side: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
+        padding: padding,
+      ),
       ButtonVariant.success => ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.success,
-          foregroundColor: AppTheme.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: padding,
-        ),
+        backgroundColor: AppTheme.success,
+        foregroundColor: AppTheme.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        padding: padding,
+      ),
       ButtonVariant.danger => ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.error,
-          foregroundColor: AppTheme.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: padding,
-        ),
+        backgroundColor: AppTheme.error,
+        foregroundColor: AppTheme.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        padding: padding,
+      ),
     };
 
     return buttonStyle.copyWith(

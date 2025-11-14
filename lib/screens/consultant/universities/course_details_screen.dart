@@ -4,7 +4,7 @@ import 'admission_application_screen.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> course;
-  
+
   const CourseDetailsScreen({super.key, required this.course});
 
   @override
@@ -22,14 +22,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.share), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.download), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -53,7 +47,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   Row(
                     children: [
                       Icon(
-                        widget.course['type'] == 'University' ? Icons.school : Icons.business,
+                        widget.course['type'] == 'University'
+                            ? Icons.school
+                            : Icons.business,
                         color: Colors.white,
                         size: 24,
                       ),
@@ -71,14 +67,21 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           widget.course['type'],
-                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -96,9 +99,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _buildQuickInfo(Icons.location_on, widget.course['location']),
+                      _buildQuickInfo(
+                        Icons.location_on,
+                        widget.course['location'],
+                      ),
                       const SizedBox(width: 16),
-                      _buildQuickInfo(Icons.schedule, widget.course['duration']),
+                      _buildQuickInfo(
+                        Icons.schedule,
+                        widget.course['duration'],
+                      ),
                     ],
                   ),
                 ],
@@ -139,8 +148,16 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   _buildSectionTitle('General Information'),
                   const SizedBox(height: 12),
                   _buildInfoCard([
-                    _buildInfoRow('Mode of Study', widget.course['mode'], Icons.play_lesson),
-                    _buildInfoRow('Duration', widget.course['duration'], Icons.schedule),
+                    _buildInfoRow(
+                      'Mode of Study',
+                      widget.course['mode'],
+                      Icons.play_lesson,
+                    ),
+                    _buildInfoRow(
+                      'Duration',
+                      widget.course['duration'],
+                      Icons.schedule,
+                    ),
                     _buildInfoRow('Course Level', 'Graduate', Icons.school),
                     _buildInfoRow('Stream', 'Computer Science', Icons.category),
                   ]),
@@ -156,7 +173,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     _buildFeeRow('Examination Fee (Per Year)', '₹3,000'),
                     _buildFeeRow('Other Mandatory Fees', '₹5,000'),
                     const Divider(),
-                    _buildFeeRow('Total Course Fee', '₹${widget.course['total_fee']}', isTotal: true),
+                    _buildFeeRow(
+                      'Total Course Fee',
+                      '₹${widget.course['total_fee']}',
+                      isTotal: true,
+                    ),
                   ]),
 
                   const SizedBox(height: 12),
@@ -169,12 +190,19 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.amber,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Optional fees like Hostel (₹8,000) and Transport (₹3,000) are not included in total',
-                            style: TextStyle(fontSize: 11, color: Colors.grey[800]),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[800],
+                            ),
                           ),
                         ),
                       ],
@@ -212,7 +240,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                       'This comprehensive program provides in-depth knowledge of computer applications, '
                       'software development, programming languages, and database management. Students will '
                       'gain practical skills in modern technologies and be prepared for careers in IT industry.',
-                      style: TextStyle(fontSize: 13, color: Colors.grey[700], height: 1.5),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[700],
+                        height: 1.5,
+                      ),
                     ),
                   ),
 
@@ -226,11 +258,17 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     decoration: BoxDecoration(
                       color: AppTheme.primaryBlue.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.support_agent, color: AppTheme.primaryBlue, size: 32),
+                        Icon(
+                          Icons.support_agent,
+                          color: AppTheme.primaryBlue,
+                          size: 32,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -238,12 +276,18 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             children: [
                               const Text(
                                 'Contact via Profit Pulse EduConnect',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Use the platform to connect with this institution',
-                                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[600],
+                                ),
                               ),
                             ],
                           ),
@@ -263,7 +307,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AdmissionApplicationScreen(course: widget.course),
+                                builder: (context) =>
+                                    AdmissionApplicationScreen(
+                                      course: widget.course,
+                                    ),
                               ),
                             );
                           },
@@ -273,7 +320,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             backgroundColor: AppTheme.primaryBlue,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -284,7 +333,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.all(14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         child: const Icon(Icons.phone),
                       ),
@@ -307,15 +358,17 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
       children: [
         Icon(icon, color: Colors.white, size: 16),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-        ),
+        Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),
       ],
     );
   }
 
-  Widget _buildFeeCard(String label, String amount, Color color, IconData icon) {
+  Widget _buildFeeCard(
+    String label,
+    String amount,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -462,7 +515,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: mandatory ? Colors.red.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
+              color: mandatory
+                  ? Colors.red.withValues(alpha: 0.1)
+                  : Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(

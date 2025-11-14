@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university_app_2/config/theme.dart';
 import 'package:university_app_2/widgets/app_header.dart';
 import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/utils/responsive_utils.dart';
+import 'package:university_app_2/core/utils/responsive_utils.dart';
 
 class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -37,13 +37,23 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCreativeWelcomeCard(context, isSmallPhone, isMobile, isTablet),
+                  _buildCreativeWelcomeCard(
+                    context,
+                    isSmallPhone,
+                    isMobile,
+                    isTablet,
+                  ),
                   SizedBox(height: isSmallPhone ? 12 : 16),
                   _buildCreativeStatsSection(isSmallPhone, isMobile, isTablet),
                   SizedBox(height: isSmallPhone ? 12 : 16),
                   _buildModernQuickActions(isSmallPhone, isMobile),
                   SizedBox(height: isSmallPhone ? 12 : 16),
-                  _buildTimelineActivity(recentActivity, isSmallPhone, isMobile, isTablet),
+                  _buildTimelineActivity(
+                    recentActivity,
+                    isSmallPhone,
+                    isMobile,
+                    isTablet,
+                  ),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -55,7 +65,12 @@ class DashboardScreen extends StatelessWidget {
   }
 
   // === Welcome Card (Fixed: Context passed correctly) ===
-  Widget _buildCreativeWelcomeCard(BuildContext context, bool isSmallPhone, bool isMobile, bool isTablet) {
+  Widget _buildCreativeWelcomeCard(
+    BuildContext context,
+    bool isSmallPhone,
+    bool isMobile,
+    bool isTablet,
+  ) {
     final fontSize = ResponsiveUtils.getTitleFontSize(context);
     final subtitleSize = isSmallPhone ? 12.0 : (isMobile ? 14.0 : 18.0);
     final iconSize = isSmallPhone ? 18.0 : (isMobile ? 22.0 : 32.0);
@@ -80,8 +95,22 @@ class DashboardScreen extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          _buildFloatingCircle(isSmallPhone, isMobile, isTablet, top: -30, right: -30, sizeFactor: 1.0),
-          _buildFloatingCircle(isSmallPhone, isMobile, isTablet, bottom: -40, right: 20, sizeFactor: 0.7),
+          _buildFloatingCircle(
+            isSmallPhone,
+            isMobile,
+            isTablet,
+            top: -30,
+            right: -30,
+            sizeFactor: 1.0,
+          ),
+          _buildFloatingCircle(
+            isSmallPhone,
+            isMobile,
+            isTablet,
+            bottom: -40,
+            right: 20,
+            sizeFactor: 0.7,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -120,8 +149,16 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingCircle(bool isSmallPhone, bool isMobile, bool isTablet,
-      {double? top, double? bottom, double? left, double? right, required double sizeFactor}) {
+  Widget _buildFloatingCircle(
+    bool isSmallPhone,
+    bool isMobile,
+    bool isTablet, {
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    required double sizeFactor,
+  }) {
     final size = (isSmallPhone ? 50 : (isMobile ? 70 : 120)) * sizeFactor;
     return Positioned(
       top: top,
@@ -141,7 +178,10 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildStatusChip(bool isSmallPhone) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 8 : 10, vertical: isSmallPhone ? 4 : 6),
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallPhone ? 8 : 10,
+        vertical: isSmallPhone ? 4 : 6,
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.12),
         borderRadius: BorderRadius.circular(10),
@@ -149,7 +189,11 @@ class DashboardScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.trending_up, color: AppTheme.white, size: isSmallPhone ? 12 : 16),
+          Icon(
+            Icons.trending_up,
+            color: AppTheme.white,
+            size: isSmallPhone ? 12 : 16,
+          ),
           const SizedBox(width: 4),
           Text(
             'Everything looks great!',
@@ -165,7 +209,11 @@ class DashboardScreen extends StatelessWidget {
   }
 
   // === Stats Section ===
-  Widget _buildCreativeStatsSection(bool isSmallPhone, bool isMobile, bool isTablet) {
+  Widget _buildCreativeStatsSection(
+    bool isSmallPhone,
+    bool isMobile,
+    bool isTablet,
+  ) {
     final spacing = isSmallPhone ? 6.0 : (isMobile ? 8.0 : 16.0);
 
     return Wrap(
@@ -173,37 +221,63 @@ class DashboardScreen extends StatelessWidget {
       runSpacing: spacing,
       children: [
         _buildModernStatCard(
-          title: 'Courses', value: '3', subtitle: 'Active',
-          color: const Color(0xFF1E3A8A), gradientColor: const Color(0xFF3B82F6),
+          title: 'Courses',
+          value: '3',
+          subtitle: 'Active',
+          color: const Color(0xFF1E3A8A),
+          gradientColor: const Color(0xFF3B82F6),
           icon: Icons.menu_book_rounded,
-          isSmallPhone: isSmallPhone, isMobile: isMobile, isTablet: isTablet,
+          isSmallPhone: isSmallPhone,
+          isMobile: isMobile,
+          isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Students', value: '5', subtitle: 'Enrolled',
-          color: const Color(0xFF059669), gradientColor: const Color(0xFF10B981),
+          title: 'Students',
+          value: '5',
+          subtitle: 'Enrolled',
+          color: const Color(0xFF059669),
+          gradientColor: const Color(0xFF10B981),
           icon: Icons.groups_rounded,
-          isSmallPhone: isSmallPhone, isMobile: isMobile, isTablet: isTablet,
+          isSmallPhone: isSmallPhone,
+          isMobile: isMobile,
+          isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Consult.', value: '4', subtitle: 'In progress',
-          color: const Color(0xFFD97706), gradientColor: const Color(0xFFF59E0B),
+          title: 'Consult.',
+          value: '4',
+          subtitle: 'In progress',
+          color: const Color(0xFFD97706),
+          gradientColor: const Color(0xFFF59E0B),
           icon: Icons.business_center_rounded,
-          isSmallPhone: isSmallPhone, isMobile: isMobile, isTablet: isTablet,
+          isSmallPhone: isSmallPhone,
+          isMobile: isMobile,
+          isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Apps', value: '2', subtitle: 'Pending',
-          color: const Color(0xFFDC2626), gradientColor: const Color(0xFFEF4444),
+          title: 'Apps',
+          value: '2',
+          subtitle: 'Pending',
+          color: const Color(0xFFDC2626),
+          gradientColor: const Color(0xFFEF4444),
           icon: Icons.pending_actions_rounded,
-          isSmallPhone: isSmallPhone, isMobile: isMobile, isTablet: isTablet,
+          isSmallPhone: isSmallPhone,
+          isMobile: isMobile,
+          isTablet: isTablet,
         ),
       ],
     );
   }
 
   Widget _buildModernStatCard({
-    required String title, required String value, required String subtitle,
-    required Color color, required Color gradientColor, required IconData icon,
-    required bool isSmallPhone, required bool isMobile, required bool isTablet,
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color color,
+    required Color gradientColor,
+    required IconData icon,
+    required bool isSmallPhone,
+    required bool isMobile,
+    required bool isTablet,
   }) {
     final width = isTablet ? 200.0 : (isMobile ? 160.0 : 140.0);
     final padding = isSmallPhone ? 10.0 : (isMobile ? 12.0 : 18.0);
@@ -215,9 +289,19 @@ class DashboardScreen extends StatelessWidget {
       width: width,
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [color, gradientColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
+        gradient: LinearGradient(
+          colors: [color, gradientColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 14),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.25), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,7 +311,10 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(isSmallPhone ? 6 : 8),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Icon(icon, color: Colors.white, size: iconSize),
                 ),
                 const SizedBox(width: 8),
@@ -237,20 +324,45 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(value, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.white, height: 0.9)),
+                          Text(
+                            value,
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              height: 0.9,
+                            ),
+                          ),
                           const SizedBox(width: 4),
-                          Text(title, style: TextStyle(fontSize: titleSize, fontWeight: FontWeight.w600, color: Colors.white.withOpacity(0.95))),
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: titleSize,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.95),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 1),
-                      Text(subtitle, style: TextStyle(fontSize: isSmallPhone ? 9 : 11, color: Colors.white.withOpacity(0.75))),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: isSmallPhone ? 9 : 11,
+                          color: Colors.white.withOpacity(0.75),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withOpacity(0.5), size: isSmallPhone ? 10 : 14),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: Colors.white.withOpacity(0.5),
+            size: isSmallPhone ? 10 : 14,
+          ),
         ],
       ),
     );
@@ -267,16 +379,41 @@ class DashboardScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildActionCard('View Apps', 'Check pending', Icons.description_rounded, Colors.blue, isSmallPhone, isMobile)),
+            Expanded(
+              child: _buildActionCard(
+                'View Apps',
+                'Check pending',
+                Icons.description_rounded,
+                Colors.blue,
+                isSmallPhone,
+                isMobile,
+              ),
+            ),
             SizedBox(width: spacing),
-            Expanded(child: _buildActionCard('Reports', 'Export analytics', Icons.assessment_rounded, Colors.green, isSmallPhone, isMobile)),
+            Expanded(
+              child: _buildActionCard(
+                'Reports',
+                'Export analytics',
+                Icons.assessment_rounded,
+                Colors.green,
+                isSmallPhone,
+                isMobile,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildActionCard(String title, String subtitle, IconData icon, Color color, bool isSmallPhone, bool isMobile) {
+  Widget _buildActionCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    bool isSmallPhone,
+    bool isMobile,
+  ) {
     final padding = isSmallPhone ? 10.0 : (isMobile ? 12.0 : 16.0);
     final titleSize = isSmallPhone ? 12.0 : (isMobile ? 13.0 : 15.0);
     final subtitleSize = isSmallPhone ? 10.0 : (isMobile ? 11.0 : 12.0);
@@ -286,7 +423,13 @@ class DashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -299,7 +442,10 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(isSmallPhone ? 8 : 10),
-                  decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Icon(icon, color: color, size: iconSize),
                 ),
                 const SizedBox(width: 10),
@@ -307,13 +453,31 @@ class DashboardScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: TextStyle(fontSize: titleSize, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: titleSize,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.charcoal,
+                        ),
+                      ),
                       const SizedBox(height: 2),
-                      Text(subtitle, style: TextStyle(fontSize: subtitleSize, color: AppTheme.mediumGray), overflow: TextOverflow.ellipsis),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: subtitleSize,
+                          color: AppTheme.mediumGray,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, size: isSmallPhone ? 12 : 14, color: AppTheme.mediumGray),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: isSmallPhone ? 12 : 14,
+                  color: AppTheme.mediumGray,
+                ),
               ],
             ),
           ),
@@ -323,7 +487,12 @@ class DashboardScreen extends StatelessWidget {
   }
 
   // === Recent Activity (No overflow) ===
-  Widget _buildTimelineActivity(List<Map<String, dynamic>> activities, bool isSmallPhone, bool isMobile, bool isTablet) {
+  Widget _buildTimelineActivity(
+    List<Map<String, dynamic>> activities,
+    bool isSmallPhone,
+    bool isMobile,
+    bool isTablet,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -334,8 +503,15 @@ class DashboardScreen extends StatelessWidget {
           final activity = entry.value;
           final isLast = index == activities.length - 1;
           return Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : (isSmallPhone ? 6.0 : 8.0)),
-            child: _buildTimelineCard(activity, isSmallPhone, isMobile, isTablet),
+            padding: EdgeInsets.only(
+              bottom: isLast ? 0 : (isSmallPhone ? 6.0 : 8.0),
+            ),
+            child: _buildTimelineCard(
+              activity,
+              isSmallPhone,
+              isMobile,
+              isTablet,
+            ),
           );
         }).toList(),
       ],
@@ -348,7 +524,10 @@ class DashboardScreen extends StatelessWidget {
         Container(
           width: 3,
           height: isSmallPhone ? 18 : 22,
-          decoration: BoxDecoration(color: AppTheme.primaryBlue, borderRadius: BorderRadius.circular(2)),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryBlue,
+            borderRadius: BorderRadius.circular(2),
+          ),
         ),
         const SizedBox(width: 8),
         Text(
@@ -363,7 +542,12 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineCard(Map<String, dynamic> activity, bool isSmallPhone, bool isMobile, bool isTablet) {
+  Widget _buildTimelineCard(
+    Map<String, dynamic> activity,
+    bool isSmallPhone,
+    bool isMobile,
+    bool isTablet,
+  ) {
     final padding = isSmallPhone ? 8.0 : (isMobile ? 10.0 : 16.0);
     final containerSize = isSmallPhone ? 36.0 : (isMobile ? 40.0 : 48.0);
     final titleSize = isSmallPhone ? 12.0 : (isMobile ? 13.0 : 15.0);
@@ -376,8 +560,17 @@ class DashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-        border: Border.all(color: AppTheme.lightGray.withOpacity(0.4), width: 0.5),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6, offset: const Offset(0, 1))],
+        border: Border.all(
+          color: AppTheme.lightGray.withOpacity(0.4),
+          width: 0.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -386,13 +579,20 @@ class DashboardScreen extends StatelessWidget {
             height: containerSize,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppTheme.primaryBlue.withOpacity(0.15), AppTheme.primaryBlue.withOpacity(0.05)],
+                colors: [
+                  AppTheme.primaryBlue.withOpacity(0.15),
+                  AppTheme.primaryBlue.withOpacity(0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(activity['icon'] as IconData, color: AppTheme.primaryBlue, size: iconSize),
+            child: Icon(
+              activity['icon'] as IconData,
+              color: AppTheme.primaryBlue,
+              size: iconSize,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -401,14 +601,22 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Text(
                   activity['title'] as String,
-                  style: TextStyle(fontSize: titleSize, fontWeight: FontWeight.w600, color: AppTheme.charcoal),
+                  style: TextStyle(
+                    fontSize: titleSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.charcoal,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   activity['description'] as String,
-                  style: TextStyle(fontSize: descSize, color: AppTheme.mediumGray, height: 1.2),
+                  style: TextStyle(
+                    fontSize: descSize,
+                    color: AppTheme.mediumGray,
+                    height: 1.2,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -417,11 +625,21 @@ class DashboardScreen extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 4 : 6, vertical: isSmallPhone ? 2 : 3),
-            decoration: BoxDecoration(color: AppTheme.lightGray.withOpacity(0.6), borderRadius: BorderRadius.circular(4)),
+            padding: EdgeInsets.symmetric(
+              horizontal: isSmallPhone ? 4 : 6,
+              vertical: isSmallPhone ? 2 : 3,
+            ),
+            decoration: BoxDecoration(
+              color: AppTheme.lightGray.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(4),
+            ),
             child: Text(
               _formatTime(activity['time'] as DateTime),
-              style: TextStyle(fontSize: timeSize, color: AppTheme.mediumGray, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: timeSize,
+                color: AppTheme.mediumGray,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

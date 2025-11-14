@@ -102,7 +102,9 @@ class CustomTextField extends StatelessWidget {
               vertical: 12,
             ),
             filled: true,
-            fillColor: enabled ? Colors.white : const Color(0xFFF3F4F6), // Light gray when disabled
+            fillColor: enabled
+                ? Colors.white
+                : const Color(0xFFF3F4F6), // Light gray when disabled
           ),
         ),
       ],

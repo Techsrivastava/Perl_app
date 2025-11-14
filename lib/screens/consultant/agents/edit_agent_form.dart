@@ -31,11 +31,19 @@ class _EditAgentFormState extends State<EditAgentForm> {
     _firmController = TextEditingController(text: widget.agent['firm_name']);
     _mobileController = TextEditingController(text: widget.agent['mobile']);
     _emailController = TextEditingController(text: widget.agent['email']);
-    _altContactController = TextEditingController(text: widget.agent['alt_contact'] ?? '');
-    _addressController = TextEditingController(text: widget.agent['address'] ?? '');
+    _altContactController = TextEditingController(
+      text: widget.agent['alt_contact'] ?? '',
+    );
+    _addressController = TextEditingController(
+      text: widget.agent['address'] ?? '',
+    );
     _cityController = TextEditingController(text: widget.agent['city']);
-    _pincodeController = TextEditingController(text: widget.agent['pincode'] ?? '');
-    _remarksController = TextEditingController(text: widget.agent['remarks'] ?? '');
+    _pincodeController = TextEditingController(
+      text: widget.agent['pincode'] ?? '',
+    );
+    _remarksController = TextEditingController(
+      text: widget.agent['remarks'] ?? '',
+    );
     _selectedState = widget.agent['state'];
   }
 
@@ -73,7 +81,9 @@ class _EditAgentFormState extends State<EditAgentForm> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppTheme.primaryBlue, Color(0xFF1565C0)]),
+                  gradient: const LinearGradient(
+                    colors: [AppTheme.primaryBlue, Color(0xFF1565C0)],
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -83,9 +93,22 @@ class _EditAgentFormState extends State<EditAgentForm> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.agent['agent_id'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        Text(
+                          widget.agent['agent_id'],
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text(widget.agent['agent_name'], style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(
+                          widget.agent['agent_name'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -107,7 +130,10 @@ class _EditAgentFormState extends State<EditAgentForm> {
 
               TextFormField(
                 controller: _firmController,
-                decoration: _inputDecoration('Firm / Agency Name', Icons.business),
+                decoration: _inputDecoration(
+                  'Firm / Agency Name',
+                  Icons.business,
+                ),
               ),
               const SizedBox(height: 12),
 
@@ -129,7 +155,10 @@ class _EditAgentFormState extends State<EditAgentForm> {
 
               TextFormField(
                 controller: _altContactController,
-                decoration: _inputDecoration('Alternate Contact', Icons.phone_android),
+                decoration: _inputDecoration(
+                  'Alternate Contact',
+                  Icons.phone_android,
+                ),
                 keyboardType: TextInputType.phone,
               ),
 
@@ -159,9 +188,21 @@ class _EditAgentFormState extends State<EditAgentForm> {
                     child: DropdownButtonFormField<String>(
                       value: _selectedState,
                       decoration: _inputDecoration('State', Icons.map),
-                      items: ['Maharashtra', 'Delhi', 'Karnataka', 'Gujarat', 'Rajasthan', 'UP', 'MP']
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                          .toList(),
+                      items:
+                          [
+                                'Maharashtra',
+                                'Delhi',
+                                'Karnataka',
+                                'Gujarat',
+                                'Rajasthan',
+                                'UP',
+                                'MP',
+                              ]
+                              .map(
+                                (e) =>
+                                    DropdownMenuItem(value: e, child: Text(e)),
+                              )
+                              .toList(),
                       onChanged: (v) => setState(() => _selectedState = v!),
                     ),
                   ),
@@ -194,11 +235,20 @@ class _EditAgentFormState extends State<EditAgentForm> {
                     const SizedBox(height: 8),
                     _buildInfoRow('Joined Date', widget.agent['joined_date']),
                     const SizedBox(height: 8),
-                    _buildInfoRow('Total Leads', widget.agent['total_leads'].toString()),
+                    _buildInfoRow(
+                      'Total Leads',
+                      widget.agent['total_leads'].toString(),
+                    ),
                     const SizedBox(height: 8),
-                    _buildInfoRow('Verified Admissions', widget.agent['verified_admissions'].toString()),
+                    _buildInfoRow(
+                      'Verified Admissions',
+                      widget.agent['verified_admissions'].toString(),
+                    ),
                     const SizedBox(height: 8),
-                    _buildInfoRow('Total Earnings', '₹${widget.agent['total_earnings']}'),
+                    _buildInfoRow(
+                      'Total Earnings',
+                      '₹${widget.agent['total_earnings']}',
+                    ),
                   ],
                 ),
               ),
@@ -245,7 +295,10 @@ class _EditAgentFormState extends State<EditAgentForm> {
                           });
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Agent updated successfully'), backgroundColor: Colors.green),
+                            const SnackBar(
+                              content: Text('Agent updated successfully'),
+                              backgroundColor: Colors.green,
+                            ),
                           );
                         }
                       },
@@ -274,7 +327,14 @@ class _EditAgentFormState extends State<EditAgentForm> {
       children: [
         Icon(icon, size: 20, color: AppTheme.primaryBlue),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primaryBlue,
+          ),
+        ),
       ],
     );
   }
@@ -295,7 +355,10 @@ class _EditAgentFormState extends State<EditAgentForm> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-        Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }

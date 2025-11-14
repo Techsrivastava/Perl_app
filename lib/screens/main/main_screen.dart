@@ -49,10 +49,10 @@ class _MainScreenState extends State<MainScreen> {
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final isSmallScreen = screenWidth < 600;
-        
+
         return Scaffold(
           key: _scaffoldKey,
-          drawer: isSmallScreen 
+          drawer: isSmallScreen
               ? AppDrawer(
                   currentRoute: _routeNames[_currentIndex],
                   onNavigate: _onDrawerNavigate,
@@ -72,10 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 // Main content area
                 Expanded(
-                  child: IndexedStack(
-                    index: _currentIndex,
-                    children: _screens,
-                  ),
+                  child: IndexedStack(index: _currentIndex, children: _screens),
                 ),
               ],
             ),

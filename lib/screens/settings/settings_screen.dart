@@ -17,97 +17,127 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: AppTheme.primaryBlue,
-        foregroundColor: AppTheme.white,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppTheme.charcoal),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.primaryBlue, AppTheme.darkBlue],
+                ),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryBlue.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.settings_rounded, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Settings',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.charcoal,
+                  ),
+                ),
+                Text(
+                  'Manage preferences',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.mediumGray,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       body: ListView(
         children: [
-          _buildSection(
-            'Account Settings',
-            [
-              _buildListTile(
-                Icons.person,
-                'Profile Settings',
-                'Edit your personal information',
-                () {},
-              ),
-              _buildListTile(
-                Icons.lock,
-                'Change Password',
-                'Update your password',
-                () {},
-              ),
-              _buildListTile(
-                Icons.security,
-                'Privacy & Security',
-                'Manage your privacy settings',
-                () {},
-              ),
-            ],
-          ),
-          _buildSection(
-            'Notifications',
-            [
-              _buildSwitchTile(
-                Icons.email,
-                'Email Notifications',
-                'Receive notifications via email',
-                _emailNotifications,
-                (value) => setState(() => _emailNotifications = value),
-              ),
-              _buildSwitchTile(
-                Icons.notifications,
-                'Push Notifications',
-                'Receive push notifications',
-                _pushNotifications,
-                (value) => setState(() => _pushNotifications = value),
-              ),
-            ],
-          ),
-          _buildSection(
-            'Appearance',
-            [
-              _buildSwitchTile(
-                Icons.dark_mode,
-                'Dark Mode',
-                'Enable dark theme',
-                _darkMode,
-                (value) => setState(() => _darkMode = value),
-              ),
-              _buildListTile(
-                Icons.language,
-                'Language',
-                _language,
-                () => _showLanguageDialog(),
-              ),
-            ],
-          ),
-          _buildSection(
-            'About',
-            [
-              _buildListTile(
-                Icons.info,
-                'App Version',
-                '1.0.0',
-                null,
-              ),
-              _buildListTile(
-                Icons.description,
-                'Terms & Conditions',
-                'Read our terms',
-                () {},
-              ),
-              _buildListTile(
-                Icons.privacy_tip,
-                'Privacy Policy',
-                'Read our privacy policy',
-                () {},
-              ),
-            ],
-          ),
+          _buildSection('Account Settings', [
+            _buildListTile(
+              Icons.person,
+              'Profile Settings',
+              'Edit your personal information',
+              () {},
+            ),
+            _buildListTile(
+              Icons.lock,
+              'Change Password',
+              'Update your password',
+              () {},
+            ),
+            _buildListTile(
+              Icons.security,
+              'Privacy & Security',
+              'Manage your privacy settings',
+              () {},
+            ),
+          ]),
+          _buildSection('Notifications', [
+            _buildSwitchTile(
+              Icons.email,
+              'Email Notifications',
+              'Receive notifications via email',
+              _emailNotifications,
+              (value) => setState(() => _emailNotifications = value),
+            ),
+            _buildSwitchTile(
+              Icons.notifications,
+              'Push Notifications',
+              'Receive push notifications',
+              _pushNotifications,
+              (value) => setState(() => _pushNotifications = value),
+            ),
+          ]),
+          _buildSection('Appearance', [
+            _buildSwitchTile(
+              Icons.dark_mode,
+              'Dark Mode',
+              'Enable dark theme',
+              _darkMode,
+              (value) => setState(() => _darkMode = value),
+            ),
+            _buildListTile(
+              Icons.language,
+              'Language',
+              _language,
+              () => _showLanguageDialog(),
+            ),
+          ]),
+          _buildSection('About', [
+            _buildListTile(Icons.info, 'App Version', '1.0.0', null),
+            _buildListTile(
+              Icons.description,
+              'Terms & Conditions',
+              'Read our terms',
+              () {},
+            ),
+            _buildListTile(
+              Icons.privacy_tip,
+              'Privacy Policy',
+              'Read our privacy policy',
+              () {},
+            ),
+          ]),
         ],
       ),
     );
@@ -162,10 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         child: Icon(icon, color: AppTheme.primaryBlue, size: 20),
       ),
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text(
         subtitle,
         style: TextStyle(fontSize: 12, color: AppTheme.mediumGray),
@@ -193,10 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         child: Icon(icon, color: AppTheme.primaryBlue, size: 20),
       ),
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text(
         subtitle,
         style: TextStyle(fontSize: 12, color: AppTheme.mediumGray),
@@ -215,15 +239,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: ['English', 'Hindi', 'Spanish', 'French']
-              .map((lang) => RadioListTile<String>(
-                    title: Text(lang),
-                    value: lang,
-                    groupValue: _language,
-                    onChanged: (value) {
-                      setState(() => _language = value!);
-                      Navigator.pop(context);
-                    },
-                  ))
+              .map(
+                (lang) => RadioListTile<String>(
+                  title: Text(lang),
+                  value: lang,
+                  groupValue: _language,
+                  onChanged: (value) {
+                    setState(() => _language = value!);
+                    Navigator.pop(context);
+                  },
+                ),
+              )
               .toList(),
         ),
       ),

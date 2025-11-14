@@ -45,7 +45,9 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.success,
+              ),
               child: const Text('OK', style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -91,91 +93,117 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Basic Details Section
-              const Text('Basic Information', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text(
+                'Basic Information',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
-              
+
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Agent Name *',
                   prefixIcon: const Icon(Icons.person),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _mobileController,
                 decoration: InputDecoration(
                   labelText: 'Mobile Number (Login ID) *',
                   prefixIcon: const Icon(Icons.phone),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.phone,
-                validator: (v) => v!.isEmpty ? 'Required' : v.length != 10 ? 'Must be 10 digits' : null,
+                validator: (v) => v!.isEmpty
+                    ? 'Required'
+                    : v.length != 10
+                    ? 'Must be 10 digits'
+                    : null,
               ),
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password *',
                   prefixIcon: const Icon(Icons.lock),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 obscureText: true,
-                validator: (v) => v!.isEmpty ? 'Required' : v.length < 6 ? 'Min 6 characters' : null,
+                validator: (v) => v!.isEmpty
+                    ? 'Required'
+                    : v.length < 6
+                    ? 'Min 6 characters'
+                    : null,
               ),
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email ID (Optional)',
                   prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(
                   labelText: 'Address',
                   prefixIcon: const Icon(Icons.location_on),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 maxLines: 2,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Commission Setup
-              const Text('Commission Setup', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text(
+                'Commission Setup',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
-              
+
               DropdownButtonFormField<String>(
                 value: _commissionType,
                 decoration: InputDecoration(
                   labelText: 'Commission Type *',
                   prefixIcon: const Icon(Icons.category),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
@@ -185,51 +213,72 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
                 onChanged: (v) => setState(() => _commissionType = v!),
               ),
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _commissionValueController,
                 decoration: InputDecoration(
-                  labelText: _commissionType == 'Percentage' ? 'Percentage Value *' : 'Amount *',
-                  prefixIcon: Icon(_commissionType == 'Percentage' ? Icons.percent : Icons.currency_rupee),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  labelText: _commissionType == 'Percentage'
+                      ? 'Percentage Value *'
+                      : 'Amount *',
+                  prefixIcon: Icon(
+                    _commissionType == 'Percentage'
+                        ? Icons.percent
+                        : Icons.currency_rupee,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: _commissionType == 'Percentage' ? 'e.g., 5' : 'e.g., 5000',
+                  hintText: _commissionType == 'Percentage'
+                      ? 'e.g., 5'
+                      : 'e.g., 5000',
                 ),
                 keyboardType: TextInputType.number,
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Permissions
-              const Text('Permissions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text(
+                'Permissions',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
-              
+
               SwitchListTile(
-                title: const Text('Enable Agent Dashboard', style: TextStyle(fontSize: 14)),
-                subtitle: const Text('Allow agent to access dashboard', style: TextStyle(fontSize: 12)),
+                title: const Text(
+                  'Enable Agent Dashboard',
+                  style: TextStyle(fontSize: 14),
+                ),
+                subtitle: const Text(
+                  'Allow agent to access dashboard',
+                  style: TextStyle(fontSize: 12),
+                ),
                 value: _enableDashboard,
                 onChanged: (v) => setState(() => _enableDashboard = v),
                 activeColor: AppTheme.success,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               TextFormField(
                 controller: _remarksController,
                 decoration: InputDecoration(
                   labelText: 'Agent Remarks / Instructions',
                   prefixIcon: const Icon(Icons.note),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 maxLines: 3,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Buttons
               Row(
                 children: [
@@ -259,7 +308,7 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
             ],
           ),

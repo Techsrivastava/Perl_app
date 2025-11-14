@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/utils/responsive_utils.dart';
+import 'package:university_app_2/core/utils/responsive_utils.dart';
 
 class ResponsiveCard extends StatelessWidget {
   final Widget child;
@@ -24,10 +24,7 @@ class ResponsiveCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cardPadding = padding ?? ResponsiveUtils.getScreenPadding(context);
 
-    final content = Padding(
-      padding: cardPadding,
-      child: child,
-    );
+    final content = Padding(padding: cardPadding, child: child);
 
     if (!wrapWithCard) {
       return content;

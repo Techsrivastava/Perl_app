@@ -43,12 +43,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
 
       if (mounted) {
         setState(() => _isLoading = false);
-        
+
         // Navigate to verification screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => VerificationScreen(email: _emailController.text),
+            builder: (context) =>
+                VerificationScreen(email: _emailController.text),
           ),
         );
       }
@@ -73,7 +74,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 8),
-                
+
                 // Logo and Title
                 Center(
                   child: Column(
@@ -123,9 +124,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Role Selection
                 const Text(
                   'I am a *',
@@ -143,13 +144,16 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildRoleCard('Consultant', Icons.business_center_rounded),
+                      child: _buildRoleCard(
+                        'Consultant',
+                        Icons.business_center_rounded,
+                      ),
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Full Name
                 CustomTextField(
                   label: 'Full Name *',
@@ -165,9 +169,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Email
                 CustomTextField(
                   label: 'Email Address *',
@@ -178,15 +182,17 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Phone Number
                 CustomTextField(
                   label: 'Phone Number *',
@@ -207,9 +213,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Password
                 CustomTextField(
                   label: 'Password *',
@@ -218,10 +224,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   obscureText: _obscurePassword,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: AppTheme.mediumGray,
                     ),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -233,9 +242,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Confirm Password
                 CustomTextField(
                   label: 'Confirm Password *',
@@ -244,10 +253,14 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   obscureText: _obscureConfirmPassword,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                      _obscureConfirmPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: AppTheme.mediumGray,
                     ),
-                    onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                    onPressed: () => setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -259,9 +272,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Register Button
                 CustomButton(
                   label: 'Create Account',
@@ -270,16 +283,19 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   isFullWidth: true,
                   icon: Icons.person_add_rounded,
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Login Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       'Already have an account? ',
-                      style: TextStyle(color: AppTheme.mediumGray, fontSize: 13),
+                      style: TextStyle(
+                        color: AppTheme.mediumGray,
+                        fontSize: 13,
+                      ),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -297,9 +313,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Terms and Conditions
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -340,7 +356,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
           color: isSelected ? null : AppTheme.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryBlue : AppTheme.mediumGray.withOpacity(0.3),
+            color: isSelected
+                ? AppTheme.primaryBlue
+                : AppTheme.mediumGray.withOpacity(0.3),
             width: isSelected ? 2 : 1.5,
           ),
           boxShadow: isSelected

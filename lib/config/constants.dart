@@ -17,12 +17,14 @@ class AppConstants {
   static const int otpLength = 4;
   static const int otpResendDelay = 25; // seconds
 
-  // UI Constants
-  static const double defaultPadding = 16.0;
-  static const double smallPadding = 8.0;
-  static const double largePadding = 24.0;
-  static const double borderRadius = 8.0;
-  static const double cardElevation = 2.0;
+  // Modern UI Constants
+  static const double defaultPadding = 20.0;  // More spacious
+  static const double smallPadding = 12.0;
+  static const double largePadding = 32.0;
+  static const double extraLargePadding = 40.0;
+  static const double borderRadius = 16.0;  // More rounded
+  static const double smallRadius = 12.0;
+  static const double cardElevation = 0.0;  // Flat design
 
   // Animation Durations
   static const Duration shortAnimation = Duration(milliseconds: 200);

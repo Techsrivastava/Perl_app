@@ -6,7 +6,8 @@ class UniversitiesCoursesScreen extends StatefulWidget {
   const UniversitiesCoursesScreen({super.key});
 
   @override
-  State<UniversitiesCoursesScreen> createState() => _UniversitiesCoursesScreenState();
+  State<UniversitiesCoursesScreen> createState() =>
+      _UniversitiesCoursesScreenState();
 }
 
 class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
@@ -69,8 +70,12 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
 
   List<Map<String, dynamic>> get _filteredCourses {
     return _courses.where((course) {
-      return course['course_name'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          course['university_name'].toLowerCase().contains(_searchQuery.toLowerCase());
+      return course['course_name'].toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          course['university_name'].toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
     }).toList();
   }
 
@@ -91,7 +96,8 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
           Expanded(child: _buildContent()),
         ],
       ),
-      floatingActionButton: _selectedView == 'comparison' && _comparisonList.length >= 2
+      floatingActionButton:
+          _selectedView == 'comparison' && _comparisonList.length >= 2
           ? FloatingActionButton.extended(
               onPressed: _showComparisonDialog,
               backgroundColor: AppTheme.primaryBlue,
@@ -121,9 +127,19 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
         children: [
           _buildTab('Courses', 'courses', Icons.book),
           const SizedBox(width: 8),
-          _buildTab('Favorites', 'favorites', Icons.favorite, badge: _favoriteIds.length),
+          _buildTab(
+            'Favorites',
+            'favorites',
+            Icons.favorite,
+            badge: _favoriteIds.length,
+          ),
           const SizedBox(width: 8),
-          _buildTab('Compare', 'comparison', Icons.compare_arrows, badge: _comparisonList.length),
+          _buildTab(
+            'Compare',
+            'comparison',
+            Icons.compare_arrows,
+            badge: _comparisonList.length,
+          ),
         ],
       ),
     );
@@ -146,18 +162,32 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Icon(icon, color: isSelected ? Colors.white : Colors.grey[600], size: 20),
+                  Icon(
+                    icon,
+                    color: isSelected ? Colors.white : Colors.grey[600],
+                    size: 20,
+                  ),
                   if (badge != null && badge > 0)
                     Positioned(
                       right: -8,
                       top: -8,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         child: Text(
                           badge.toString(),
-                          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -195,7 +225,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           isDense: true,
         ),
       ),
@@ -215,7 +248,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
 
   Widget _buildCoursesList() {
     final courses = _filteredCourses;
-    
+
     if (courses.isEmpty) {
       return Center(
         child: Column(
@@ -223,7 +256,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
           children: [
             Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text('No courses found', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+            Text(
+              'No courses found',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
           ],
         ),
       );
@@ -239,7 +275,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   Widget _buildCourseCard(Map<String, dynamic> course) {
     bool isFavorite = _favoriteIds.contains(course['id']);
     bool inComparison = _comparisonList.any((c) => c['id'] == course['id']);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -269,7 +305,9 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
             child: Row(
               children: [
                 Icon(
-                  course['type'] == 'University' ? Icons.school : Icons.business,
+                  course['type'] == 'University'
+                      ? Icons.school
+                      : Icons.business,
                   color: AppTheme.primaryBlue,
                   size: 20,
                 ),
@@ -280,20 +318,33 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     children: [
                       Text(
                         course['university_name'],
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey[800]),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[800],
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: course['type'] == 'University' ? Colors.blue : Colors.orange,
+                          color: course['type'] == 'University'
+                              ? Colors.blue
+                              : Colors.orange,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           course['type'],
-                          style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -312,7 +363,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               ],
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -320,21 +371,30 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               children: [
                 Text(
                   course['course_name'],
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 10),
-                
+
                 Row(
                   children: [
                     Icon(Icons.play_lesson, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 4),
-                    Text(course['mode'], style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+                    Text(
+                      course['mode'],
+                      style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+                    ),
                     const SizedBox(width: 16),
                     Icon(Icons.schedule, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 4),
-                    Text(course['duration'], style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+                    Text(
+                      course['duration'],
+                      style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -352,9 +412,9 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 Row(
                   children: [
                     Expanded(
@@ -363,16 +423,28 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         decoration: BoxDecoration(
                           color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.green.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Total Fee', style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+                            Text(
+                              'Total Fee',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                             const SizedBox(height: 2),
                             Text(
                               '₹${course['total_fee']}',
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
                             ),
                           ],
                         ),
@@ -385,16 +457,28 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         decoration: BoxDecoration(
                           color: Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.blue.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Your Share', style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+                            Text(
+                              'Your Share',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                             const SizedBox(height: 2),
                             Text(
                               course['consultant_share'],
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.blue),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
                             ),
                           ],
                         ),
@@ -405,7 +489,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               ],
             ),
           ),
-          
+
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -421,7 +505,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _viewCourseDetails(course),
                     icon: const Icon(Icons.visibility, size: 16),
-                    label: const Text('View Details', style: TextStyle(fontSize: 12)),
+                    label: const Text(
+                      'View Details',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       side: BorderSide(color: AppTheme.primaryBlue),
@@ -434,11 +521,20 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                   onPressed: () => _toggleComparison(course),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.all(8),
-                    side: BorderSide(color: inComparison ? Colors.orange : Colors.grey[300]!),
-                    backgroundColor: inComparison ? Colors.orange.withValues(alpha: 0.1) : null,
-                    foregroundColor: inComparison ? Colors.orange : Colors.grey[600],
+                    side: BorderSide(
+                      color: inComparison ? Colors.orange : Colors.grey[300]!,
+                    ),
+                    backgroundColor: inComparison
+                        ? Colors.orange.withValues(alpha: 0.1)
+                        : null,
+                    foregroundColor: inComparison
+                        ? Colors.orange
+                        : Colors.grey[600],
                   ),
-                  child: Icon(inComparison ? Icons.compare_arrows : Icons.add_chart, size: 18),
+                  child: Icon(
+                    inComparison ? Icons.compare_arrows : Icons.add_chart,
+                    size: 18,
+                  ),
                 ),
               ],
             ),
@@ -449,8 +545,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   }
 
   Widget _buildFavoritesList() {
-    final favorites = _courses.where((c) => _favoriteIds.contains(c['id'])).toList();
-    
+    final favorites = _courses
+        .where((c) => _favoriteIds.contains(c['id']))
+        .toList();
+
     if (favorites.isEmpty) {
       return Center(
         child: Column(
@@ -458,7 +556,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
           children: [
             Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text('No favorite courses yet', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+            Text(
+              'No favorite courses yet',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => setState(() => _selectedView = 'courses'),
@@ -484,9 +585,15 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
           children: [
             Icon(Icons.compare_arrows, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text('No courses added for comparison', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+            Text(
+              'No courses added for comparison',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
             const SizedBox(height: 8),
-            Text('Add 2-3 courses to compare', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+            Text(
+              'Add 2-3 courses to compare',
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () => setState(() => _selectedView = 'courses'),
@@ -515,11 +622,18 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               Container(
                 width: 32,
                 height: 32,
-                decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Center(
                   child: Text(
                     '${index + 1}',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -530,7 +644,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                   children: [
                     Text(
                       course['course_name'],
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -544,7 +661,8 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                 ),
               ),
               IconButton(
-                onPressed: () => setState(() => _comparisonList.removeAt(index)),
+                onPressed: () =>
+                    setState(() => _comparisonList.removeAt(index)),
                 icon: const Icon(Icons.close, size: 18, color: Colors.red),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -585,7 +703,9 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   void _viewCourseDetails(Map<String, dynamic> course) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CourseDetailsScreen(course: course)),
+      MaterialPageRoute(
+        builder: (context) => CourseDetailsScreen(course: course),
+      ),
     );
   }
 
@@ -598,7 +718,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Course Comparison', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                'Course Comparison',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -606,35 +729,74 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                   columns: [
                     const DataColumn(label: Text('Field')),
                     for (var course in _comparisonList)
-                      DataColumn(label: Text(course['course_name'].toString().split('(')[0], 
-                        style: const TextStyle(fontSize: 11))),
+                      DataColumn(
+                        label: Text(
+                          course['course_name'].toString().split('(')[0],
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      ),
                   ],
                   rows: [
-                    DataRow(cells: [
-                      const DataCell(Text('University')),
-                      for (var course in _comparisonList)
-                        DataCell(Text(course['university_name'], style: const TextStyle(fontSize: 11))),
-                    ]),
-                    DataRow(cells: [
-                      const DataCell(Text('Mode')),
-                      for (var course in _comparisonList)
-                        DataCell(Text(course['mode'], style: const TextStyle(fontSize: 11))),
-                    ]),
-                    DataRow(cells: [
-                      const DataCell(Text('Duration')),
-                      for (var course in _comparisonList)
-                        DataCell(Text(course['duration'], style: const TextStyle(fontSize: 11))),
-                    ]),
-                    DataRow(cells: [
-                      const DataCell(Text('Fee')),
-                      for (var course in _comparisonList)
-                        DataCell(Text('₹${course['total_fee']}', style: const TextStyle(fontSize: 11))),
-                    ]),
-                    DataRow(cells: [
-                      const DataCell(Text('Your Share')),
-                      for (var course in _comparisonList)
-                        DataCell(Text(course['consultant_share'], style: const TextStyle(fontSize: 11))),
-                    ]),
+                    DataRow(
+                      cells: [
+                        const DataCell(Text('University')),
+                        for (var course in _comparisonList)
+                          DataCell(
+                            Text(
+                              course['university_name'],
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                      ],
+                    ),
+                    DataRow(
+                      cells: [
+                        const DataCell(Text('Mode')),
+                        for (var course in _comparisonList)
+                          DataCell(
+                            Text(
+                              course['mode'],
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                      ],
+                    ),
+                    DataRow(
+                      cells: [
+                        const DataCell(Text('Duration')),
+                        for (var course in _comparisonList)
+                          DataCell(
+                            Text(
+                              course['duration'],
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                      ],
+                    ),
+                    DataRow(
+                      cells: [
+                        const DataCell(Text('Fee')),
+                        for (var course in _comparisonList)
+                          DataCell(
+                            Text(
+                              '₹${course['total_fee']}',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                      ],
+                    ),
+                    DataRow(
+                      cells: [
+                        const DataCell(Text('Your Share')),
+                        for (var course in _comparisonList)
+                          DataCell(
+                            Text(
+                              course['consultant_share'],
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               ),

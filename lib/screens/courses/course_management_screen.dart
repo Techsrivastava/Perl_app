@@ -23,10 +23,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
 
   Future<void> _loadCourses() async {
     setState(() => _isLoading = true);
-    
+
     // Simulate loading delay
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // Mock data with streams
     final courses = [
       Course(
@@ -108,7 +108,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
         streams: [],
       ),
     ];
-    
+
     setState(() {
       _courses = courses;
       _isLoading = false;
@@ -119,16 +119,22 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     setState(() {
       final index = _courses.indexWhere((c) => c.id == course.id);
       if (index != -1) {
-        _courses[index] = course.isDraft ? course.publish() : course.saveToDraft();
+        _courses[index] = course.isDraft
+            ? course.publish()
+            : course.saveToDraft();
         if (_selectedCourse?.id == course.id) {
           _selectedCourse = _courses[index];
         }
       }
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(course.isDraft ? 'Course published successfully!' : 'Course saved as draft'),
+        content: Text(
+          course.isDraft
+              ? 'Course published successfully!'
+              : 'Course saved as draft',
+        ),
         backgroundColor: course.isDraft ? Colors.green : Colors.orange,
         behavior: SnackBarBehavior.floating,
       ),
@@ -146,18 +152,26 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
           }
           return s;
         }).toList();
-        
-        final courseIndex = _courses.indexWhere((c) => c.id == _selectedCourse!.id);
+
+        final courseIndex = _courses.indexWhere(
+          (c) => c.id == _selectedCourse!.id,
+        );
         if (courseIndex != -1) {
-          _courses[courseIndex] = _courses[courseIndex].copyWith(streams: updatedStreams);
+          _courses[courseIndex] = _courses[courseIndex].copyWith(
+            streams: updatedStreams,
+          );
           _selectedCourse = _courses[courseIndex];
         }
       }
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(stream.isDraft ? 'Stream published successfully!' : 'Stream saved as draft'),
+        content: Text(
+          stream.isDraft
+              ? 'Stream published successfully!'
+              : 'Stream saved as draft',
+        ),
         backgroundColor: stream.isDraft ? Colors.green : Colors.orange,
         behavior: SnackBarBehavior.floating,
       ),
@@ -212,19 +226,13 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
           : Row(
               children: [
                 // Left Panel - Course List
-                Expanded(
-                  flex: 2,
-                  child: _buildCourseList(),
-                ),
-                
+                Expanded(flex: 2, child: _buildCourseList()),
+
                 // Divider
                 const VerticalDivider(width: 1, thickness: 1),
-                
+
                 // Right Panel - Stream List
-                Expanded(
-                  flex: 3,
-                  child: _buildStreamPanel(),
-                ),
+                Expanded(flex: 3, child: _buildStreamPanel()),
               ],
             ),
     );
@@ -252,7 +260,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
             itemBuilder: (context, index) {
               final course = _courses[index];
               final isSelected = _selectedCourse?.id == course.id;
-              
+
               return _buildCourseCard(course, isSelected);
             },
           ),
@@ -289,7 +297,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryBlue,
                       borderRadius: BorderRadius.circular(6),
@@ -316,9 +327,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Status and streams count
               Row(
                 children: [
@@ -329,14 +340,17 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                     const SizedBox(width: 4),
                     Text(
                       '${course.streams!.length} ${course.streams!.length == 1 ? 'Stream' : 'Streams'}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Action buttons
               Row(
                 children: [
@@ -366,7 +380,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                       ),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 8),
-                        backgroundColor: course.isDraft ? Colors.green : Colors.orange,
+                        backgroundColor: course.isDraft
+                            ? Colors.green
+                            : Colors.orange,
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -386,7 +402,11 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.category_outlined, size: 64, color: Colors.grey.shade400),
+            Icon(
+              Icons.category_outlined,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
             const SizedBox(height: 16),
             Text(
               'Select a course to view its streams',
@@ -398,7 +418,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     }
 
     final streams = _selectedCourse!.streams ?? [];
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -421,7 +441,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'Streams (${streams.length})',
-                      style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -441,18 +464,25 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
             ],
           ),
         ),
-        
+
         Expanded(
           child: streams.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.info_outline, size: 48, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.info_outline,
+                        size: 48,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'No streams available',
-                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       TextButton.icon(
@@ -512,7 +542,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange,
                     borderRadius: BorderRadius.circular(6),
@@ -530,9 +563,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                 _buildStatusBadge(stream.status),
               ],
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Stream name
             Text(
               stream.name,
@@ -544,9 +577,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Seats info
             Row(
               children: [
@@ -558,9 +591,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                 ),
               ],
             ),
-            
+
             const Spacer(),
-            
+
             // Action buttons
             Row(
               children: [
@@ -581,7 +614,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                     onPressed: () => _toggleStreamStatus(stream),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 6),
-                      backgroundColor: stream.isDraft ? Colors.green : Colors.orange,
+                      backgroundColor: stream.isDraft
+                          ? Colors.green
+                          : Colors.orange,
                       foregroundColor: Colors.white,
                     ),
                     child: Text(

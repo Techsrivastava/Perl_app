@@ -7,7 +7,8 @@ class SupportConsultantScreen extends StatefulWidget {
   const SupportConsultantScreen({super.key});
 
   @override
-  State<SupportConsultantScreen> createState() => _SupportConsultantScreenState();
+  State<SupportConsultantScreen> createState() =>
+      _SupportConsultantScreenState();
 }
 
 class _SupportConsultantScreenState extends State<SupportConsultantScreen> {
@@ -144,18 +145,19 @@ class _SupportConsultantScreenState extends State<SupportConsultantScreen> {
                               vertical: 12,
                             ),
                           ),
-                          items: [
-                            'Technical Issue',
-                            'Billing Question',
-                            'Feature Request',
-                            'General Inquiry',
-                            'Bug Report',
-                          ].map((category) {
-                            return DropdownMenuItem(
-                              value: category,
-                              child: Text(category),
-                            );
-                          }).toList(),
+                          items:
+                              [
+                                'Technical Issue',
+                                'Billing Question',
+                                'Feature Request',
+                                'General Inquiry',
+                                'Bug Report',
+                              ].map((category) {
+                                return DropdownMenuItem(
+                                  value: category,
+                                  child: Text(category),
+                                );
+                              }).toList(),
                           onChanged: (value) {
                             setState(() => _selectedCategory = value!);
                           },
@@ -277,10 +279,7 @@ class _SupportConsultantScreenState extends State<SupportConsultantScreen> {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -311,17 +310,10 @@ class _SupportConsultantScreenState extends State<SupportConsultantScreen> {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppTheme.charcoal,
-              ),
+              style: const TextStyle(fontSize: 14, color: AppTheme.charcoal),
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            color: AppTheme.mediumGray,
-            size: 20,
-          ),
+          const Icon(Icons.chevron_right, color: AppTheme.mediumGray, size: 20),
         ],
       ),
     );

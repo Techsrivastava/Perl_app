@@ -22,31 +22,39 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   int _currentStep = 0;
   bool _isLoading = false;
   bool _agreeTerms = false;
-  
+
   // Form controllers
-  final TextEditingController _universityNameController = TextEditingController();
+  final TextEditingController _universityNameController =
+      TextEditingController();
   final TextEditingController _shortNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _pincodeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _contactNumberController = TextEditingController();
+  final TextEditingController _contactNumberController =
+      TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
-  final TextEditingController _authPersonNameController = TextEditingController();
+  final TextEditingController _authPersonNameController =
+      TextEditingController();
   final TextEditingController _designationController = TextEditingController();
-  final TextEditingController _personalEmailController = TextEditingController();
+  final TextEditingController _personalEmailController =
+      TextEditingController();
   final TextEditingController _mobileNumberController = TextEditingController();
-  final TextEditingController _altContactNumberController = TextEditingController();
+  final TextEditingController _altContactNumberController =
+      TextEditingController();
   final TextEditingController _bankNameController = TextEditingController();
-  final TextEditingController _accountHolderNameController = TextEditingController();
-  final TextEditingController _accountNumberController = TextEditingController();
+  final TextEditingController _accountHolderNameController =
+      TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
   final TextEditingController _ifscCodeController = TextEditingController();
   final TextEditingController _branchNameController = TextEditingController();
   final TextEditingController _upiIdController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // File pickers
   File? _logoFile;
@@ -61,21 +69,27 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   String? _state;
   String? _yearOfEstablishment;
   bool _autoApproval = false;
-  
+
   // Authorization Type: 'individual' or 'firm'
   String _authorizationType = 'individual';
   final TextEditingController _firmNameController = TextEditingController();
-  
+
   // Company/Agency Tie-Up Details
   bool _operatedViaAgency = false;
   final TextEditingController _companyNameController = TextEditingController();
-  final TextEditingController _registrationNumberController = TextEditingController();
-  final TextEditingController _companyAddressController = TextEditingController();
+  final TextEditingController _registrationNumberController =
+      TextEditingController();
+  final TextEditingController _companyAddressController =
+      TextEditingController();
   final TextEditingController _companyEmailController = TextEditingController();
-  final TextEditingController _companyContactController = TextEditingController();
-  final TextEditingController _authorizedCompanyPersonController = TextEditingController();
-  final TextEditingController _authorizedPersonDesignationController = TextEditingController();
-  final TextEditingController _authorizedPersonContactController = TextEditingController();
+  final TextEditingController _companyContactController =
+      TextEditingController();
+  final TextEditingController _authorizedCompanyPersonController =
+      TextEditingController();
+  final TextEditingController _authorizedPersonDesignationController =
+      TextEditingController();
+  final TextEditingController _authorizedPersonContactController =
+      TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
   String? _registrationType;
   DateTime? _agreementFromDate;
@@ -86,12 +100,34 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
 
   // List of Indian states for dropdown
   final List<String> _indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
-    'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
-    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
-    'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
   ];
 
   // List of university types
@@ -109,7 +145,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
     'State Board',
     'Others',
   ];
-  
+
   // List of registration types for company/agency
   final List<String> _registrationTypes = [
     'Pvt. Ltd.',
@@ -172,7 +208,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         imageQuality: 70,
         maxWidth: 800,
       );
-      
+
       if (pickedFile != null) {
         setState(() {
           _logoFile = File(pickedFile.path);
@@ -181,9 +217,9 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
     } catch (e) {
       debugPrint('Error picking image: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to pick image')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to pick image')));
       }
     }
   }
@@ -196,7 +232,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         imageQuality: 70,
         maxWidth: 1200,
       );
-      
+
       if (pickedFile != null) {
         setState(() {
           _bannerFile = File(pickedFile.path);
@@ -225,7 +261,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         final file = File(result.files.single.path!);
         final fileSize = await file.length();
         const maxSize = 10 * 1024 * 1024; // 10MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +273,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _brochureFile = file;
         });
@@ -268,7 +304,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         final file = File(result.files.single.path!);
         final fileSize = await file.length();
         const maxSize = 10 * 1024 * 1024; // 10MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -280,7 +316,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _authLetterFile = file;
         });
@@ -306,12 +342,12 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         imageQuality: 50,
         maxWidth: 500,
       );
-      
+
       if (pickedFile != null) {
         final file = File(pickedFile.path);
         final fileSize = await file.length();
         const maxSize = 2 * 1024 * 1024; // 2MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -323,7 +359,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _qrCodeFile = file;
         });
@@ -354,7 +390,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         final file = File(result.files.single.path!);
         final fileSize = await file.length();
         const maxSize = 10 * 1024 * 1024; // 10MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -366,7 +402,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _companyRegistrationCertFile = file;
         });
@@ -389,7 +425,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         final file = File(result.files.single.path!);
         final fileSize = await file.length();
         const maxSize = 10 * 1024 * 1024; // 10MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -401,7 +437,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _companyPanGstFile = file;
         });
@@ -424,7 +460,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         final file = File(result.files.single.path!);
         final fileSize = await file.length();
         const maxSize = 10 * 1024 * 1024; // 10MB
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -436,7 +472,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
           }
           return;
         }
-        
+
         setState(() {
           _mouAgreementFile = file;
         });
@@ -458,7 +494,9 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
 
     if (!_agreeTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the terms and conditions')),
+        const SnackBar(
+          content: Text('Please agree to the terms and conditions'),
+        ),
       );
       return;
     }
@@ -510,29 +548,60 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         title: const Text('Basic Info'),
         content: Column(
           children: [
-            _buildTextField('University Name*', 'Enter university name', _universityNameController, true),
+            _buildTextField(
+              'University Name*',
+              'Enter university name',
+              _universityNameController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Short Name*', 'e.g., LPU', _shortNameController, true),
+            _buildTextField(
+              'Short Name*',
+              'e.g., LPU',
+              _shortNameController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildDropdown('University Type*', _universityType, _universityTypes, (value) {
-              setState(() {
-                _universityType = value;
-              });
-            }),
+            _buildDropdown(
+              'University Type*',
+              _universityType,
+              _universityTypes,
+              (value) {
+                setState(() {
+                  _universityType = value;
+                });
+              },
+            ),
             const SizedBox(height: 16),
-            _buildDropdown('Affiliation Type*', _affiliationType, _affiliationTypes, (value) {
-              setState(() {
-                _affiliationType = value;
-              });
-            }),
+            _buildDropdown(
+              'Affiliation Type*',
+              _affiliationType,
+              _affiliationTypes,
+              (value) {
+                setState(() {
+                  _affiliationType = value;
+                });
+              },
+            ),
             const SizedBox(height: 16),
-            _buildDropdown('Year of Establishment*', _yearOfEstablishment, _yearsList, (value) {
-              setState(() {
-                _yearOfEstablishment = value;
-              });
-            }),
+            _buildDropdown(
+              'Year of Establishment*',
+              _yearOfEstablishment,
+              _yearsList,
+              (value) {
+                setState(() {
+                  _yearOfEstablishment = value;
+                });
+              },
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Description', 'Tell us about your university', _descriptionController, false, maxLines: 4),
+            _buildTextField(
+              'Description',
+              'Tell us about your university',
+              _descriptionController,
+              false,
+              maxLines: 4,
+            ),
           ],
         ),
         isActive: _currentStep >= 0,
@@ -543,7 +612,13 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         title: const Text('Contact'),
         content: Column(
           children: [
-            _buildTextField('Address*', 'Enter full address', _addressController, true, maxLines: 3),
+            _buildTextField(
+              'Address*',
+              'Enter full address',
+              _addressController,
+              true,
+              maxLines: 3,
+            ),
             const SizedBox(height: 16),
             _buildDropdown('State*', _state, _indianStates, (value) {
               setState(() {
@@ -553,13 +628,37 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             const SizedBox(height: 16),
             _buildTextField('City*', 'Enter city', _cityController, true),
             const SizedBox(height: 16),
-            _buildTextField('Pin Code*', '6-digit PIN code', _pincodeController, true, keyboardType: TextInputType.number),
+            _buildTextField(
+              'Pin Code*',
+              '6-digit PIN code',
+              _pincodeController,
+              true,
+              keyboardType: TextInputType.number,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Official Email*', 'university@example.com', _emailController, true, keyboardType: TextInputType.emailAddress),
+            _buildTextField(
+              'Official Email*',
+              'university@example.com',
+              _emailController,
+              true,
+              keyboardType: TextInputType.emailAddress,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Contact Number*', '10-digit mobile number', _contactNumberController, true, keyboardType: TextInputType.phone),
+            _buildTextField(
+              'Contact Number*',
+              '10-digit mobile number',
+              _contactNumberController,
+              true,
+              keyboardType: TextInputType.phone,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Website URL', 'https://example.com', _websiteController, false, keyboardType: TextInputType.url),
+            _buildTextField(
+              'Website URL',
+              'https://example.com',
+              _websiteController,
+              false,
+              keyboardType: TextInputType.url,
+            ),
           ],
         ),
         isActive: _currentStep >= 1,
@@ -583,7 +682,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                   child: GestureDetector(
                     onTap: () => setState(() => _operatedViaAgency = false),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: !_operatedViaAgency
                             ? AppTheme.primaryBlue
@@ -634,7 +736,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                   child: GestureDetector(
                     onTap: () => setState(() => _operatedViaAgency = true),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _operatedViaAgency
                             ? AppTheme.primaryBlue
@@ -689,46 +794,121 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
               const SizedBox(height: 12),
               const Text(
                 'Company / Agency Details',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryBlue,
+                ),
               ),
               const SizedBox(height: 16),
-              _buildTextField('Company / Agency Name*', 'Enter company name', _companyNameController, true),
+              _buildTextField(
+                'Company / Agency Name*',
+                'Enter company name',
+                _companyNameController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildDropdown('Registration Type*', _registrationType, _registrationTypes, (value) {
-                setState(() {
-                  _registrationType = value;
-                });
-              }),
+              _buildDropdown(
+                'Registration Type*',
+                _registrationType,
+                _registrationTypes,
+                (value) {
+                  setState(() {
+                    _registrationType = value;
+                  });
+                },
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Registration / CIN / GST No.*', 'Enter registration number', _registrationNumberController, true),
+              _buildTextField(
+                'Registration / CIN / GST No.*',
+                'Enter registration number',
+                _registrationNumberController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildFilePicker('Upload Company Registration Certificate*', _companyRegistrationCertFile, _pickCompanyRegistrationCert, required: true),
+              _buildFilePicker(
+                'Upload Company Registration Certificate*',
+                _companyRegistrationCertFile,
+                _pickCompanyRegistrationCert,
+                required: true,
+              ),
               const SizedBox(height: 16),
-              _buildFilePicker('Upload Company PAN / GST Certificate', _companyPanGstFile, _pickCompanyPanGst),
+              _buildFilePicker(
+                'Upload Company PAN / GST Certificate',
+                _companyPanGstFile,
+                _pickCompanyPanGst,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Office Address*', 'Full office address including city, state, PIN', _companyAddressController, true, maxLines: 3),
+              _buildTextField(
+                'Office Address*',
+                'Full office address including city, state, PIN',
+                _companyAddressController,
+                true,
+                maxLines: 3,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Company Email*', 'company@example.com', _companyEmailController, true, keyboardType: TextInputType.emailAddress),
+              _buildTextField(
+                'Company Email*',
+                'company@example.com',
+                _companyEmailController,
+                true,
+                keyboardType: TextInputType.emailAddress,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Company Contact Number*', '10-digit contact number', _companyContactController, true, keyboardType: TextInputType.phone),
+              _buildTextField(
+                'Company Contact Number*',
+                '10-digit contact number',
+                _companyContactController,
+                true,
+                keyboardType: TextInputType.phone,
+              ),
               const SizedBox(height: 20),
               const Text(
                 'Authorized Company Person',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryBlue,
+                ),
               ),
               const SizedBox(height: 16),
-              _buildTextField('Authorized Person Name*', 'Representative name', _authorizedCompanyPersonController, true),
+              _buildTextField(
+                'Authorized Person Name*',
+                'Representative name',
+                _authorizedCompanyPersonController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Designation*', 'e.g., Director, Admission Head', _authorizedPersonDesignationController, true),
+              _buildTextField(
+                'Designation*',
+                'e.g., Director, Admission Head',
+                _authorizedPersonDesignationController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Contact Number*', '10-digit mobile number', _authorizedPersonContactController, true, keyboardType: TextInputType.phone),
+              _buildTextField(
+                'Contact Number*',
+                '10-digit mobile number',
+                _authorizedPersonContactController,
+                true,
+                keyboardType: TextInputType.phone,
+              ),
               const SizedBox(height: 20),
               const Text(
                 'Agreement Details',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryBlue,
+                ),
               ),
               const SizedBox(height: 16),
-              _buildFilePicker('Upload MOU / Agreement*', _mouAgreementFile, _pickMouAgreement, required: true),
+              _buildFilePicker(
+                'Upload MOU / Agreement*',
+                _mouAgreementFile,
+                _pickMouAgreement,
+                required: true,
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -757,7 +937,9 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                               ? '${_agreementFromDate!.day}/${_agreementFromDate!.month}/${_agreementFromDate!.year}'
                               : 'Select date',
                           style: TextStyle(
-                            color: _agreementFromDate != null ? Colors.black : Colors.grey,
+                            color: _agreementFromDate != null
+                                ? Colors.black
+                                : Colors.grey,
                           ),
                         ),
                       ),
@@ -769,7 +951,9 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                       onTap: () async {
                         final DateTime? picked = await showDatePicker(
                           context: context,
-                          initialDate: _agreementToDate ?? DateTime.now().add(const Duration(days: 365)),
+                          initialDate:
+                              _agreementToDate ??
+                              DateTime.now().add(const Duration(days: 365)),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
@@ -789,7 +973,9 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                               ? '${_agreementToDate!.day}/${_agreementToDate!.month}/${_agreementToDate!.year}'
                               : 'Select date',
                           style: TextStyle(
-                            color: _agreementToDate != null ? Colors.black : Colors.grey,
+                            color: _agreementToDate != null
+                                ? Colors.black
+                                : Colors.grey,
                           ),
                         ),
                       ),
@@ -798,7 +984,13 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              _buildTextField('Remarks / Additional Note', 'Optional internal remarks', _remarksController, false, maxLines: 3),
+              _buildTextField(
+                'Remarks / Additional Note',
+                'Optional internal remarks',
+                _remarksController,
+                false,
+                maxLines: 3,
+              ),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -809,7 +1001,11 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: AppTheme.primaryBlue, size: 20),
+                    Icon(
+                      Icons.info_outline,
+                      color: AppTheme.primaryBlue,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
@@ -852,9 +1048,13 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _authorizationType = 'individual'),
+                    onTap: () =>
+                        setState(() => _authorizationType = 'individual'),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _authorizationType == 'individual'
                             ? AppTheme.primaryBlue
@@ -905,7 +1105,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                   child: GestureDetector(
                     onTap: () => setState(() => _authorizationType = 'firm'),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _authorizationType == 'firm'
                             ? AppTheme.primaryBlue
@@ -958,24 +1161,67 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             const SizedBox(height: 20),
             // Individual Form
             if (_authorizationType == 'individual') ...[
-              _buildTextField('Full Name*', 'Enter full name', _authPersonNameController, true),
+              _buildTextField(
+                'Full Name*',
+                'Enter full name',
+                _authPersonNameController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Designation*', 'e.g., Admission Incharge', _designationController, true),
+              _buildTextField(
+                'Designation*',
+                'e.g., Admission Incharge',
+                _designationController,
+                true,
+              ),
             ],
             // Firm/Organization Form
             if (_authorizationType == 'firm') ...[
-              _buildTextField('Firm/Organization Name*', 'e.g., University Trust, Management Board', _firmNameController, true),
+              _buildTextField(
+                'Firm/Organization Name*',
+                'e.g., University Trust, Management Board',
+                _firmNameController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Representative Name*', 'Enter representative name', _authPersonNameController, true),
+              _buildTextField(
+                'Representative Name*',
+                'Enter representative name',
+                _authPersonNameController,
+                true,
+              ),
               const SizedBox(height: 16),
-              _buildTextField('Representative Designation*', 'e.g., Managing Director, CEO', _designationController, true),
+              _buildTextField(
+                'Representative Designation*',
+                'e.g., Managing Director, CEO',
+                _designationController,
+                true,
+              ),
             ],
             const SizedBox(height: 16),
-            _buildTextField('Personal Email*', 'person@example.com', _personalEmailController, true, keyboardType: TextInputType.emailAddress),
+            _buildTextField(
+              'Personal Email*',
+              'person@example.com',
+              _personalEmailController,
+              true,
+              keyboardType: TextInputType.emailAddress,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Mobile Number*', '10-digit mobile number', _mobileNumberController, true, keyboardType: TextInputType.phone),
+            _buildTextField(
+              'Mobile Number*',
+              '10-digit mobile number',
+              _mobileNumberController,
+              true,
+              keyboardType: TextInputType.phone,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Alternate Contact', '10-digit mobile number', _altContactNumberController, false, keyboardType: TextInputType.phone),
+            _buildTextField(
+              'Alternate Contact',
+              '10-digit mobile number',
+              _altContactNumberController,
+              false,
+              keyboardType: TextInputType.phone,
+            ),
           ],
         ),
         isActive: _currentStep >= 3,
@@ -986,19 +1232,55 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         title: const Text('Bank Details'),
         content: Column(
           children: [
-            _buildTextField('Bank Name*', 'e.g., State Bank of India', _bankNameController, true),
+            _buildTextField(
+              'Bank Name*',
+              'e.g., State Bank of India',
+              _bankNameController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Account Holder Name*', 'As per bank records', _accountHolderNameController, true),
+            _buildTextField(
+              'Account Holder Name*',
+              'As per bank records',
+              _accountHolderNameController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Account Number*', 'Enter account number', _accountNumberController, true, keyboardType: TextInputType.number),
+            _buildTextField(
+              'Account Number*',
+              'Enter account number',
+              _accountNumberController,
+              true,
+              keyboardType: TextInputType.number,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('IFSC Code*', '11-digit IFSC code', _ifscCodeController, true),
+            _buildTextField(
+              'IFSC Code*',
+              '11-digit IFSC code',
+              _ifscCodeController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Branch Name', 'Enter branch name', _branchNameController, false),
+            _buildTextField(
+              'Branch Name',
+              'Enter branch name',
+              _branchNameController,
+              false,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('UPI ID', 'yourname@upi', _upiIdController, false, keyboardType: TextInputType.emailAddress),
+            _buildTextField(
+              'UPI ID',
+              'yourname@upi',
+              _upiIdController,
+              false,
+              keyboardType: TextInputType.emailAddress,
+            ),
             const SizedBox(height: 16),
-            _buildFilePicker('Upload QR Code (Optional)', _qrCodeFile, _pickQRCode),
+            _buildFilePicker(
+              'Upload QR Code (Optional)',
+              _qrCodeFile,
+              _pickQRCode,
+            ),
           ],
         ),
         isActive: _currentStep >= 4,
@@ -1013,9 +1295,18 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             const SizedBox(height: 16),
             _buildImagePicker('Banner Image*', _bannerFile, _pickBannerImage),
             const SizedBox(height: 16),
-            _buildFilePicker('Brochure (PDF, Optional)', _brochureFile, _pickPdf),
+            _buildFilePicker(
+              'Brochure (PDF, Optional)',
+              _brochureFile,
+              _pickPdf,
+            ),
             const SizedBox(height: 16),
-            _buildFilePicker('Authorization Letter*', _authLetterFile, _pickAuthLetter, required: true),
+            _buildFilePicker(
+              'Authorization Letter*',
+              _authLetterFile,
+              _pickAuthLetter,
+              required: true,
+            ),
             const SizedBox(height: 8),
             const Text(
               'Upload authorization/registration letter from UGC/AICTE/State Board',
@@ -1031,11 +1322,28 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         title: const Text('Account'),
         content: Column(
           children: [
-            _buildTextField('Username*', 'Choose a username', _usernameController, true),
+            _buildTextField(
+              'Username*',
+              'Choose a username',
+              _usernameController,
+              true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Password*', 'Create a strong password', _passwordController, true, isPassword: true),
+            _buildTextField(
+              'Password*',
+              'Create a strong password',
+              _passwordController,
+              true,
+              isPassword: true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField('Confirm Password*', 'Re-enter your password', _confirmPasswordController, true, isPassword: true),
+            _buildTextField(
+              'Confirm Password*',
+              'Re-enter your password',
+              _confirmPasswordController,
+              true,
+              isPassword: true,
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -1118,7 +1426,10 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.grey),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             suffixIcon: isPassword
                 ? IconButton(
                     icon: const Icon(Icons.visibility_off, size: 20),
@@ -1135,8 +1446,11 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             if (isRequired && (value == null || value.isEmpty)) {
               return 'This field is required';
             }
-            if (keyboardType == TextInputType.emailAddress && value!.isNotEmpty) {
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+            if (keyboardType == TextInputType.emailAddress &&
+                value!.isNotEmpty) {
+              if (!RegExp(
+                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+              ).hasMatch(value)) {
                 return 'Please enter a valid email';
               }
             }
@@ -1148,7 +1462,8 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
             if (isPassword && value!.length < 8) {
               return 'Password must be at least 8 characters';
             }
-            if (controller == _confirmPasswordController && value != _passwordController.text) {
+            if (controller == _confirmPasswordController &&
+                value != _passwordController.text) {
               return 'Passwords do not match';
             }
             return null;
@@ -1186,17 +1501,17 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         DropdownButtonFormField<String>(
           value: value,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.grey),
             ),
           ),
           items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
+            return DropdownMenuItem<String>(value: item, child: Text(item));
           }).toList(),
           onChanged: onChanged,
           validator: (value) {
@@ -1213,7 +1528,12 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   }
 
   // Helper method to build file picker
-  Widget _buildFilePicker(String label, File? file, VoidCallback onTap, {bool required = false}) {
+  Widget _buildFilePicker(
+    String label,
+    File? file,
+    VoidCallback onTap, {
+    bool required = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1298,9 +1618,16 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_photo_alternate_outlined, size: 40, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 40,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(height: 8),
-                      Text('Tap to add $label', style: TextStyle(color: Colors.grey.shade600)),
+                      Text(
+                        'Tap to add $label',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                     ],
                   ),
           ),
@@ -1313,7 +1640,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('University Registration  Edit' ),
+        title: const Text('University Registration  Edit'),
         elevation: 0,
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
@@ -1364,31 +1691,43 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
                                 OutlinedButton(
                                   onPressed: details.onStepCancel,
                                   style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                    side: const BorderSide(color: AppTheme.primaryBlue),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                    side: const BorderSide(
+                                      color: AppTheme.primaryBlue,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
                                   child: const Text(
                                     'Back',
-                                    style: TextStyle(color: AppTheme.primaryBlue),
+                                    style: TextStyle(
+                                      color: AppTheme.primaryBlue,
+                                    ),
                                   ),
                                 )
                               else
                                 const SizedBox(width: 0),
-                              
+
                               ElevatedButton(
                                 onPressed: details.onStepContinue,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.primaryBlue,
-                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
                                 child: Text(
-                                  _currentStep == _buildSteps().length - 1 ? 'Submit' : 'Next',
+                                  _currentStep == _buildSteps().length - 1
+                                      ? 'Submit'
+                                      : 'Next',
                                   style: const TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -1455,7 +1794,10 @@ class CustomTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.grey),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             suffixIcon: isPassword
                 ? IconButton(
                     icon: const Icon(Icons.visibility_off, size: 20),

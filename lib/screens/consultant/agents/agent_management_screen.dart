@@ -9,7 +9,8 @@ class AgentManagementScreen extends StatefulWidget {
   State<AgentManagementScreen> createState() => _AgentManagementScreenState();
 }
 
-class _AgentManagementScreenState extends State<AgentManagementScreen> with SingleTickerProviderStateMixin {
+class _AgentManagementScreenState extends State<AgentManagementScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
 
@@ -146,20 +147,25 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
   int _getStatusCount(String status) {
     if (status == 'All') return _allAgents.length;
-    if (status == 'Active') return _allAgents.where((a) => a['status'] == 'Active').length;
-    if (status == 'Inactive') return _allAgents.where((a) => a['status'] == 'Inactive').length;
-    if (status == 'Blocked') return _allAgents.where((a) => a['blocked'] == true).length;
+    if (status == 'Active')
+      return _allAgents.where((a) => a['status'] == 'Active').length;
+    if (status == 'Inactive')
+      return _allAgents.where((a) => a['status'] == 'Inactive').length;
+    if (status == 'Blocked')
+      return _allAgents.where((a) => a['blocked'] == true).length;
     return 0;
   }
 
   List<Map<String, dynamic>> get _filteredAgents {
     return _allAgents.where((a) {
-      final matchesSearch = _searchQuery.isEmpty ||
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           a['agent_name'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
           a['agent_id'].toLowerCase().contains(_searchQuery.toLowerCase());
-      
+
       final tabIndex = _tabController.index;
-      if (tabIndex == 6) return a['blocked'] == true && matchesSearch; // Blocked tab
+      if (tabIndex == 6)
+        return a['blocked'] == true && matchesSearch; // Blocked tab
       if (tabIndex == 0) return matchesSearch; // All Agents tab
       return matchesSearch;
     }).toList();
@@ -267,13 +273,76 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: [
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.people, size: 16), const SizedBox(width: 6), Text('All (${_getStatusCount('All')})')])),
-            const Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.person_add, size: 16), SizedBox(width: 6), Text('Add Agent')])),
-            const Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.school, size: 16), SizedBox(width: 6), Text('Assign')])),
-            const Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.account_balance_wallet, size: 16), SizedBox(width: 6), Text('Commissions')])),
-            const Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.analytics, size: 16), SizedBox(width: 6), Text('Activity')])),
-            const Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.admin_panel_settings, size: 16), SizedBox(width: 6), Text('Permissions')])),
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.block, size: 16), const SizedBox(width: 6), Text('Blocked (${_getStatusCount('Blocked')})')])),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.people, size: 16),
+                  const SizedBox(width: 6),
+                  Text('All (${_getStatusCount('All')})'),
+                ],
+              ),
+            ),
+            const Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person_add, size: 16),
+                  SizedBox(width: 6),
+                  Text('Add Agent'),
+                ],
+              ),
+            ),
+            const Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.school, size: 16),
+                  SizedBox(width: 6),
+                  Text('Assign'),
+                ],
+              ),
+            ),
+            const Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.account_balance_wallet, size: 16),
+                  SizedBox(width: 6),
+                  Text('Commissions'),
+                ],
+              ),
+            ),
+            const Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.analytics, size: 16),
+                  SizedBox(width: 6),
+                  Text('Activity'),
+                ],
+              ),
+            ),
+            const Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.admin_panel_settings, size: 16),
+                  SizedBox(width: 6),
+                  Text('Permissions'),
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.block, size: 16),
+                  const SizedBox(width: 6),
+                  Text('Blocked (${_getStatusCount('Blocked')})'),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -310,13 +379,41 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Expanded(child: _buildStatCard('Total', _allAgents.length.toString(), Icons.people, Colors.blue)),
+              Expanded(
+                child: _buildStatCard(
+                  'Total',
+                  _allAgents.length.toString(),
+                  Icons.people,
+                  Colors.blue,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildStatCard('Active', _getStatusCount('Active').toString(), Icons.check_circle, Colors.green)),
+              Expanded(
+                child: _buildStatCard(
+                  'Active',
+                  _getStatusCount('Active').toString(),
+                  Icons.check_circle,
+                  Colors.green,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildStatCard('Inactive', _getStatusCount('Inactive').toString(), Icons.remove_circle, Colors.orange)),
+              Expanded(
+                child: _buildStatCard(
+                  'Inactive',
+                  _getStatusCount('Inactive').toString(),
+                  Icons.remove_circle,
+                  Colors.orange,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildStatCard('Blocked', _getStatusCount('Blocked').toString(), Icons.block, Colors.red)),
+              Expanded(
+                child: _buildStatCard(
+                  'Blocked',
+                  _getStatusCount('Blocked').toString(),
+                  Icons.block,
+                  Colors.red,
+                ),
+              ),
             ],
           ),
         ),
@@ -330,8 +427,13 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             decoration: InputDecoration(
               hintText: 'Search by name or ID...',
               prefixIcon: const Icon(Icons.search, size: 20),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               isDense: true,
             ),
           ),
@@ -344,14 +446,20 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: _filteredAgents.length,
-                  itemBuilder: (context, index) => _buildAgentCard(_filteredAgents[index]),
+                  itemBuilder: (context, index) =>
+                      _buildAgentCard(_filteredAgents[index]),
                 ),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String count, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String count,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -365,7 +473,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
         children: [
           Icon(icon, size: 20, color: color),
           const SizedBox(height: 6),
-          Text(count, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(height: 2),
           Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
         ],
@@ -374,8 +489,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
   }
 
   Widget _buildAgentCard(Map<String, dynamic> agent) {
-    final statusColor = agent['blocked'] == true ? Colors.red : (agent['status'] == 'Active' ? Colors.green : Colors.orange);
-    
+    final statusColor = agent['blocked'] == true
+        ? Colors.red
+        : (agent['status'] == 'Active' ? Colors.green : Colors.orange);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
@@ -393,7 +510,12 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [statusColor.withValues(alpha: 0.2), statusColor.withValues(alpha: 0.05)]),
+                    gradient: LinearGradient(
+                      colors: [
+                        statusColor.withValues(alpha: 0.2),
+                        statusColor.withValues(alpha: 0.05),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(Icons.person, color: statusColor, size: 24),
@@ -405,23 +527,43 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     children: [
                       Row(
                         children: [
-                          Expanded(child: Text(agent['agent_name'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+                          Expanded(
+                            child: Text(
+                              agent['agent_name'],
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: statusColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: statusColor),
                             ),
                             child: Text(
-                              agent['blocked'] == true ? 'Blocked' : agent['status'],
-                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: statusColor),
+                              agent['blocked'] == true
+                                  ? 'Blocked'
+                                  : agent['status'],
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: statusColor,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(agent['agent_id'], style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        agent['agent_id'],
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                     ],
                   ),
                 ),
@@ -439,7 +581,13 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 const SizedBox(width: 16),
                 Icon(Icons.business, size: 14, color: Colors.grey[600]),
                 const SizedBox(width: 6),
-                Expanded(child: Text(agent['firm_name'], style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
+                Expanded(
+                  child: Text(
+                    agent['firm_name'],
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
 
@@ -449,11 +597,17 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 Icon(Icons.location_city, size: 14, color: Colors.grey[600]),
                 const SizedBox(width: 6),
-                Text('${agent['city']}, ${agent['state']}', style: const TextStyle(fontSize: 12)),
+                Text(
+                  '${agent['city']}, ${agent['state']}',
+                  style: const TextStyle(fontSize: 12),
+                ),
                 const SizedBox(width: 16),
                 Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
                 const SizedBox(width: 6),
-                Text('Joined: ${agent['joined_date']}', style: const TextStyle(fontSize: 12)),
+                Text(
+                  'Joined: ${agent['joined_date']}',
+                  style: const TextStyle(fontSize: 12),
+                ),
               ],
             ),
 
@@ -462,11 +616,29 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             // Stats Row
             Row(
               children: [
-                Expanded(child: _buildMiniCard('Leads', agent['total_leads'].toString(), Colors.blue)),
+                Expanded(
+                  child: _buildMiniCard(
+                    'Leads',
+                    agent['total_leads'].toString(),
+                    Colors.blue,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildMiniCard('Admissions', agent['verified_admissions'].toString(), Colors.green)),
+                Expanded(
+                  child: _buildMiniCard(
+                    'Admissions',
+                    agent['verified_admissions'].toString(),
+                    Colors.green,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildMiniCard('Earnings', '₹${(agent['total_earnings'] / 1000).toStringAsFixed(0)}K', Colors.orange)),
+                Expanded(
+                  child: _buildMiniCard(
+                    'Earnings',
+                    '₹${(agent['total_earnings'] / 1000).toStringAsFixed(0)}K',
+                    Colors.orange,
+                  ),
+                ),
               ],
             ),
 
@@ -483,10 +655,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 children: [
                   Icon(Icons.school, size: 14, color: Colors.grey[700]),
                   const SizedBox(width: 6),
-                  Text('${agent['assigned_universities'].length} Universities, ${agent['assigned_courses']} Courses', style: const TextStyle(fontSize: 11)),
+                  Text(
+                    '${agent['assigned_universities'].length} Universities, ${agent['assigned_courses']} Courses',
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   const Spacer(),
-                  Text('Commission: ${agent['commission_type'] == 'Percentage' ? '${agent['commission_value']}%' : '₹${agent['commission_value']}'}', 
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green[700])),
+                  Text(
+                    'Commission: ${agent['commission_type'] == 'Percentage' ? '${agent['commission_value']}%' : '₹${agent['commission_value']}'}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[700],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -503,7 +684,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     label: const Text('View', style: TextStyle(fontSize: 12)),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      side: BorderSide(color: AppTheme.primaryBlue.withValues(alpha: 0.5)),
+                      side: BorderSide(
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.5),
+                      ),
                       foregroundColor: AppTheme.primaryBlue,
                     ),
                   ),
@@ -524,11 +707,21 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => agent['blocked'] ? _unblockAgent(agent) : _blockAgent(agent),
-                    icon: Icon(agent['blocked'] ? Icons.check_circle : Icons.block, size: 16),
-                    label: Text(agent['blocked'] ? 'Unblock' : 'Block', style: const TextStyle(fontSize: 12)),
+                    onPressed: () => agent['blocked']
+                        ? _unblockAgent(agent)
+                        : _blockAgent(agent),
+                    icon: Icon(
+                      agent['blocked'] ? Icons.check_circle : Icons.block,
+                      size: 16,
+                    ),
+                    label: Text(
+                      agent['blocked'] ? 'Unblock' : 'Block',
+                      style: const TextStyle(fontSize: 12),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: agent['blocked'] ? Colors.green : Colors.red,
+                      backgroundColor: agent['blocked']
+                          ? Colors.green
+                          : Colors.red,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
@@ -546,7 +739,12 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [color.withValues(alpha: 0.12), color.withValues(alpha: 0.05)]),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
@@ -554,7 +752,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
         children: [
           Text(label, style: TextStyle(fontSize: 9, color: Colors.grey[700])),
           const SizedBox(height: 3),
-          Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -586,28 +791,41 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Add New Agent', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+            const Text(
+              'Add New Agent',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
             const SizedBox(height: 8),
-            Text('Register a new sub-consultant to your network', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            Text(
+              'Register a new sub-consultant to your network',
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
             const SizedBox(height: 24),
 
             // Basic Information
             _buildSectionHeader('Basic Information', Icons.person),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _agentNameController,
               decoration: _inputDecoration('Agent Name *', Icons.person),
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _firmNameController,
-              decoration: _inputDecoration('Firm / Agency Name', Icons.business),
+              decoration: _inputDecoration(
+                'Firm / Agency Name',
+                Icons.business,
+              ),
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _mobileController,
               decoration: _inputDecoration('Mobile Number *', Icons.phone),
@@ -615,7 +833,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _emailController,
               decoration: _inputDecoration('Email ID *', Icons.email),
@@ -623,18 +841,22 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _passwordController,
               decoration: _inputDecoration('Password *', Icons.lock),
               obscureText: true,
-              validator: (v) => v == null || v.length < 6 ? 'Min 6 characters' : null,
+              validator: (v) =>
+                  v == null || v.length < 6 ? 'Min 6 characters' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _altContactController,
-              decoration: _inputDecoration('Alternate Contact', Icons.phone_android),
+              decoration: _inputDecoration(
+                'Alternate Contact',
+                Icons.phone_android,
+              ),
               keyboardType: TextInputType.phone,
             ),
 
@@ -643,14 +865,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             // Address Details
             _buildSectionHeader('Address Details', Icons.location_on),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _addressController,
               decoration: _inputDecoration('Full Address', Icons.home),
               maxLines: 2,
             ),
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
@@ -664,16 +886,27 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: DropdownButtonFormField<String>(
                     value: _selectedState,
                     decoration: _inputDecoration('State', Icons.map),
-                    items: ['Maharashtra', 'Delhi', 'Karnataka', 'Gujarat', 'Rajasthan', 'UP', 'MP']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
+                    items:
+                        [
+                              'Maharashtra',
+                              'Delhi',
+                              'Karnataka',
+                              'Gujarat',
+                              'Rajasthan',
+                              'UP',
+                              'MP',
+                            ]
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
                     onChanged: (v) => setState(() => _selectedState = v!),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _pincodeController,
               decoration: _inputDecoration('Pincode', Icons.pin_drop),
@@ -685,21 +918,25 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             // ID Proof
             _buildSectionHeader('ID Proof', Icons.credit_card),
             const SizedBox(height: 12),
-            
+
             DropdownButtonFormField<String>(
               value: _idProofType,
               decoration: _inputDecoration('ID Proof Type', Icons.badge),
-              items: ['Aadhaar', 'PAN', 'Driving License']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
+              items: [
+                'Aadhaar',
+                'PAN',
+                'Driving License',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _idProofType = v!),
             ),
             const SizedBox(height: 12),
-            
+
             OutlinedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('File picker will be integrated')),
+                  const SnackBar(
+                    content: Text('File picker will be integrated'),
+                  ),
                 );
               },
               icon: const Icon(Icons.upload_file, size: 18),
@@ -713,16 +950,22 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             const SizedBox(height: 24),
 
             // Bank Details
-            _buildSectionHeader('Bank Details (Optional)', Icons.account_balance),
+            _buildSectionHeader(
+              'Bank Details (Optional)',
+              Icons.account_balance,
+            ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _accountNoController,
-              decoration: _inputDecoration('Account Number', Icons.account_balance_wallet),
+              decoration: _inputDecoration(
+                'Account Number',
+                Icons.account_balance_wallet,
+              ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
@@ -746,7 +989,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             // Remarks
             _buildSectionHeader('Remarks', Icons.note),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _remarksController,
               decoration: _inputDecoration('Internal Notes', Icons.comment),
@@ -814,7 +1057,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     final newAgent = {
       'agent_id': 'AGT200${_allAgents.length + 1}',
       'agent_name': _agentNameController.text,
-      'firm_name': _firmNameController.text.isEmpty ? 'Self' : _firmNameController.text,
+      'firm_name': _firmNameController.text.isEmpty
+          ? 'Self'
+          : _firmNameController.text,
       'mobile': _mobileController.text,
       'email': _emailController.text,
       'city': _cityController.text,
@@ -872,7 +1117,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Agent ID: ${newAgent['agent_id']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Agent ID: ${newAgent['agent_id']}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Text('Login credentials will be sent to:'),
             Text('📧 ${_emailController.text}'),
@@ -884,7 +1132,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 color: Colors.blue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text('Next: Assign universities and set commission', style: TextStyle(fontSize: 12)),
+              child: const Text(
+                'Next: Assign universities and set commission',
+                style: TextStyle(fontSize: 12),
+              ),
             ),
           ],
         ),
@@ -898,7 +1149,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               Navigator.pop(ctx);
               setState(() => _tabController.index = 2); // Go to Assign tab
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryBlue,
+            ),
             child: const Text('Assign Now'),
           ),
         ],
@@ -911,7 +1164,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
       children: [
         Icon(icon, size: 20, color: AppTheme.primaryBlue),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primaryBlue,
+          ),
+        ),
       ],
     );
   }
@@ -929,18 +1189,34 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
   // Tab 3: Assign Universities/Courses
   Map<String, dynamic>? _selectedAgentForAssign;
-  List<String> _availableUniversities = ['Sunrise University', 'MIT University', 'Global Tech University', 'Healthcare Hub', 'Career Institute'];
+  List<String> _availableUniversities = [
+    'Sunrise University',
+    'MIT University',
+    'Global Tech University',
+    'Healthcare Hub',
+    'Career Institute',
+  ];
   List<String> _selectedUniversities = [];
-  
+
   Widget _buildAssignTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Assign Universities & Courses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+          const Text(
+            'Assign Universities & Courses',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryBlue,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Control which universities and courses each agent can access', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+          Text(
+            'Control which universities and courses each agent can access',
+            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          ),
           const SizedBox(height: 24),
 
           // Select Agent
@@ -956,20 +1232,27 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 _buildSectionHeader('Select Agent', Icons.person),
                 const SizedBox(height: 12),
-                
+
                 DropdownButtonFormField<Map<String, dynamic>>(
                   value: _selectedAgentForAssign,
-                  decoration: _inputDecoration('Choose Agent', Icons.person_search),
+                  decoration: _inputDecoration(
+                    'Choose Agent',
+                    Icons.person_search,
+                  ),
                   items: _allAgents.map((agent) {
                     return DropdownMenuItem(
                       value: agent,
-                      child: Text('${agent['agent_name']} (${agent['agent_id']})'),
+                      child: Text(
+                        '${agent['agent_name']} (${agent['agent_id']})',
+                      ),
                     );
                   }).toList(),
                   onChanged: (agent) {
                     setState(() {
                       _selectedAgentForAssign = agent;
-                      _selectedUniversities = List<String>.from(agent?['assigned_universities'] ?? []);
+                      _selectedUniversities = List<String>.from(
+                        agent?['assigned_universities'] ?? [],
+                      );
                     });
                   },
                 ),
@@ -981,13 +1264,21 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
                   _buildSectionHeader('Assign Universities', Icons.school),
                   const SizedBox(height: 12),
-                  
+
                   ..._availableUniversities.map((university) {
-                    final isAssigned = _selectedUniversities.contains(university);
+                    final isAssigned = _selectedUniversities.contains(
+                      university,
+                    );
                     return CheckboxListTile(
                       value: isAssigned,
-                      title: Text(university, style: const TextStyle(fontSize: 14)),
-                      secondary: Icon(Icons.business, color: isAssigned ? AppTheme.primaryBlue : Colors.grey),
+                      title: Text(
+                        university,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      secondary: Icon(
+                        Icons.business,
+                        color: isAssigned ? AppTheme.primaryBlue : Colors.grey,
+                      ),
                       activeColor: AppTheme.primaryBlue,
                       contentPadding: EdgeInsets.zero,
                       onChanged: (val) {
@@ -1007,12 +1298,18 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   // Assignment Mode
                   _buildSectionHeader('Access Level', Icons.security),
                   const SizedBox(height: 12),
-                  
+
                   RadioListTile<String>(
                     value: 'Full Access',
                     groupValue: 'Full Access',
-                    title: const Text('Full Access', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Can add, edit, and view students', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'Full Access',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Can add, edit, and view students',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     activeColor: AppTheme.primaryBlue,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (v) {},
@@ -1020,8 +1317,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   RadioListTile<String>(
                     value: 'Lead Access',
                     groupValue: 'Full Access',
-                    title: const Text('Lead Access Only', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Can only add new leads', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'Lead Access Only',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Can only add new leads',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     activeColor: AppTheme.primaryBlue,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (v) {},
@@ -1029,8 +1332,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   RadioListTile<String>(
                     value: 'View Only',
                     groupValue: 'Full Access',
-                    title: const Text('View Only', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Cannot add or edit', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'View Only',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Cannot add or edit',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     activeColor: AppTheme.primaryBlue,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (v) {},
@@ -1044,12 +1353,17 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     child: ElevatedButton.icon(
                       onPressed: () {
                         setState(() {
-                          _selectedAgentForAssign!['assigned_universities'] = _selectedUniversities;
-                          _selectedAgentForAssign!['assigned_courses'] = _selectedUniversities.length * 3; // Mock: 3 courses per university
+                          _selectedAgentForAssign!['assigned_universities'] =
+                              _selectedUniversities;
+                          _selectedAgentForAssign!['assigned_courses'] =
+                              _selectedUniversities.length *
+                              3; // Mock: 3 courses per university
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('${_selectedUniversities.length} universities assigned to ${_selectedAgentForAssign!['agent_name']}'),
+                            content: Text(
+                              '${_selectedUniversities.length} universities assigned to ${_selectedAgentForAssign!['agent_name']}',
+                            ),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -1078,15 +1392,27 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
   String _applyToUniversity = 'All';
   String? _selectedUniversity;
   final _commissionValueController = TextEditingController();
-  
+
   // Sample commission data per university
   final Map<String, Map<String, dynamic>> _universityCommissions = {
-    'Sunrise University': {'type': 'Percentage', 'value': 10, 'agent': 'Rahul Sharma'},
+    'Sunrise University': {
+      'type': 'Percentage',
+      'value': 10,
+      'agent': 'Rahul Sharma',
+    },
     'MIT University': {'type': 'Flat', 'value': 5000, 'agent': 'Priya Verma'},
-    'Global Tech University': {'type': 'Percentage', 'value': 12, 'agent': 'Rahul Sharma'},
-    'Healthcare Hub': {'type': 'One-time', 'value': 3000, 'agent': 'Priya Verma'},
+    'Global Tech University': {
+      'type': 'Percentage',
+      'value': 12,
+      'agent': 'Rahul Sharma',
+    },
+    'Healthcare Hub': {
+      'type': 'One-time',
+      'value': 3000,
+      'agent': 'Priya Verma',
+    },
   };
-  
+
   Widget _buildCommissionsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -1099,9 +1425,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Commission Setup', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+                    Text(
+                      'Commission Setup',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryBlue,
+                      ),
+                    ),
                     SizedBox(height: 4),
-                    Text('University-wise commission management', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      'University-wise commission management',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -1116,7 +1452,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
 
           // Commission Setup Card
@@ -1132,21 +1468,28 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 _buildSectionHeader('Select Agent', Icons.person),
                 const SizedBox(height: 12),
-                
+
                 DropdownButtonFormField<Map<String, dynamic>>(
                   value: _selectedAgentForCommission,
-                  decoration: _inputDecoration('Choose Agent', Icons.person_search),
+                  decoration: _inputDecoration(
+                    'Choose Agent',
+                    Icons.person_search,
+                  ),
                   items: _allAgents.map((agent) {
                     return DropdownMenuItem(
                       value: agent,
-                      child: Text('${agent['agent_name']} (${agent['agent_id']})'),
+                      child: Text(
+                        '${agent['agent_name']} (${agent['agent_id']})',
+                      ),
                     );
                   }).toList(),
                   onChanged: (agent) {
                     setState(() {
                       _selectedAgentForCommission = agent;
-                      _commissionType = agent?['commission_type'] ?? 'Percentage';
-                      _commissionValueController.text = agent?['commission_value']?.toString() ?? '0';
+                      _commissionType =
+                          agent?['commission_type'] ?? 'Percentage';
+                      _commissionValueController.text =
+                          agent?['commission_value']?.toString() ?? '0';
                     });
                   },
                 ),
@@ -1159,12 +1502,18 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   // University Selection
                   _buildSectionHeader('Apply Commission To', Icons.school),
                   const SizedBox(height: 12),
-                  
+
                   RadioListTile<String>(
                     value: 'All',
                     groupValue: _applyToUniversity,
-                    title: const Text('All Universities', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Same commission for all', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'All Universities',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Same commission for all',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     activeColor: AppTheme.primaryBlue,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (v) => setState(() => _applyToUniversity = v!),
@@ -1172,8 +1521,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   RadioListTile<String>(
                     value: 'Specific',
                     groupValue: _applyToUniversity,
-                    title: const Text('Specific University', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Different commission per university', style: TextStyle(fontSize: 12)),
+                    title: const Text(
+                      'Specific University',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Different commission per university',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     activeColor: AppTheme.primaryBlue,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (v) => setState(() => _applyToUniversity = v!),
@@ -1183,7 +1538,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: _selectedUniversity,
-                      decoration: _inputDecoration('Select University', Icons.business),
+                      decoration: _inputDecoration(
+                        'Select University',
+                        Icons.business,
+                      ),
                       items: _availableUniversities.map((uni) {
                         return DropdownMenuItem(value: uni, child: Text(uni));
                       }).toList(),
@@ -1193,13 +1551,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
                   const SizedBox(height: 20),
 
-                  _buildSectionHeader('Commission Structure', Icons.account_balance_wallet),
+                  _buildSectionHeader(
+                    'Commission Structure',
+                    Icons.account_balance_wallet,
+                  ),
                   const SizedBox(height: 12),
 
                   // Commission Type
                   DropdownButtonFormField<String>(
                     value: _commissionType,
-                    decoration: _inputDecoration('Commission Type', Icons.category),
+                    decoration: _inputDecoration(
+                      'Commission Type',
+                      Icons.category,
+                    ),
                     items: ['Percentage', 'Flat', 'One-time']
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
@@ -1211,7 +1575,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   TextFormField(
                     controller: _commissionValueController,
                     decoration: _inputDecoration(
-                      _commissionType == 'Percentage' ? 'Commission Value (%)' : 'Commission Amount (₹)',
+                      _commissionType == 'Percentage'
+                          ? 'Commission Value (%)'
+                          : 'Commission Amount (₹)',
                       Icons.money,
                     ),
                     keyboardType: TextInputType.number,
@@ -1232,22 +1598,46 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.calculate, color: Colors.green, size: 18),
+                            Icon(
+                              Icons.calculate,
+                              color: Colors.green,
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
-                            Text('Example Calculation', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text(
+                              'Example Calculation',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Text('Course Fee: ₹50,000', style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                        Text(
+                          'Course Fee: ₹50,000',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
+                        ),
                         if (_commissionType == 'Percentage')
                           Text(
                             'Agent Commission: ₹${((double.tryParse(_commissionValueController.text) ?? 0) * 50000 / 100).toStringAsFixed(0)}',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
                           )
                         else
                           Text(
                             'Agent Commission: ₹${_commissionValueController.text}',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
                           ),
                       ],
                     ),
@@ -1261,12 +1651,17 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     child: ElevatedButton.icon(
                       onPressed: () {
                         setState(() {
-                          _selectedAgentForCommission!['commission_type'] = _commissionType;
-                          _selectedAgentForCommission!['commission_value'] = int.tryParse(_commissionValueController.text) ?? 0;
+                          _selectedAgentForCommission!['commission_type'] =
+                              _commissionType;
+                          _selectedAgentForCommission!['commission_value'] =
+                              int.tryParse(_commissionValueController.text) ??
+                              0;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Commission updated for ${_selectedAgentForCommission!['agent_name']}${_applyToUniversity == 'Specific' ? ' at $_selectedUniversity' : ''}'),
+                            content: Text(
+                              'Commission updated for ${_selectedAgentForCommission!['agent_name']}${_applyToUniversity == 'Specific' ? ' at $_selectedUniversity' : ''}',
+                            ),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -1290,7 +1685,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           // University-wise Commission Breakdown
           _buildSectionHeader('University-wise Commission Data', Icons.grid_on),
           const SizedBox(height: 12),
-          
+
           ..._universityCommissions.entries.map((entry) {
             return _buildUniversityCommissionCard(
               entry.key,
@@ -1304,9 +1699,16 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     );
   }
 
-  Widget _buildUniversityCommissionCard(String university, String type, dynamic value, String agent) {
-    Color typeColor = type == 'Percentage' ? Colors.blue : (type == 'Flat' ? Colors.green : Colors.orange);
-    
+  Widget _buildUniversityCommissionCard(
+    String university,
+    String type,
+    dynamic value,
+    String agent,
+  ) {
+    Color typeColor = type == 'Percentage'
+        ? Colors.blue
+        : (type == 'Flat' ? Colors.green : Colors.orange);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ExpansionTile(
@@ -1318,7 +1720,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           ),
           child: Icon(Icons.business, color: typeColor, size: 20),
         ),
-        title: Text(university, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        title: Text(
+          university,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
         subtitle: Text('Agent: $agent', style: const TextStyle(fontSize: 12)),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -1329,7 +1734,11 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           ),
           child: Text(
             type == 'Percentage' ? '$value%' : '₹$value',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: typeColor),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: typeColor,
+            ),
           ),
         ),
         children: [
@@ -1339,13 +1748,17 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 _buildDetailRow('Commission Type', type, typeColor),
                 const SizedBox(height: 8),
-                _buildDetailRow('Commission Value', type == 'Percentage' ? '$value%' : '₹$value', typeColor),
+                _buildDetailRow(
+                  'Commission Value',
+                  type == 'Percentage' ? '$value%' : '₹$value',
+                  typeColor,
+                ),
                 const SizedBox(height: 8),
                 _buildDetailRow('Agent Name', agent, Colors.grey.shade700),
                 const SizedBox(height: 8),
                 _buildDetailRow('Status', 'Active', Colors.green),
                 const SizedBox(height: 16),
-                
+
                 // Example calculation
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -1357,15 +1770,27 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Example for ₹50,000 course:', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        'Example for ₹50,000 course:',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                       const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Agent gets:', style: TextStyle(fontSize: 12)),
+                          const Text(
+                            'Agent gets:',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           Text(
-                            type == 'Percentage' ? '₹${(value * 50000 / 100).toStringAsFixed(0)}' : '₹$value',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: typeColor),
+                            type == 'Percentage'
+                                ? '₹${(value * 50000 / 100).toStringAsFixed(0)}'
+                                : '₹$value',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: typeColor,
+                            ),
                           ),
                         ],
                       ),
@@ -1373,10 +1798,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Consultant gets:', style: TextStyle(fontSize: 12)),
+                          const Text(
+                            'Consultant gets:',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           Text(
-                            type == 'Percentage' ? '₹${(50000 - (value * 50000 / 100)).toStringAsFixed(0)}' : '₹${50000 - (value as int)}',
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue),
+                            type == 'Percentage'
+                                ? '₹${(50000 - (value * 50000 / 100)).toStringAsFixed(0)}'
+                                : '₹${50000 - (value as int)}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryBlue,
+                            ),
                           ),
                         ],
                       ),
@@ -1393,11 +1827,16 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                       child: OutlinedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Edit commission for $university')),
+                            SnackBar(
+                              content: Text('Edit commission for $university'),
+                            ),
                           );
                         },
                         icon: const Icon(Icons.edit, size: 16),
-                        label: const Text('Edit', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'Edit',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppTheme.primaryBlue,
                         ),
@@ -1408,11 +1847,16 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                       child: OutlinedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('View history for $university')),
+                            SnackBar(
+                              content: Text('View history for $university'),
+                            ),
                           );
                         },
                         icon: const Icon(Icons.history, size: 16),
-                        label: const Text('History', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'History',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.grey.shade700,
                         ),
@@ -1433,7 +1877,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: valueColor)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: valueColor,
+          ),
+        ),
       ],
     );
   }
@@ -1453,9 +1904,18 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   const Icon(Icons.summarize, color: AppTheme.primaryBlue),
                   const SizedBox(width: 12),
                   const Expanded(
-                    child: Text('Commission Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'Commission Summary',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -1463,17 +1923,33 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               // Summary Stats
               Row(
                 children: [
-                  Expanded(child: _buildSummaryCard('Universities', '4', Colors.blue)),
+                  Expanded(
+                    child: _buildSummaryCard('Universities', '4', Colors.blue),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: _buildSummaryCard('Agents', '2', Colors.green)),
+                  Expanded(
+                    child: _buildSummaryCard('Agents', '2', Colors.green),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: _buildSummaryCard('Avg Commission', '₹4K', Colors.orange)),
+                  Expanded(
+                    child: _buildSummaryCard(
+                      'Avg Commission',
+                      '₹4K',
+                      Colors.orange,
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: _buildSummaryCard('Total Paid', '₹73K', Colors.purple)),
+                  Expanded(
+                    child: _buildSummaryCard(
+                      'Total Paid',
+                      '₹73K',
+                      Colors.purple,
+                    ),
+                  ),
                 ],
               ),
 
@@ -1481,7 +1957,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Agent-wise Breakdown', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Agent-wise Breakdown',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 12),
 
@@ -1505,13 +1984,25 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)]),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
-          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
         ],
@@ -1525,11 +2016,30 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
-          child: Text(name[0], style: const TextStyle(color: AppTheme.primaryBlue, fontWeight: FontWeight.bold)),
+          child: Text(
+            name[0],
+            style: const TextStyle(
+              color: AppTheme.primaryBlue,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        title: Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-        subtitle: Text('$universities universities', style: const TextStyle(fontSize: 11)),
-        trailing: Text(earned, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green)),
+        title: Text(
+          name,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '$universities universities',
+          style: const TextStyle(fontSize: 11),
+        ),
+        trailing: Text(
+          earned,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
       ),
     );
   }
@@ -1541,20 +2051,40 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Agent Activity Monitor', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+          const Text(
+            'Agent Activity Monitor',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryBlue,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Track performance and earnings of each agent', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+          Text(
+            'Track performance and earnings of each agent',
+            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          ),
           const SizedBox(height: 24),
 
           // Summary Cards
           Row(
             children: [
               Expanded(
-                child: _buildActivityCard('Total Leads', '63', Icons.phone_in_talk, Colors.blue),
+                child: _buildActivityCard(
+                  'Total Leads',
+                  '63',
+                  Icons.phone_in_talk,
+                  Colors.blue,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildActivityCard('Admissions', '25', Icons.check_circle, Colors.green),
+                child: _buildActivityCard(
+                  'Admissions',
+                  '25',
+                  Icons.check_circle,
+                  Colors.green,
+                ),
               ),
             ],
           ),
@@ -1562,11 +2092,21 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           Row(
             children: [
               Expanded(
-                child: _buildActivityCard('Earnings', '₹73.5K', Icons.account_balance_wallet, Colors.orange),
+                child: _buildActivityCard(
+                  'Earnings',
+                  '₹73.5K',
+                  Icons.account_balance_wallet,
+                  Colors.orange,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildActivityCard('Active Agents', '3', Icons.people, Colors.purple),
+                child: _buildActivityCard(
+                  'Active Agents',
+                  '3',
+                  Icons.people,
+                  Colors.purple,
+                ),
               ),
             ],
           ),
@@ -1580,12 +2120,20 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     );
   }
 
-  Widget _buildActivityCard(String label, String value, IconData icon, Color color) {
+  Widget _buildActivityCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.3)),
@@ -1595,7 +2143,14 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 8),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         ],
@@ -1615,22 +2170,42 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 CircleAvatar(
                   backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
-                  child: Text(agent['agent_name'][0], style: const TextStyle(color: AppTheme.primaryBlue, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    agent['agent_name'][0],
+                    style: const TextStyle(
+                      color: AppTheme.primaryBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(agent['agent_name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                      Text(agent['agent_id'], style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        agent['agent_name'],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        agent['agent_id'],
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: agent['status'] == 'Active' ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
+                    color: agent['status'] == 'Active'
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -1638,7 +2213,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: agent['status'] == 'Active' ? Colors.green : Colors.orange,
+                      color: agent['status'] == 'Active'
+                          ? Colors.green
+                          : Colors.orange,
                     ),
                   ),
                 ),
@@ -1653,9 +2230,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Leads', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        'Leads',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                       const SizedBox(height: 4),
-                      Text(agent['total_leads'].toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+                      Text(
+                        agent['total_leads'].toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1663,9 +2250,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Admissions', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        'Admissions',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                       const SizedBox(height: 4),
-                      Text(agent['verified_admissions'].toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                      Text(
+                        agent['verified_admissions'].toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1673,9 +2270,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Pending', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        'Pending',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                       const SizedBox(height: 4),
-                      Text(agent['pending_admissions'].toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange)),
+                      Text(
+                        agent['pending_admissions'].toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1683,10 +2290,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Earnings', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        'Earnings',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                       const SizedBox(height: 4),
-                      Text('₹${(agent['total_earnings'] / 1000).toStringAsFixed(0)}K', 
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                      Text(
+                        '₹${(agent['total_earnings'] / 1000).toStringAsFixed(0)}K',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1699,7 +2315,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 Icon(Icons.access_time, size: 12, color: Colors.grey[600]),
                 const SizedBox(width: 4),
-                Text('Last Login: ${agent['last_login']}', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                Text(
+                  'Last Login: ${agent['last_login']}',
+                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                ),
               ],
             ),
           ],
@@ -1710,16 +2329,26 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
   // Tab 6: Permissions
   Map<String, dynamic>? _selectedAgentForPermissions;
-  
+
   Widget _buildPermissionsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Role & Permissions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+          const Text(
+            'Role & Permissions',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryBlue,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Control dashboard access for each agent', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+          Text(
+            'Control dashboard access for each agent',
+            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          ),
           const SizedBox(height: 24),
 
           Container(
@@ -1734,14 +2363,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               children: [
                 _buildSectionHeader('Select Agent', Icons.person),
                 const SizedBox(height: 12),
-                
+
                 DropdownButtonFormField<Map<String, dynamic>>(
                   value: _selectedAgentForPermissions,
-                  decoration: _inputDecoration('Choose Agent', Icons.person_search),
+                  decoration: _inputDecoration(
+                    'Choose Agent',
+                    Icons.person_search,
+                  ),
                   items: _allAgents.map((agent) {
                     return DropdownMenuItem(
                       value: agent,
-                      child: Text('${agent['agent_name']} (${agent['agent_id']})'),
+                      child: Text(
+                        '${agent['agent_name']} (${agent['agent_id']})',
+                      ),
                     );
                   }).toList(),
                   onChanged: (agent) {
@@ -1763,31 +2397,51 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                     'Student Management',
                     'Access to student module',
                     _selectedAgentForPermissions!['permissions']['student_management'],
-                    (val) => setState(() => _selectedAgentForPermissions!['permissions']['student_management'] = val),
+                    (val) => setState(
+                      () =>
+                          _selectedAgentForPermissions!['permissions']['student_management'] =
+                              val,
+                    ),
                   ),
                   _buildPermissionSwitch(
                     'Add New Student',
                     'Can add new students',
                     _selectedAgentForPermissions!['permissions']['add_student'],
-                    (val) => setState(() => _selectedAgentForPermissions!['permissions']['add_student'] = val),
+                    (val) => setState(
+                      () =>
+                          _selectedAgentForPermissions!['permissions']['add_student'] =
+                              val,
+                    ),
                   ),
                   _buildPermissionSwitch(
                     'Edit Student',
                     'Can edit student details',
                     _selectedAgentForPermissions!['permissions']['edit_student'],
-                    (val) => setState(() => _selectedAgentForPermissions!['permissions']['edit_student'] = val),
+                    (val) => setState(
+                      () =>
+                          _selectedAgentForPermissions!['permissions']['edit_student'] =
+                              val,
+                    ),
                   ),
                   _buildPermissionSwitch(
                     'View Reports',
                     'Access to fee reports',
                     _selectedAgentForPermissions!['permissions']['view_reports'],
-                    (val) => setState(() => _selectedAgentForPermissions!['permissions']['view_reports'] = val),
+                    (val) => setState(
+                      () =>
+                          _selectedAgentForPermissions!['permissions']['view_reports'] =
+                              val,
+                    ),
                   ),
                   _buildPermissionSwitch(
                     'Download Reports',
                     'Export Excel/PDF allowed',
                     _selectedAgentForPermissions!['permissions']['download_reports'],
-                    (val) => setState(() => _selectedAgentForPermissions!['permissions']['download_reports'] = val),
+                    (val) => setState(
+                      () =>
+                          _selectedAgentForPermissions!['permissions']['download_reports'] =
+                              val,
+                    ),
                   ),
 
                   const SizedBox(height: 24),
@@ -1799,7 +2453,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Permissions updated for ${_selectedAgentForPermissions!['agent_name']}'),
+                            content: Text(
+                              'Permissions updated for ${_selectedAgentForPermissions!['agent_name']}',
+                            ),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -1822,7 +2478,12 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     );
   }
 
-  Widget _buildPermissionSwitch(String title, String subtitle, bool value, Function(bool) onChanged) {
+  Widget _buildPermissionSwitch(
+    String title,
+    String subtitle,
+    bool value,
+    Function(bool) onChanged,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -1837,9 +2498,18 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
               ],
             ),
           ),
@@ -1855,14 +2525,17 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
 
   // Tab 7: Blocked Agents
   Widget _buildBlockedTab() {
-    final blockedAgents = _allAgents.where((a) => a['blocked'] == true).toList();
-    
+    final blockedAgents = _allAgents
+        .where((a) => a['blocked'] == true)
+        .toList();
+
     return blockedAgents.isEmpty
         ? const Center(child: Text('No blocked agents'))
         : ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: blockedAgents.length,
-            itemBuilder: (context, index) => _buildAgentCard(blockedAgents[index]),
+            itemBuilder: (context, index) =>
+                _buildAgentCard(blockedAgents[index]),
           );
   }
 
@@ -1877,13 +2550,18 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Agent ID: ${agent['agent_id']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Agent ID: ${agent['agent_id']}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               Text('Mobile: ${agent['mobile']}'),
               Text('Email: ${agent['email']}'),
               Text('Firm: ${agent['firm_name']}'),
               const SizedBox(height: 12),
-              Text('Universities: ${agent['assigned_universities'].join(', ')}'),
+              Text(
+                'Universities: ${agent['assigned_universities'].join(', ')}',
+              ),
               Text('Total Leads: ${agent['total_leads']}'),
               Text('Verified Admissions: ${agent['verified_admissions']}'),
               Text('Total Earnings: ₹${agent['total_earnings']}'),
@@ -1893,7 +2571,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
         ],
       ),
     );
@@ -1940,13 +2621,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => agent['blocked'] = true);
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${agent['agent_name']} blocked successfully'), backgroundColor: Colors.red),
+                SnackBar(
+                  content: Text('${agent['agent_name']} blocked successfully'),
+                  backgroundColor: Colors.red,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -1964,13 +2651,21 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
         title: const Text('Unblock Agent'),
         content: Text('Restore access for ${agent['agent_name']}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => agent['blocked'] = false);
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${agent['agent_name']} unblocked successfully'), backgroundColor: Colors.green),
+                SnackBar(
+                  content: Text(
+                    '${agent['agent_name']} unblocked successfully',
+                  ),
+                  backgroundColor: Colors.green,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -2022,10 +2717,15 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Clear All')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Clear All'),
+          ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryBlue,
+            ),
             child: const Text('Apply Filters'),
           ),
         ],
@@ -2088,7 +2788,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               onTap: () {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notification feature coming soon')),
+                  const SnackBar(
+                    content: Text('Notification feature coming soon'),
+                  ),
                 );
               },
             ),
@@ -2099,7 +2801,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               onTap: () {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Bulk block feature coming soon')),
+                  const SnackBar(
+                    content: Text('Bulk block feature coming soon'),
+                  ),
                 );
               },
             ),
@@ -2110,14 +2814,19 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
               onTap: () {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Bulk commission update coming soon')),
+                  const SnackBar(
+                    content: Text('Bulk commission update coming soon'),
+                  ),
                 );
               },
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
         ],
       ),
     );
@@ -2138,20 +2847,54 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   const Icon(Icons.assessment, color: AppTheme.primaryBlue),
                   const SizedBox(width: 12),
                   const Expanded(
-                    child: Text('Agent Reports', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'Agent Reports',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
               Expanded(
                 child: ListView(
                   children: [
-                    _buildReportCard('Performance Report', 'View individual agent performance', Icons.trending_up, Colors.green),
-                    _buildReportCard('Commission Summary', 'Total commissions earned', Icons.account_balance_wallet, Colors.blue),
-                    _buildReportCard('Activity Timeline', 'Agent activity history', Icons.timeline, Colors.orange),
-                    _buildReportCard('Student Conversion', 'Lead to admission ratio', Icons.swap_horiz, Colors.purple),
-                    _buildReportCard('Monthly Summary', 'Month-wise breakdown', Icons.calendar_month, Colors.teal),
+                    _buildReportCard(
+                      'Performance Report',
+                      'View individual agent performance',
+                      Icons.trending_up,
+                      Colors.green,
+                    ),
+                    _buildReportCard(
+                      'Commission Summary',
+                      'Total commissions earned',
+                      Icons.account_balance_wallet,
+                      Colors.blue,
+                    ),
+                    _buildReportCard(
+                      'Activity Timeline',
+                      'Agent activity history',
+                      Icons.timeline,
+                      Colors.orange,
+                    ),
+                    _buildReportCard(
+                      'Student Conversion',
+                      'Lead to admission ratio',
+                      Icons.swap_horiz,
+                      Colors.purple,
+                    ),
+                    _buildReportCard(
+                      'Monthly Summary',
+                      'Month-wise breakdown',
+                      Icons.calendar_month,
+                      Colors.teal,
+                    ),
                   ],
                 ),
               ),
@@ -2162,7 +2905,12 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     );
   }
 
-  Widget _buildReportCard(String title, String subtitle, IconData icon, Color color) {
+  Widget _buildReportCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -2202,20 +2950,59 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
                   const Icon(Icons.history, color: AppTheme.primaryBlue),
                   const SizedBox(width: 12),
                   const Expanded(
-                    child: Text('Activity History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'Activity History',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
               Expanded(
                 child: ListView(
                   children: [
-                    _buildHistoryItem('Agent Added', 'Rahul Sharma joined the network', '2 hours ago', Icons.person_add, Colors.green),
-                    _buildHistoryItem('Commission Updated', 'Priya Verma commission changed to 12%', '5 hours ago', Icons.account_balance_wallet, Colors.blue),
-                    _buildHistoryItem('Agent Blocked', 'Sneha Patel blocked for policy violation', '1 day ago', Icons.block, Colors.red),
-                    _buildHistoryItem('University Assigned', 'MIT University assigned to Amit Kumar', '2 days ago', Icons.school, Colors.orange),
-                    _buildHistoryItem('Permission Changed', 'View Reports enabled for Rahul Sharma', '3 days ago', Icons.security, Colors.purple),
+                    _buildHistoryItem(
+                      'Agent Added',
+                      'Rahul Sharma joined the network',
+                      '2 hours ago',
+                      Icons.person_add,
+                      Colors.green,
+                    ),
+                    _buildHistoryItem(
+                      'Commission Updated',
+                      'Priya Verma commission changed to 12%',
+                      '5 hours ago',
+                      Icons.account_balance_wallet,
+                      Colors.blue,
+                    ),
+                    _buildHistoryItem(
+                      'Agent Blocked',
+                      'Sneha Patel blocked for policy violation',
+                      '1 day ago',
+                      Icons.block,
+                      Colors.red,
+                    ),
+                    _buildHistoryItem(
+                      'University Assigned',
+                      'MIT University assigned to Amit Kumar',
+                      '2 days ago',
+                      Icons.school,
+                      Colors.orange,
+                    ),
+                    _buildHistoryItem(
+                      'Permission Changed',
+                      'View Reports enabled for Rahul Sharma',
+                      '3 days ago',
+                      Icons.security,
+                      Colors.purple,
+                    ),
                   ],
                 ),
               ),
@@ -2226,7 +3013,13 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
     );
   }
 
-  Widget _buildHistoryItem(String action, String description, String time, IconData icon, Color color) {
+  Widget _buildHistoryItem(
+    String action,
+    String description,
+    String time,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -2245,11 +3038,23 @@ class _AgentManagementScreenState extends State<AgentManagementScreen> with Sing
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(action, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                Text(
+                  action,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(description, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
                 const SizedBox(height: 4),
-                Text(time, style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                Text(
+                  time,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                ),
               ],
             ),
           ),

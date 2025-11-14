@@ -25,7 +25,7 @@ class BaseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the current route if in a navigation context
     final currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-    
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -38,7 +38,7 @@ class BaseScreen extends StatelessWidget {
             : null,
         actions: actions,
       ),
-      drawer: showDrawer 
+      drawer: showDrawer
           ? AppDrawer(
               currentRoute: currentRoute,
               onNavigate: (route) {
@@ -49,7 +49,7 @@ class BaseScreen extends StatelessWidget {
                 // Handle navigation if needed
                 // This can be overridden by the parent widget if needed
               },
-            ) 
+            )
           : null,
       body: SafeArea(
         child: LayoutBuilder(

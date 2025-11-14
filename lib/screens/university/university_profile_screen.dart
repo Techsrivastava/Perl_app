@@ -10,7 +10,8 @@ class UniversityProfileScreen extends StatefulWidget {
   const UniversityProfileScreen({super.key, this.scaffoldKey});
 
   @override
-  State<UniversityProfileScreen> createState() => _UniversityProfileScreenState();
+  State<UniversityProfileScreen> createState() =>
+      _UniversityProfileScreenState();
 }
 
 class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
@@ -62,9 +63,20 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         abbreviation: 'SU',
         establishedYear: 2000,
         type: 'Private',
-        facilities: const ['Library', 'Sports', 'Cafeteria', 'Computer Lab', 'Auditorium'],
-        documents: const ['Prospectus.pdf', 'Fee_Structure.pdf', 'Brochure.pdf'],
-        description: 'A leading educational institution committed to excellence in education and research. We provide world-class facilities and experienced faculty to nurture future leaders.',
+        facilities: const [
+          'Library',
+          'Sports',
+          'Cafeteria',
+          'Computer Lab',
+          'Auditorium',
+        ],
+        documents: const [
+          'Prospectus.pdf',
+          'Fee_Structure.pdf',
+          'Brochure.pdf',
+        ],
+        description:
+            'A leading educational institution committed to excellence in education and research. We provide world-class facilities and experienced faculty to nurture future leaders.',
         contactEmail: 'info@sampleuniv.edu',
         contactPhone: '+1234567890',
         address: '123 University Ave, City, Country',
@@ -83,7 +95,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _isLoading = false;
         _errorMessage = null;
       });
-      debugPrint('[_loadUniversityData] Data loaded successfully! (${stopwatch.elapsedMilliseconds}ms)');
+      debugPrint(
+        '[_loadUniversityData] Data loaded successfully! (${stopwatch.elapsedMilliseconds}ms)',
+      );
     } catch (e, stackTrace) {
       debugPrint('[_loadUniversityData] Error: $e\n$stackTrace');
       if (!mounted) return;
@@ -96,7 +110,11 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().length > 100 ? '${e.toString().substring(0, 100)}...' : e.toString()),
+            content: Text(
+              e.toString().length > 100
+                  ? '${e.toString().substring(0, 100)}...'
+                  : e.toString(),
+            ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 5),
@@ -116,7 +134,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
   void _navigateToEditScreen() async {
     final result = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => EditUniversityScreen(university: _university!)),
+      MaterialPageRoute(
+        builder: (_) => EditUniversityScreen(university: _university!),
+      ),
     );
     if (result == true && mounted) {
       await _refreshData();
@@ -125,7 +145,10 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
 
   Widget _buildChip(String label, {Color? color}) {
     return Chip(
-      label: Text(label, style: TextStyle(color: color ?? AppTheme.white, fontSize: 12)),
+      label: Text(
+        label,
+        style: TextStyle(color: color ?? AppTheme.white, fontSize: 12),
+      ),
       backgroundColor: (color ?? AppTheme.primaryBlue).withOpacity(0.8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -134,7 +157,12 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
   }
 
   // Helper Methods Added Below
-  Widget _buildQuickInfoCard({required IconData icon, required String label, required String value, required Color color}) {
+  Widget _buildQuickInfoCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -146,7 +174,10 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const SizedBox(height: 4),
           Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
         ],
@@ -154,7 +185,12 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
     );
   }
 
-  Widget _buildSocialMediaButton(IconData icon, String platform, String action, Color color) {
+  Widget _buildSocialMediaButton(
+    IconData icon,
+    String platform,
+    String action,
+    Color color,
+  ) {
     return ElevatedButton.icon(
       onPressed: () {
         // TODO: Open respective link
@@ -188,7 +224,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[build] Building UniversityProfileScreen - isLoading: $_isLoading, hasData: ${_university != null}');
+    debugPrint(
+      '[build] Building UniversityProfileScreen - isLoading: $_isLoading, hasData: ${_university != null}',
+    );
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       appBar: AppBar(
@@ -218,11 +256,18 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 16), textAlign: TextAlign.center),
+            Text(
+              _errorMessage!,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _loadUniversityData,
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryBlue,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Retry'),
             ),
           ],
@@ -235,11 +280,17 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('No university data available', style: TextStyle(fontSize: 16, color: Colors.grey)),
+            const Text(
+              'No university data available',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _loadUniversityData,
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryBlue,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Load Data'),
             ),
           ],
@@ -247,10 +298,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _refreshData,
-      child: _buildContent(),
-    );
+    return RefreshIndicator(onRefresh: _refreshData, child: _buildContent());
   }
 
   Widget _buildContent() {
@@ -262,7 +310,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         Container(
           height: 200,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [AppTheme.primaryBlue, AppTheme.darkBlue]),
+            gradient: const LinearGradient(
+              colors: [AppTheme.primaryBlue, AppTheme.darkBlue],
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Stack(
@@ -272,7 +322,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     color: Colors.black.withOpacity(0.3),
-                    child: const Center(child: Icon(Icons.image, size: 60, color: Colors.white24)),
+                    child: const Center(
+                      child: Icon(Icons.image, size: 60, color: Colors.white24),
+                    ),
                   ),
                 ),
               ),
@@ -290,9 +342,19 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                         color: AppTheme.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppTheme.white, width: 3),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))],
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.school, color: AppTheme.primaryBlue, size: 40),
+                      child: const Icon(
+                        Icons.school,
+                        color: AppTheme.primaryBlue,
+                        size: 40,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -302,13 +364,23 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                         children: [
                           Text(
                             university.name,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.white),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.white,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           if (university.abbreviation != null) ...[
                             const SizedBox(height: 4),
-                            Text(university.abbreviation!, style: TextStyle(fontSize: 14, color: AppTheme.white.withOpacity(0.95))),
+                            Text(
+                              university.abbreviation!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppTheme.white.withOpacity(0.95),
+                              ),
+                            ),
                           ],
                         ],
                       ),
@@ -349,15 +421,40 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _buildInfoCard(
           title: 'Social Media & Links',
           children: [
-            _buildSocialMediaButton(Icons.location_on, 'Google Maps', 'View Location', Colors.red),
+            _buildSocialMediaButton(
+              Icons.location_on,
+              'Google Maps',
+              'View Location',
+              Colors.red,
+            ),
             const SizedBox(height: 8),
-            _buildSocialMediaButton(Icons.facebook, 'Facebook', 'Visit Page', const Color(0xFF1877F2)),
+            _buildSocialMediaButton(
+              Icons.facebook,
+              'Facebook',
+              'Visit Page',
+              const Color(0xFF1877F2),
+            ),
             const SizedBox(height: 8),
-            _buildSocialMediaButton(Icons.tag, 'Twitter/X', 'Follow Us', const Color(0xFF1DA1F2)),
+            _buildSocialMediaButton(
+              Icons.tag,
+              'Twitter/X',
+              'Follow Us',
+              const Color(0xFF1DA1F2),
+            ),
             const SizedBox(height: 8),
-            _buildSocialMediaButton(Icons.work, 'LinkedIn', 'Connect', const Color(0xFF0A66C2)),
+            _buildSocialMediaButton(
+              Icons.work,
+              'LinkedIn',
+              'Connect',
+              const Color(0xFF0A66C2),
+            ),
             const SizedBox(height: 8),
-            _buildSocialMediaButton(Icons.camera_alt, 'Instagram', 'Follow', const Color(0xFFE4405F)),
+            _buildSocialMediaButton(
+              Icons.camera_alt,
+              'Instagram',
+              'Follow',
+              const Color(0xFFE4405F),
+            ),
           ],
         ),
 
@@ -374,15 +471,29 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.assignment, color: Colors.amber.shade700, size: 24),
+                  Icon(
+                    Icons.assignment,
+                    color: Colors.amber.shade700,
+                    size: 24,
+                  ),
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('University Entrance Test', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                        Text(
+                          'University Entrance Test',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.charcoal,
+                          ),
+                        ),
                         SizedBox(height: 4),
-                        Text('Custom entrance examination required for admission', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(
+                          'Custom entrance examination required for admission',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
                       ],
                     ),
                   ),
@@ -419,17 +530,34 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                 Container(
                   width: 60,
                   height: 60,
-                  decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
-                  child: Icon(Icons.person, size: 30, color: Colors.grey.shade400),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Colors.grey.shade400,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Dr. John Doe', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                      Text(
+                        'Dr. John Doe',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.charcoal,
+                        ),
+                      ),
                       SizedBox(height: 4),
-                      Text('Registrar', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      Text(
+                        'Registrar',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                     ],
                   ),
                 ),
@@ -448,15 +576,44 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
             onPressed: _navigateToEditScreen,
           ),
           children: [
-            _buildInfoRow(Icons.account_balance, 'University Name', university.name),
-            if (university.abbreviation != null) _buildInfoRow(Icons.short_text, 'Abbreviation', university.abbreviation!),
-            if (university.establishedYear != null) _buildInfoRow(Icons.calendar_today, 'Established Year', university.establishedYear.toString()),
-            if (university.type != null) _buildInfoRow(Icons.category, 'Type', university.type!),
+            _buildInfoRow(
+              Icons.account_balance,
+              'University Name',
+              university.name,
+            ),
+            if (university.abbreviation != null)
+              _buildInfoRow(
+                Icons.short_text,
+                'Abbreviation',
+                university.abbreviation!,
+              ),
+            if (university.establishedYear != null)
+              _buildInfoRow(
+                Icons.calendar_today,
+                'Established Year',
+                university.establishedYear.toString(),
+              ),
+            if (university.type != null)
+              _buildInfoRow(Icons.category, 'Type', university.type!),
             if (university.description.isNotEmpty) ...[
               const SizedBox(height: 8),
-              const Text('About', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500)),
+              const Text(
+                'About',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(university.description, style: const TextStyle(fontSize: 14, color: AppTheme.charcoal, height: 1.5)),
+              Text(
+                university.description,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.charcoal,
+                  height: 1.5,
+                ),
+              ),
             ],
           ],
         ),
@@ -464,23 +621,45 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _buildInfoCard(
           title: 'Contact Information',
           children: [
-            if (university.contactEmail != null) _buildInfoRow(Icons.email, 'Email', university.contactEmail!),
-            if (university.contactPhone != null) _buildInfoRow(Icons.phone, 'Phone', university.contactPhone!),
-            if (university.address.isNotEmpty) _buildInfoRow(Icons.location_on, 'Address', university.address),
+            if (university.contactEmail != null)
+              _buildInfoRow(Icons.email, 'Email', university.contactEmail!),
+            if (university.contactPhone != null)
+              _buildInfoRow(Icons.phone, 'Phone', university.contactPhone!),
+            if (university.address.isNotEmpty)
+              _buildInfoRow(Icons.location_on, 'Address', university.address),
           ],
         ),
 
         _buildInfoCard(
           title: 'Bank Details',
           children: [
-            if (university.bankName != null) _buildInfoRow(Icons.account_balance, 'Bank Name', university.bankName!),
-            if (university.accountNumber != null) _buildInfoRow(Icons.credit_card, 'Account Number', university.accountNumber!),
-            if (university.ifscCode != null) _buildInfoRow(Icons.qr_code, 'IFSC Code', university.ifscCode!),
-            if (university.branch != null) _buildInfoRow(Icons.business, 'Branch', university.branch!),
+            if (university.bankName != null)
+              _buildInfoRow(
+                Icons.account_balance,
+                'Bank Name',
+                university.bankName!,
+              ),
+            if (university.accountNumber != null)
+              _buildInfoRow(
+                Icons.credit_card,
+                'Account Number',
+                university.accountNumber!,
+              ),
+            if (university.ifscCode != null)
+              _buildInfoRow(Icons.qr_code, 'IFSC Code', university.ifscCode!),
+            if (university.branch != null)
+              _buildInfoRow(Icons.business, 'Branch', university.branch!),
             if (university.bankName == null && university.accountNumber == null)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text('No bank details added yet', style: TextStyle(fontSize: 14, color: Colors.grey, fontStyle: FontStyle.italic)),
+                child: Text(
+                  'No bank details added yet',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ),
           ],
         ),
@@ -489,7 +668,11 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
           _buildInfoCard(
             title: 'Facilities',
             children: [
-              Wrap(spacing: 8, runSpacing: 8, children: university.facilities.map(_buildChip).toList()),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: university.facilities.map(_buildChip).toList(),
+              ),
             ],
           ),
 
@@ -499,7 +682,14 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               ? [
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('No documents uploaded yet', style: TextStyle(fontSize: 14, color: Colors.grey, fontStyle: FontStyle.italic)),
+                    child: Text(
+                      'No documents uploaded yet',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
                 ]
               : university.documents.map(_buildDocumentItem).toList(),
@@ -508,19 +698,34 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _buildInfoCard(
           title: 'Additional Information',
           children: [
-            _buildInfoRow(Icons.date_range, 'Created', DateFormat('MMM dd, yyyy').format(university.createdAt)),
-            _buildInfoRow(Icons.update, 'Last Updated', DateFormat('MMM dd, yyyy').format(university.updatedAt)),
+            _buildInfoRow(
+              Icons.date_range,
+              'Created',
+              DateFormat('MMM dd, yyyy').format(university.createdAt),
+            ),
+            _buildInfoRow(
+              Icons.update,
+              'Last Updated',
+              DateFormat('MMM dd, yyyy').format(university.updatedAt),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildInfoCard({required String title, required List<Widget> children, Widget? trailing}) {
+  Widget _buildInfoCard({
+    required String title,
+    required List<Widget> children,
+    Widget? trailing,
+  }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade200)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -529,7 +734,14 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.charcoal,
+                  ),
+                ),
                 if (trailing != null) trailing,
               ],
             ),
@@ -552,8 +764,17 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value, style: const TextStyle(fontSize: 14, color: AppTheme.charcoal)),
-                Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppTheme.charcoal,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -573,8 +794,20 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(documentName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.charcoal), maxLines: 1, overflow: TextOverflow.ellipsis),
-                const Text('PDF Document', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(
+                  documentName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.charcoal,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const Text(
+                  'PDF Document',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
               ],
             ),
           ),

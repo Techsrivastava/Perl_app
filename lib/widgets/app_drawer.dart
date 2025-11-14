@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university_app_2/config/theme.dart';
+import 'package:university_app_2/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final String currentRoute;
@@ -42,7 +43,9 @@ class AppDrawer extends StatelessWidget {
                         backgroundColor: AppTheme.white,
                         child: CircleAvatar(
                           radius: 33,
-                          backgroundColor: AppTheme.primaryBlue.withOpacity(0.3),
+                          backgroundColor: AppTheme.primaryBlue.withOpacity(
+                            0.3,
+                          ),
                           child: const Icon(
                             Icons.school,
                             color: AppTheme.white,
@@ -83,7 +86,10 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
@@ -95,10 +101,7 @@ class AppDrawer extends StatelessWidget {
                         SizedBox(width: 4),
                         Text(
                           'Tap to edit profile',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.white,
-                          ),
+                          style: TextStyle(fontSize: 11, color: AppTheme.white),
                         ),
                       ],
                     ),
@@ -160,7 +163,9 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.attach_money,
                   title: 'Fee & Student Reports',
                   route: '/fee-student-reports',
-                  isSelected: currentRoute == '/fee-student-reports' || currentRoute == '/fee-reports',
+                  isSelected:
+                      currentRoute == '/fee-student-reports' ||
+                      currentRoute == '/fee-reports',
                 ),
                 _buildDrawerItem(
                   context: context,
@@ -217,10 +222,13 @@ class AppDrawer extends StatelessWidget {
                       builder: (BuildContext dialogContext) {
                         return AlertDialog(
                           title: const Text('Logout'),
-                          content: const Text('Are you sure you want to logout?'),
+                          content: const Text(
+                            'Are you sure you want to logout?',
+                          ),
                           actions: [
                             TextButton(
-                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
                               child: const Text('Cancel'),
                             ),
                             TextButton(
@@ -228,8 +236,10 @@ class AppDrawer extends StatelessWidget {
                                 Navigator.of(dialogContext).pop();
                                 Navigator.of(context).pop(); // Close drawer
                                 // Navigate to login screen and clear all routes
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/login',
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
                                   (route) => false,
                                 );
                               },

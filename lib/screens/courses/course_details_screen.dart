@@ -32,7 +32,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          _isActive ? 'Course activated successfully' : 'Course deactivated successfully',
+          _isActive
+              ? 'Course activated successfully'
+              : 'Course deactivated successfully',
           style: const TextStyle(fontSize: 12),
         ),
         backgroundColor: _isActive ? AppTheme.success : AppTheme.warning,
@@ -128,12 +130,19 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             ),
                             const SizedBox(height: 4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: _isActive ? Colors.green.shade50 : Colors.orange.shade50,
+                                color: _isActive
+                                    ? Colors.green.shade50
+                                    : Colors.orange.shade50,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: _isActive ? Colors.green : Colors.orange,
+                                  color: _isActive
+                                      ? Colors.green
+                                      : Colors.orange,
                                   width: 1,
                                 ),
                               ),
@@ -142,7 +151,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: _isActive ? Colors.green.shade700 : Colors.orange.shade700,
+                                  color: _isActive
+                                      ? Colors.green.shade700
+                                      : Colors.orange.shade700,
                                 ),
                               ),
                             ),
@@ -211,14 +222,16 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Active/Inactive Toggle Card
             FadeInUp(
               duration: const Duration(milliseconds: 400),
               delay: const Duration(milliseconds: 100),
               child: Card(
                 elevation: 2,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
@@ -237,10 +250,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _isActive ? 'Currently Active' : 'Currently Inactive',
+                            _isActive
+                                ? 'Currently Active'
+                                : 'Currently Inactive',
                             style: TextStyle(
                               fontSize: 12,
-                              color: _isActive ? AppTheme.success : AppTheme.warning,
+                              color: _isActive
+                                  ? AppTheme.success
+                                  : AppTheme.warning,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -261,7 +278,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
             FadeInUp(
               duration: const Duration(milliseconds: 400),
@@ -270,7 +287,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 title: "Course Information",
                 isSmallScreen: isSmallScreen,
                 children: [
-                  buildInfoRow("Mode of Study", widget.course!.modeOfStudy ?? "NA"),
+                  buildInfoRow(
+                    "Mode of Study",
+                    widget.course!.modeOfStudy ?? "NA",
+                  ),
                   buildInfoRow("Level", widget.course!.level ?? "NA"),
                   buildInfoRow(
                     "Total Seats",
@@ -287,7 +307,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 ],
               ),
             ),
-            if (widget.course!.description != null && widget.course!.description!.isNotEmpty)
+            if (widget.course!.description != null &&
+                widget.course!.description!.isNotEmpty)
               FadeInUp(
                 duration: const Duration(milliseconds: 400),
                 delay: const Duration(milliseconds: 300),
@@ -306,7 +327,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   ],
                 ),
               ),
-            if (widget.course!.eligibility != null && widget.course!.eligibility!.isNotEmpty)
+            if (widget.course!.eligibility != null &&
+                widget.course!.eligibility!.isNotEmpty)
               FadeInUp(
                 duration: const Duration(milliseconds: 400),
                 delay: const Duration(milliseconds: 400),

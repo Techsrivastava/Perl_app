@@ -5,7 +5,8 @@ class CommissionSummaryScreen extends StatefulWidget {
   const CommissionSummaryScreen({super.key});
 
   @override
-  State<CommissionSummaryScreen> createState() => _CommissionSummaryScreenState();
+  State<CommissionSummaryScreen> createState() =>
+      _CommissionSummaryScreenState();
 }
 
 class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
@@ -64,9 +65,16 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     final filteredCommissions = _getFilteredCommissions();
-    final totalEarned = filteredCommissions.fold<int>(0, (sum, c) => sum + (c['earned'] as int));
-    final totalPaid = filteredCommissions.where((c) => c['status'] == 'Paid').fold<int>(0, (sum, c) => sum + (c['earned'] as int));
-    final totalPending = filteredCommissions.where((c) => c['status'] == 'Pending').fold<int>(0, (sum, c) => sum + (c['earned'] as int));
+    final totalEarned = filteredCommissions.fold<int>(
+      0,
+      (sum, c) => sum + (c['earned'] as int),
+    );
+    final totalPaid = filteredCommissions
+        .where((c) => c['status'] == 'Paid')
+        .fold<int>(0, (sum, c) => sum + (c['earned'] as int));
+    final totalPending = filteredCommissions
+        .where((c) => c['status'] == 'Pending')
+        .fold<int>(0, (sum, c) => sum + (c['earned'] as int));
     final agentSummary = _getAgentSummary(filteredCommissions);
     final agentGroups = _groupCommissionsByAgent(filteredCommissions);
 
@@ -125,15 +133,33 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: TextStyle(fontSize: 9.5, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 9.5,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: color)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSummarySection(int totalEarned, int totalPaid, int totalPending) {
+  Widget _buildSummarySection(
+    int totalEarned,
+    int totalPaid,
+    int totalPending,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -151,17 +177,37 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         children: [
           Row(
             children: [
-              Expanded(child: _buildSummaryCard('Total Earned', totalEarned, Colors.blue)),
+              Expanded(
+                child: _buildSummaryCard(
+                  'Total Earned',
+                  totalEarned,
+                  Colors.blue,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildSummaryCard('Received', totalPaid, Colors.green)),
+              Expanded(
+                child: _buildSummaryCard('Received', totalPaid, Colors.green),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
-              Expanded(child: _buildSummaryCard('Pending', totalPending, Colors.orange)),
+              Expanded(
+                child: _buildSummaryCard(
+                  'Pending',
+                  totalPending,
+                  Colors.orange,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildSummaryCard('Average Ticket', _calculateAverage(totalEarned), Colors.purple)),
+              Expanded(
+                child: _buildSummaryCard(
+                  'Average Ticket',
+                  _calculateAverage(totalEarned),
+                  Colors.purple,
+                ),
+              ),
             ],
           ),
         ],
@@ -182,12 +228,20 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 11, color: Colors.grey[600], fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             '₹${_formatCurrency(value)}',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -237,9 +291,21 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           const SizedBox(height: 10),
           Row(
             children: [
-              Expanded(child: _buildDateSelector('From', _startDate, (date) => setState(() => _startDate = date))),
+              Expanded(
+                child: _buildDateSelector(
+                  'From',
+                  _startDate,
+                  (date) => setState(() => _startDate = date),
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildDateSelector('To', _endDate, (date) => setState(() => _endDate = date))),
+              Expanded(
+                child: _buildDateSelector(
+                  'To',
+                  _endDate,
+                  (date) => setState(() => _endDate = date),
+                ),
+              ),
             ],
           ),
         ],
@@ -251,19 +317,26 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Agent-wise Commission', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const Text(
+          'Agent-wise Commission',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: summary.entries.map((entry) {
-            final color = AppTheme.primaryBlue.withOpacity(0.1 + (entry.value / 100000).clamp(0, 0.5));
+            final color = AppTheme.primaryBlue.withOpacity(
+              0.1 + (entry.value / 100000).clamp(0, 0.5),
+            );
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
+                border: Border.all(
+                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +344,10 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                 children: [
                   Text(
                     entry.key,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -302,9 +378,15 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           children: [
             Icon(Icons.inbox_outlined, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 12),
-            const Text('No commission entries found', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'No commission entries found',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 4),
-            Text('Try adjusting the filters above', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+            Text(
+              'Try adjusting the filters above',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
           ],
         ),
       );
@@ -318,32 +400,54 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     );
   }
 
-  Widget _buildAgentDetailSection(Map<String, List<Map<String, dynamic>>> agentGroups) {
+  Widget _buildAgentDetailSection(
+    Map<String, List<Map<String, dynamic>>> agentGroups,
+  ) {
     final sortedAgents = agentGroups.entries.toList()
       ..sort((a, b) {
-        final totalA = a.value.fold<int>(0, (sum, item) => sum + (item['earned'] as int));
-        final totalB = b.value.fold<int>(0, (sum, item) => sum + (item['earned'] as int));
+        final totalA = a.value.fold<int>(
+          0,
+          (sum, item) => sum + (item['earned'] as int),
+        );
+        final totalB = b.value.fold<int>(
+          0,
+          (sum, item) => sum + (item['earned'] as int),
+        );
         return totalB.compareTo(totalA);
       });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Agent Performance Details', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const Text(
+          'Agent Performance Details',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
-        ...sortedAgents.map((entry) => _buildAgentDetailCard(entry.key, entry.value)).toList(),
+        ...sortedAgents
+            .map((entry) => _buildAgentDetailCard(entry.key, entry.value))
+            .toList(),
       ],
     );
   }
 
-  Widget _buildAgentDetailCard(String agent, List<Map<String, dynamic>> records) {
-    final total = records.fold<int>(0, (sum, item) => sum + (item['earned'] as int));
+  Widget _buildAgentDetailCard(
+    String agent,
+    List<Map<String, dynamic>> records,
+  ) {
+    final total = records.fold<int>(
+      0,
+      (sum, item) => sum + (item['earned'] as int),
+    );
     final paidCount = records.where((r) => r['status'] == 'Paid').length;
     final pendingCount = records.where((r) => r['status'] == 'Pending').length;
-    final inReviewCount = records.where((r) => r['status'] == 'In Review').length;
+    final inReviewCount = records
+        .where((r) => r['status'] == 'In Review')
+        .length;
     final average = records.isEmpty ? 0 : (total / records.length).round();
-    final sortedRecords = List<Map<String, dynamic>>.from(records)
-      ..sort((a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime));
+    final sortedRecords = List<Map<String, dynamic>>.from(
+      records,
+    )..sort((a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -369,22 +473,43 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
             backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
             child: Text(
               agent.isNotEmpty ? agent[0].toUpperCase() : '?',
-              style: TextStyle(color: AppTheme.primaryBlue, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: AppTheme.primaryBlue,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          title: Text(agent, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          title: Text(
+            agent,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
               children: [
-                _buildMetricBadge('Total Deals', '${records.length}', AppTheme.primaryBlue),
-                _buildMetricBadge('Earned', '₹${_formatCurrency(total)}', Colors.green),
-                _buildMetricBadge('Avg Ticket', '₹${_formatCurrency(average)}', Colors.purple),
-                if (paidCount > 0) _buildStatusChip('$paidCount Paid', Colors.green),
-                if (pendingCount > 0) _buildStatusChip('$pendingCount Pending', Colors.orange),
-                if (inReviewCount > 0) _buildStatusChip('$inReviewCount In Review', Colors.blueGrey),
+                _buildMetricBadge(
+                  'Total Deals',
+                  '${records.length}',
+                  AppTheme.primaryBlue,
+                ),
+                _buildMetricBadge(
+                  'Earned',
+                  '₹${_formatCurrency(total)}',
+                  Colors.green,
+                ),
+                _buildMetricBadge(
+                  'Avg Ticket',
+                  '₹${_formatCurrency(average)}',
+                  Colors.purple,
+                ),
+                if (paidCount > 0)
+                  _buildStatusChip('$paidCount Paid', Colors.green),
+                if (pendingCount > 0)
+                  _buildStatusChip('$pendingCount Pending', Colors.orange),
+                if (inReviewCount > 0)
+                  _buildStatusChip('$inReviewCount In Review', Colors.blueGrey),
               ],
             ),
           ),
@@ -431,7 +556,10 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                     Expanded(
                       child: Text(
                         record['student'],
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -447,8 +575,18 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Date: ${_formatDate(record['date'] as DateTime)}', style: TextStyle(fontSize: 10, color: Colors.grey[500])),
-                    Text('₹${record['earned']}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.success)),
+                    Text(
+                      'Date: ${_formatDate(record['date'] as DateTime)}',
+                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                    ),
+                    Text(
+                      '₹${record['earned']}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.success,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -468,7 +606,11 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
       ),
       child: Text(
         label,
-        style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 10,
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -478,8 +620,8 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     final statusColor = isPaid
         ? Colors.green
         : commission['status'] == 'Pending'
-            ? Colors.orange
-            : Colors.blueGrey;
+        ? Colors.orange
+        : Colors.blueGrey;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -495,11 +637,17 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                 Expanded(
                   child: Text(
                     commission['university'],
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(14),
@@ -516,11 +664,20 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
               ],
             ),
             const SizedBox(height: 6),
-            Text(commission['course'], style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              commission['course'],
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
             const SizedBox(height: 4),
-            Text('Student: ${commission['student']}', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              'Student: ${commission['student']}',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
             const SizedBox(height: 4),
-            Text('Agent: ${commission['agent']}', style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+            Text(
+              'Agent: ${commission['agent']}',
+              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+            ),
             const Divider(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -528,22 +685,47 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Course Fee', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                    Text('₹${commission['courseFee']}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(
+                      'Course Fee',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      '₹${commission['courseFee']}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Share ${commission['shareType']}', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                    Text('₹${commission['earned']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.success)),
+                    Text(
+                      'Share ${commission['shareType']}',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      '₹${commission['earned']}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.success,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('Date', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                    Text(_formatDate(commission['date']), style: const TextStyle(fontSize: 12)),
+                    Text(
+                      'Date',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      _formatDate(commission['date']),
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
               ],
@@ -556,14 +738,18 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
 
   List<Map<String, dynamic>> _getFilteredCommissions() {
     return _commissions.where((commission) {
-      final matchesStatus = _paymentFilter == 'All' || commission['status'] == _paymentFilter;
-      final matchesAgent = _selectedAgent == 'All' || commission['agent'] == _selectedAgent;
+      final matchesStatus =
+          _paymentFilter == 'All' || commission['status'] == _paymentFilter;
+      final matchesAgent =
+          _selectedAgent == 'All' || commission['agent'] == _selectedAgent;
       final commissionDate = commission['date'] as DateTime;
-      final matchesStart = _startDate == null || !commissionDate.isBefore(_startDate!);
+      final matchesStart =
+          _startDate == null || !commissionDate.isBefore(_startDate!);
       final matchesEnd = _endDate == null || !commissionDate.isAfter(_endDate!);
       return matchesStatus && matchesAgent && matchesStart && matchesEnd;
-    }).toList()
-      ..sort((a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime));
+    }).toList()..sort(
+      (a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime),
+    );
   }
 
   Map<String, int> _getAgentSummary(List<Map<String, dynamic>> commissions) {
@@ -575,7 +761,9 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return summary;
   }
 
-  Map<String, List<Map<String, dynamic>>> _groupCommissionsByAgent(List<Map<String, dynamic>> commissions) {
+  Map<String, List<Map<String, dynamic>>> _groupCommissionsByAgent(
+    List<Map<String, dynamic>> commissions,
+  ) {
     final grouped = <String, List<Map<String, dynamic>>>{};
     for (final commission in commissions) {
       final agent = commission['agent'] as String;
@@ -593,7 +781,10 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -608,10 +799,10 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
             underline: const SizedBox(),
             onChanged: onChanged,
             items: items
-                .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    ))
+                .map(
+                  (item) =>
+                      DropdownMenuItem<String>(value: item, child: Text(item)),
+                )
                 .toList(),
           ),
         ),
@@ -619,11 +810,18 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     );
   }
 
-  Widget _buildDateSelector(String label, DateTime? selectedDate, ValueChanged<DateTime?> onDateSelected) {
+  Widget _buildDateSelector(
+    String label,
+    DateTime? selectedDate,
+    ValueChanged<DateTime?> onDateSelected,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 4),
         OutlinedButton.icon(
           onPressed: () async {
@@ -646,7 +844,9 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             foregroundColor: Colors.grey[700],
             side: BorderSide(color: Colors.grey[300]!),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       ],

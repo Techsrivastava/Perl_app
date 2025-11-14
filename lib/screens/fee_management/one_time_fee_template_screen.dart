@@ -6,7 +6,8 @@ class OneTimeFeeTemplateScreen extends StatefulWidget {
   const OneTimeFeeTemplateScreen({super.key});
 
   @override
-  State<OneTimeFeeTemplateScreen> createState() => _OneTimeFeeTemplateScreenState();
+  State<OneTimeFeeTemplateScreen> createState() =>
+      _OneTimeFeeTemplateScreenState();
 }
 
 class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
@@ -60,8 +61,12 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final activeFees = _feeTemplates.where((f) => f['status'] == 'Active').length;
-    final mandatoryFees = _feeTemplates.where((f) => f['mandatory'] == true).length;
+    final activeFees = _feeTemplates
+        .where((f) => f['status'] == 'Active')
+        .length;
+    final mandatoryFees = _feeTemplates
+        .where((f) => f['mandatory'] == true)
+        .length;
     final totalAmount = _feeTemplates
         .where((f) => f['status'] == 'Active' && f['mandatory'] == true)
         .fold<double>(0, (sum, item) => sum + (item['amount'] as double));
@@ -76,10 +81,16 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
             child: ElevatedButton.icon(
               onPressed: _saveTemplate,
               icon: const Icon(Icons.save, size: 18, color: Colors.white),
-              label: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 13)),
+              label: const Text(
+                'Save',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.success,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
               ),
             ),
           ),
@@ -93,13 +104,41 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
             color: Colors.white,
             child: Row(
               children: [
-                Expanded(child: _buildStatCard('Total', _feeTemplates.length.toString(), AppTheme.primaryBlue, Icons.receipt_long)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Total',
+                    _feeTemplates.length.toString(),
+                    AppTheme.primaryBlue,
+                    Icons.receipt_long,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Active', activeFees.toString(), AppTheme.success, Icons.check_circle)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Active',
+                    activeFees.toString(),
+                    AppTheme.success,
+                    Icons.check_circle,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Mandatory', mandatoryFees.toString(), Colors.orange, Icons.priority_high)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Mandatory',
+                    mandatoryFees.toString(),
+                    Colors.orange,
+                    Icons.priority_high,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Amount', '₹${totalAmount.toStringAsFixed(0)}', Colors.green, Icons.currency_rupee)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Amount',
+                    '₹${totalAmount.toStringAsFixed(0)}',
+                    Colors.green,
+                    Icons.currency_rupee,
+                  ),
+                ),
               ],
             ),
           ),
@@ -115,8 +154,14 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                   child: ElevatedButton.icon(
                     onPressed: _showAddFeeDialog,
                     icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text('Add Fee', style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 12)),
+                    label: const Text(
+                      'Add Fee',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -125,7 +170,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                     onPressed: _showPreviewDialog,
                     icon: const Icon(Icons.visibility),
                     label: const Text('Preview'),
-                    style: OutlinedButton.styleFrom(foregroundColor: AppTheme.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 12)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.primaryBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
               ],
@@ -139,7 +187,8 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
             child: ListView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: _feeTemplates.length,
-              itemBuilder: (context, index) => _buildFeeCard(_feeTemplates[index], index),
+              itemBuilder: (context, index) =>
+                  _buildFeeCard(_feeTemplates[index], index),
             ),
           ),
         ],
@@ -147,7 +196,12 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color, IconData icon) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -159,8 +213,18 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
         children: [
           Icon(icon, color: color, size: 18),
           const SizedBox(height: 4),
-          Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color)),
-          Text(label, style: const TextStyle(fontSize: 9, color: AppTheme.mediumGray)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 9, color: AppTheme.mediumGray),
+          ),
         ],
       ),
     );
@@ -181,23 +245,54 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: AppTheme.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(Icons.receipt, color: AppTheme.primaryBlue, size: 20),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.receipt,
+                    color: AppTheme.primaryBlue,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(fee['fee_name'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      Text(fee['fee_type'], style: const TextStyle(fontSize: 11, color: AppTheme.mediumGray)),
+                      Text(
+                        fee['fee_name'],
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        fee['fee_type'],
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.mediumGray,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(6)),
-                  child: Text('₹${fee['amount'].toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.success)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '₹${fee['amount'].toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.success,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -205,17 +300,39 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
             Wrap(
               spacing: 6,
               children: [
-                _buildChip(isMandatory ? 'Mandatory' : 'Optional', isMandatory ? Colors.red : Colors.orange, isMandatory ? Icons.star : Icons.add_circle_outline),
-                _buildChip(fee['applicable_stage'], AppTheme.primaryBlue, Icons.schedule),
-                _buildChip(isActive ? 'Active' : 'Inactive', isActive ? AppTheme.success : Colors.grey, isActive ? Icons.check_circle : Icons.cancel),
+                _buildChip(
+                  isMandatory ? 'Mandatory' : 'Optional',
+                  isMandatory ? Colors.red : Colors.orange,
+                  isMandatory ? Icons.star : Icons.add_circle_outline,
+                ),
+                _buildChip(
+                  fee['applicable_stage'],
+                  AppTheme.primaryBlue,
+                  Icons.schedule,
+                ),
+                _buildChip(
+                  isActive ? 'Active' : 'Inactive',
+                  isActive ? AppTheme.success : Colors.grey,
+                  isActive ? Icons.check_circle : Icons.cancel,
+                ),
               ],
             ),
-            if (fee['description'] != null && (fee['description'] as String).isNotEmpty) ...[
+            if (fee['description'] != null &&
+                (fee['description'] as String).isNotEmpty) ...[
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(6)),
-                child: Text(fee['description'], style: const TextStyle(fontSize: 11, color: AppTheme.mediumGray)),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  fee['description'],
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.mediumGray,
+                  ),
+                ),
               ),
             ],
             const SizedBox(height: 10),
@@ -226,22 +343,43 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                     onPressed: () => _showEditFeeDialog(fee, index),
                     icon: const Icon(Icons.edit, size: 16),
                     label: const Text('Edit', style: TextStyle(fontSize: 12)),
-                    style: OutlinedButton.styleFrom(foregroundColor: AppTheme.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 8)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.primaryBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   onPressed: () => _toggleStatus(index),
-                  icon: Icon(isActive ? Icons.visibility_off : Icons.visibility, size: 16),
-                  label: Text(isActive ? 'Hide' : 'Show', style: const TextStyle(fontSize: 12)),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.orange, padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
+                  icon: Icon(
+                    isActive ? Icons.visibility_off : Icons.visibility,
+                    size: 16,
+                  ),
+                  label: Text(
+                    isActive ? 'Hide' : 'Show',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   onPressed: () => _deleteFee(index),
                   icon: const Icon(Icons.delete, size: 16),
                   label: const Text('Delete', style: TextStyle(fontSize: 12)),
-                  style: OutlinedButton.styleFrom(foregroundColor: AppTheme.error, padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.error,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -254,13 +392,24 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
   Widget _buildChip(String label, Color color, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(6), border: Border.all(color: color.withOpacity(0.3))),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
           const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -282,7 +431,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
             child: Column(
@@ -293,26 +444,52 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppTheme.primaryBlue, AppTheme.primaryBlue.withValues(alpha: 0.8)],
+                      colors: [
+                        AppTheme.primaryBlue,
+                        AppTheme.primaryBlue.withValues(alpha: 0.8),
+                      ],
                     ),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.add_circle, color: Colors.white, size: 24),
+                      const Icon(
+                        Icons.add_circle,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                       const SizedBox(width: 12),
                       const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Add New Fee', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text(
+                              'Add New Fee',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             SizedBox(height: 2),
-                            Text('Create a new fee template', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                            Text(
+                              'Create a new fee template',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -333,7 +510,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             decoration: InputDecoration(
                               labelText: 'Fee Name *',
                               hintText: 'e.g., Registration Fee',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               prefixIcon: const Icon(Icons.receipt, size: 20),
                             ),
                             validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -348,10 +527,16 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   decoration: InputDecoration(
                                     labelText: 'Amount *',
                                     hintText: '₹',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                                    prefixIcon: const Icon(Icons.currency_rupee, size: 20),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.currency_rupee,
+                                      size: 20,
+                                    ),
                                   ),
-                                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                                  validator: (v) =>
+                                      v!.isEmpty ? 'Required' : null,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -360,12 +545,29 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   value: selectedType,
                                   decoration: InputDecoration(
                                     labelText: 'Type *',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
-                                  items: ['One-Time', 'Annual', 'Semester', 'Per-Service'].map((t) {
-                                    return DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 13)));
-                                  }).toList(),
-                                  onChanged: (v) => setDialogState(() => selectedType = v!),
+                                  items:
+                                      [
+                                        'One-Time',
+                                        'Annual',
+                                        'Semester',
+                                        'Per-Service',
+                                      ].map((t) {
+                                        return DropdownMenuItem(
+                                          value: t,
+                                          child: Text(
+                                            t,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                  onChanged: (v) =>
+                                      setDialogState(() => selectedType = v!),
                                 ),
                               ),
                             ],
@@ -375,13 +577,21 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             value: selectedStage,
                             decoration: InputDecoration(
                               labelText: 'Applicable Stage *',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               prefixIcon: const Icon(Icons.schedule, size: 20),
                             ),
-                            items: ['Admission', 'Exam', 'Completion', 'Others'].map((s) {
-                              return DropdownMenuItem(value: s, child: Text(s));
-                            }).toList(),
-                            onChanged: (v) => setDialogState(() => selectedStage = v!),
+                            items: ['Admission', 'Exam', 'Completion', 'Others']
+                                .map((s) {
+                                  return DropdownMenuItem(
+                                    value: s,
+                                    child: Text(s),
+                                  );
+                                })
+                                .toList(),
+                            onChanged: (v) =>
+                                setDialogState(() => selectedStage = v!),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
@@ -390,32 +600,55 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             decoration: InputDecoration(
                               labelText: 'Description',
                               hintText: 'e.g., Payable during admission',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Mandatory Fee', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Auto-added to course fee', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Mandatory Fee',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Auto-added to course fee',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: isMandatory,
-                            onChanged: (v) => setDialogState(() => isMandatory = v),
+                            onChanged: (v) =>
+                                setDialogState(() => isMandatory = v),
                             activeTrackColor: AppTheme.primaryBlue,
                           ),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Document Required', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Require document upload', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Document Required',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Require document upload',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: docRequired,
-                            onChanged: (v) => setDialogState(() => docRequired = v),
+                            onChanged: (v) =>
+                                setDialogState(() => docRequired = v),
                             activeTrackColor: AppTheme.primaryBlue,
                           ),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Active Status', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Enable this fee', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Active Status',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Enable this fee',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: isActive,
-                            onChanged: (v) => setDialogState(() => isActive = v),
+                            onChanged: (v) =>
+                                setDialogState(() => isActive = v),
                             activeTrackColor: AppTheme.success,
                           ),
                         ],
@@ -429,7 +662,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(16),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -450,7 +685,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   'fee_id': _feeTemplates.length + 1,
                                   'fee_name': nameController.text,
                                   'fee_type': selectedType,
-                                  'amount': double.tryParse(amountController.text) ?? 0.0,
+                                  'amount':
+                                      double.tryParse(amountController.text) ??
+                                      0.0,
                                   'mandatory': isMandatory,
                                   'applicable_stage': selectedStage,
                                   'description': descriptionController.text,
@@ -459,7 +696,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                 });
                               });
                               Navigator.pop(context);
-                              _showSnackBar('✅ Fee added successfully!', AppTheme.success);
+                              _showSnackBar(
+                                '✅ Fee added successfully!',
+                                AppTheme.success,
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -467,7 +707,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           icon: const Icon(Icons.add, color: Colors.white),
-                          label: const Text('Add Fee', style: TextStyle(color: Colors.white)),
+                          label: const Text(
+                            'Add Fee',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
@@ -484,8 +727,12 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
   void _showEditFeeDialog(Map<String, dynamic> fee, int index) {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: fee['fee_name']);
-    final amountController = TextEditingController(text: fee['amount'].toString());
-    final descriptionController = TextEditingController(text: fee['description'] ?? '');
+    final amountController = TextEditingController(
+      text: fee['amount'].toString(),
+    );
+    final descriptionController = TextEditingController(
+      text: fee['description'] ?? '',
+    );
     String selectedType = fee['fee_type'];
     String selectedStage = fee['applicable_stage'];
     bool isMandatory = fee['mandatory'];
@@ -497,7 +744,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
             child: Column(
@@ -510,7 +759,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                     gradient: LinearGradient(
                       colors: [Colors.orange, Colors.orange.shade700],
                     ),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -520,14 +771,31 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Edit Fee', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text(
+                              'Edit Fee',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             SizedBox(height: 2),
-                            Text('Update fee template', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                            Text(
+                              'Update fee template',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -547,7 +815,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             controller: nameController,
                             decoration: InputDecoration(
                               labelText: 'Fee Name *',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               prefixIcon: const Icon(Icons.receipt, size: 20),
                             ),
                             validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -561,10 +831,16 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     labelText: 'Amount *',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                                    prefixIcon: const Icon(Icons.currency_rupee, size: 20),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.currency_rupee,
+                                      size: 20,
+                                    ),
                                   ),
-                                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                                  validator: (v) =>
+                                      v!.isEmpty ? 'Required' : null,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -573,12 +849,29 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   value: selectedType,
                                   decoration: InputDecoration(
                                     labelText: 'Type *',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
-                                  items: ['One-Time', 'Annual', 'Semester', 'Per-Service'].map((t) {
-                                    return DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 13)));
-                                  }).toList(),
-                                  onChanged: (v) => setDialogState(() => selectedType = v!),
+                                  items:
+                                      [
+                                        'One-Time',
+                                        'Annual',
+                                        'Semester',
+                                        'Per-Service',
+                                      ].map((t) {
+                                        return DropdownMenuItem(
+                                          value: t,
+                                          child: Text(
+                                            t,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                  onChanged: (v) =>
+                                      setDialogState(() => selectedType = v!),
                                 ),
                               ),
                             ],
@@ -588,13 +881,21 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             value: selectedStage,
                             decoration: InputDecoration(
                               labelText: 'Applicable Stage *',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               prefixIcon: const Icon(Icons.schedule, size: 20),
                             ),
-                            items: ['Admission', 'Exam', 'Completion', 'Others'].map((s) {
-                              return DropdownMenuItem(value: s, child: Text(s));
-                            }).toList(),
-                            onChanged: (v) => setDialogState(() => selectedStage = v!),
+                            items: ['Admission', 'Exam', 'Completion', 'Others']
+                                .map((s) {
+                                  return DropdownMenuItem(
+                                    value: s,
+                                    child: Text(s),
+                                  );
+                                })
+                                .toList(),
+                            onChanged: (v) =>
+                                setDialogState(() => selectedStage = v!),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
@@ -602,32 +903,55 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             maxLines: 3,
                             decoration: InputDecoration(
                               labelText: 'Description',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Mandatory Fee', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Auto-added to course fee', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Mandatory Fee',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Auto-added to course fee',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: isMandatory,
-                            onChanged: (v) => setDialogState(() => isMandatory = v),
+                            onChanged: (v) =>
+                                setDialogState(() => isMandatory = v),
                             activeTrackColor: AppTheme.primaryBlue,
                           ),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Document Required', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Require document upload', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Document Required',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Require document upload',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: docRequired,
-                            onChanged: (v) => setDialogState(() => docRequired = v),
+                            onChanged: (v) =>
+                                setDialogState(() => docRequired = v),
                             activeTrackColor: AppTheme.primaryBlue,
                           ),
                           SwitchListTile(
                             dense: true,
-                            title: const Text('Active Status', style: TextStyle(fontSize: 13)),
-                            subtitle: const Text('Enable this fee', style: TextStyle(fontSize: 11)),
+                            title: const Text(
+                              'Active Status',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            subtitle: const Text(
+                              'Enable this fee',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             value: isActive,
-                            onChanged: (v) => setDialogState(() => isActive = v),
+                            onChanged: (v) =>
+                                setDialogState(() => isActive = v),
                             activeTrackColor: AppTheme.success,
                           ),
                         ],
@@ -641,7 +965,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(16),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -662,7 +988,9 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                   'fee_id': fee['fee_id'],
                                   'fee_name': nameController.text,
                                   'fee_type': selectedType,
-                                  'amount': double.tryParse(amountController.text) ?? 0.0,
+                                  'amount':
+                                      double.tryParse(amountController.text) ??
+                                      0.0,
                                   'mandatory': isMandatory,
                                   'applicable_stage': selectedStage,
                                   'description': descriptionController.text,
@@ -671,7 +999,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                                 };
                               });
                               Navigator.pop(context);
-                              _showSnackBar('✅ Fee updated successfully!', Colors.orange);
+                              _showSnackBar(
+                                '✅ Fee updated successfully!',
+                                Colors.orange,
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -679,7 +1010,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           icon: const Icon(Icons.check, color: Colors.white),
-                          label: const Text('Update Fee', style: TextStyle(color: Colors.white)),
+                          label: const Text(
+                            'Update Fee',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
@@ -708,17 +1042,22 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
               DataColumn(label: Text('Status')),
             ],
             rows: _feeTemplates.map((fee) {
-              return DataRow(cells: [
-                DataCell(Text(fee['fee_name'])),
-                DataCell(Text(fee['fee_type'])),
-                DataCell(Text('₹${fee['amount']}')),
-                DataCell(Text(fee['status'])),
-              ]);
+              return DataRow(
+                cells: [
+                  DataCell(Text(fee['fee_name'])),
+                  DataCell(Text(fee['fee_type'])),
+                  DataCell(Text('₹${fee['amount']}')),
+                  DataCell(Text(fee['status'])),
+                ],
+              );
             }).toList(),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
         ],
       ),
     );
@@ -726,7 +1065,8 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
 
   void _toggleStatus(int index) {
     setState(() {
-      _feeTemplates[index]['status'] = _feeTemplates[index]['status'] == 'Active' ? 'Inactive' : 'Active';
+      _feeTemplates[index]['status'] =
+          _feeTemplates[index]['status'] == 'Active' ? 'Inactive' : 'Active';
     });
     _showSnackBar('Status updated', Colors.blue);
   }
@@ -738,7 +1078,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
         title: const Text('Delete Fee'),
         content: const Text('Are you sure you want to delete this fee?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => _feeTemplates.removeAt(index));
@@ -759,7 +1102,11 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
 
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color, behavior: SnackBarBehavior.floating),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 }

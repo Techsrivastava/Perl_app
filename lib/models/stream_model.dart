@@ -89,8 +89,12 @@ class CourseStream {
       careerOptions: json['careerOptions'] as String?,
       isActive: json['isActive'] as bool? ?? true,
       status: json['status'] as String? ?? 'draft',
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
     );
   }
 

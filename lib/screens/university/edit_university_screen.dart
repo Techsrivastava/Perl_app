@@ -32,7 +32,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
   final _ifscCodeController = TextEditingController();
   final _branchController = TextEditingController();
   final _upiIdController = TextEditingController();
-  
+
   // Authorize Person Controllers
   final _authorizePersonNameController = TextEditingController();
   final _firmNameController = TextEditingController();
@@ -44,33 +44,33 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
   final _departmentNameController = TextEditingController();
   final _officeLandlineController = TextEditingController();
   final _remarksController = TextEditingController();
-  
+
   // ID Proof & Documents
-  String _idProofType = 'Aadhaar';
+  String _idProofType = 'University ID';
   File? _idProofFile;
   File? _authorizationLetterFile;
   File? _digitalSignatureFile;
-  
+
   // Authorization Validity
   DateTime? _validityFromDate;
   DateTime? _validityToDate;
-  
+
   // Agency Linkage
   bool _authorizedViaAgency = false;
   String? _selectedAgency;
-  
+
   // Social Media & Maps
   final _googleMapsLinkController = TextEditingController();
   final _facebookLinkController = TextEditingController();
   final _twitterLinkController = TextEditingController();
   final _linkedinLinkController = TextEditingController();
   final _instagramLinkController = TextEditingController();
-  
+
   // Custom Test
   final _customTestNameController = TextEditingController();
   final _customTestDescriptionController = TextEditingController();
   bool _hasCustomTest = false;
-  
+
   // Files
   File? _logoFile;
   File? _backgroundImageFile;
@@ -82,7 +82,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
   List<String> _selectedFacilities = [];
   List<String> _selectedAccreditations = [];
   bool _isLoading = false;
-  
+
   // Authorization Type: 'individual' or 'firm'
   String _authorizationType = 'individual';
 
@@ -105,14 +105,14 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     _accountNumberController.text = widget.university.accountNumber ?? '';
     _ifscCodeController.text = widget.university.ifscCode ?? '';
     _branchController.text = widget.university.branch ?? '';
-    
+
     // Initialize authorize person fields (add these fields to university model if not present)
     _authorizePersonNameController.text = '';
     _firmNameController.text = '';
     _authorizePersonDetailsController.text = '';
     _authorizePersonPhoneController.text = '';
     _authorizePersonEmailController.text = '';
-    
+
     _selectedType = widget.university.type;
     _selectedFacilities = List.from(widget.university.facilities);
   }
@@ -151,7 +151,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     _customTestDescriptionController.dispose();
     super.dispose();
   }
-  
+
   // File Pickers
   Future<void> _pickLogo() async {
     try {
@@ -166,7 +166,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       debugPrint('Error picking logo: $e');
     }
   }
-  
+
   Future<void> _pickBackgroundImage() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -180,7 +180,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       debugPrint('Error picking background: $e');
     }
   }
-  
+
   Future<void> _pickAccreditationCert() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -188,13 +188,15 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
         allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
       );
       if (result != null) {
-        setState(() => _accreditationCertFile = File(result.files.single.path!));
+        setState(
+          () => _accreditationCertFile = File(result.files.single.path!),
+        );
       }
     } catch (e) {
       debugPrint('Error picking certificate: $e');
     }
   }
-  
+
   Future<void> _pickAuthorizedPersonPhoto() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -202,13 +204,15 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
         allowedExtensions: ['jpg', 'jpeg', 'png'],
       );
       if (result != null) {
-        setState(() => _authorizedPersonPhotoFile = File(result.files.single.path!));
+        setState(
+          () => _authorizedPersonPhotoFile = File(result.files.single.path!),
+        );
       }
     } catch (e) {
       debugPrint('Error picking photo: $e');
     }
   }
-  
+
   Future<void> _pickQRCode() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -222,7 +226,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       debugPrint('Error picking QR code: $e');
     }
   }
-  
+
   Future<void> _pickIDProof() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -246,7 +250,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       debugPrint('Error picking ID proof: $e');
     }
   }
-  
+
   Future<void> _pickAuthorizationLetter() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -270,7 +274,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       debugPrint('Error picking authorization letter: $e');
     }
   }
-  
+
   Future<void> _pickDigitalSignature() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -518,18 +522,23 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                             Expanded(
                               child: Text(
                                 'Authorized via Agency / Direct University',
-                                style: TextStyle(fontSize: 14, color: Colors.grey.shade800, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade800,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                             Switch(
                               value: _authorizedViaAgency,
-                              onChanged: (value) => setState(() => _authorizedViaAgency = value),
+                              onChanged: (value) =>
+                                  setState(() => _authorizedViaAgency = value),
                               activeColor: AppTheme.primaryBlue,
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Agency Selection (conditional)
                       if (_authorizedViaAgency) ...[
                         const SizedBox(height: 16),
@@ -537,12 +546,13 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                           label: 'Select Agency Name *',
                           value: _selectedAgency ?? 'Agency A',
                           items: ['Agency A', 'Agency B', 'Agency C'],
-                          onChanged: (value) => setState(() => _selectedAgency = value),
+                          onChanged: (value) =>
+                              setState(() => _selectedAgency = value),
                         ),
                       ],
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Authorization Type Selector
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -553,33 +563,73 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.verified_user, color: Colors.orange.shade700, size: 18),
+                            Icon(
+                              Icons.verified_user,
+                              color: Colors.orange.shade700,
+                              size: 18,
+                            ),
                             const SizedBox(width: 8),
-                            Text('Choose authorization type', style: TextStyle(fontSize: 13, color: Colors.grey.shade700)),
+                            Text(
+                              'Choose authorization type',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Tab Selector
                       Row(
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () => setState(() => _authorizationType = 'individual'),
+                              onTap: () => setState(
+                                () => _authorizationType = 'individual',
+                              ),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: _authorizationType == 'individual' ? AppTheme.primaryBlue : Colors.white,
-                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                                  border: Border.all(color: _authorizationType == 'individual' ? AppTheme.primaryBlue : Colors.grey.shade300, width: 2),
+                                  color: _authorizationType == 'individual'
+                                      ? AppTheme.primaryBlue
+                                      : Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    bottomLeft: Radius.circular(8),
+                                  ),
+                                  border: Border.all(
+                                    color: _authorizationType == 'individual'
+                                        ? AppTheme.primaryBlue
+                                        : Colors.grey.shade300,
+                                    width: 2,
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.person, size: 16, color: _authorizationType == 'individual' ? Colors.white : Colors.grey.shade700),
+                                    Icon(
+                                      Icons.person,
+                                      size: 16,
+                                      color: _authorizationType == 'individual'
+                                          ? Colors.white
+                                          : Colors.grey.shade700,
+                                    ),
                                     const SizedBox(width: 6),
-                                    Text('Individual', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _authorizationType == 'individual' ? Colors.white : Colors.grey.shade700)),
+                                    Text(
+                                      'Individual',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            _authorizationType == 'individual'
+                                            ? Colors.white
+                                            : Colors.grey.shade700,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -587,20 +637,48 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                           ),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () => setState(() => _authorizationType = 'firm'),
+                              onTap: () =>
+                                  setState(() => _authorizationType = 'firm'),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: _authorizationType == 'firm' ? AppTheme.primaryBlue : Colors.white,
-                                  borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
-                                  border: Border.all(color: _authorizationType == 'firm' ? AppTheme.primaryBlue : Colors.grey.shade300, width: 2),
+                                  color: _authorizationType == 'firm'
+                                      ? AppTheme.primaryBlue
+                                      : Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(8),
+                                    bottomRight: Radius.circular(8),
+                                  ),
+                                  border: Border.all(
+                                    color: _authorizationType == 'firm'
+                                        ? AppTheme.primaryBlue
+                                        : Colors.grey.shade300,
+                                    width: 2,
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.business, size: 16, color: _authorizationType == 'firm' ? Colors.white : Colors.grey.shade700),
+                                    Icon(
+                                      Icons.business,
+                                      size: 16,
+                                      color: _authorizationType == 'firm'
+                                          ? Colors.white
+                                          : Colors.grey.shade700,
+                                    ),
                                     const SizedBox(width: 6),
-                                    Text('Firm/Organization', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _authorizationType == 'firm' ? Colors.white : Colors.grey.shade700)),
+                                    Text(
+                                      'Firm/Organization',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: _authorizationType == 'firm'
+                                            ? Colors.white
+                                            : Colors.grey.shade700,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -609,7 +687,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Firm Name (for firm type)
                       if (_authorizationType == 'firm') ...[
                         CustomTextField(
@@ -617,7 +695,8 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                           hint: 'e.g., University Trust, Management Board',
                           controller: _firmNameController,
                           validator: (value) {
-                            if (_authorizationType == 'firm' && (value == null || value.isEmpty)) {
+                            if (_authorizationType == 'firm' &&
+                                (value == null || value.isEmpty)) {
                               return 'Firm name is required';
                             }
                             return null;
@@ -625,7 +704,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         ),
                         const SizedBox(height: 16),
                       ],
-                      
+
                       // Full Name
                       CustomTextField(
                         label: 'Full Name *',
@@ -639,7 +718,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Designation
                       CustomTextField(
                         label: 'Designation *',
@@ -653,7 +732,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Department/Office Name
                       CustomTextField(
                         label: 'Department / Office Name',
@@ -661,7 +740,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         controller: _departmentNameController,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Official Email
                       CustomTextField(
                         label: 'Official Email *',
@@ -672,14 +751,16 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Official email is required';
                           }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return 'Please enter a valid email';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Alternate Email
                       CustomTextField(
                         label: 'Alternate Email',
@@ -688,7 +769,9 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value != null && value.isNotEmpty) {
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                            if (!RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            ).hasMatch(value)) {
                               return 'Please enter a valid email';
                             }
                           }
@@ -696,7 +779,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Mobile Number
                       CustomTextField(
                         label: 'Mobile Number *',
@@ -714,7 +797,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Alternate Contact
                       CustomTextField(
                         label: 'Alternate Contact',
@@ -722,14 +805,16 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         controller: _alternateContactController,
                         keyboardType: TextInputType.phone,
                         validator: (value) {
-                          if (value != null && value.isNotEmpty && value.length != 10) {
+                          if (value != null &&
+                              value.isNotEmpty &&
+                              value.length != 10) {
                             return 'Contact number must be 10 digits';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Office Landline
                       CustomTextField(
                         label: 'Office Landline',
@@ -738,20 +823,28 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         keyboardType: TextInputType.phone,
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // ID Proof Section
-                      const Text('ID Proof & Verification', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                      const Text(
+                        'ID Proof & Verification',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.charcoal,
+                        ),
+                      ),
                       const SizedBox(height: 12),
-                      
+
                       // ID Proof Type Dropdown
                       _buildDropdownField(
                         label: 'ID Proof Type',
                         value: _idProofType,
-                        items: ['Aadhaar', 'PAN', 'Passport', 'University ID'],
-                        onChanged: (value) => setState(() => _idProofType = value!),
+                        items: ['University ID'],
+                        onChanged: (value) =>
+                            setState(() => _idProofType = value!),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Upload ID Proof
                       _buildFileUploadButton(
                         label: 'Upload ID Proof *',
@@ -760,11 +853,18 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         icon: Icons.badge,
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Authorization Documents
-                      const Text('Authorization Documents', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                      const Text(
+                        'Authorization Documents',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.charcoal,
+                        ),
+                      ),
                       const SizedBox(height: 12),
-                      
+
                       // Upload Authorization Letter
                       _buildFileUploadButton(
                         label: 'Upload Authorization Letter',
@@ -774,7 +874,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         icon: Icons.description,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Upload Digital Signature
                       _buildFileUploadButton(
                         label: 'Upload Digital Signature / Stamp',
@@ -784,9 +884,16 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         icon: Icons.draw,
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Authorization Validity
-                      const Text('Authorization Validity (Optional)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.charcoal)),
+                      const Text(
+                        'Authorization Validity (Optional)',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.charcoal,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -801,7 +908,8 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                 );
-                                if (date != null) setState(() => _validityFromDate = date);
+                                if (date != null)
+                                  setState(() => _validityFromDate = date);
                               },
                             ),
                           ),
@@ -813,18 +921,21 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                               onTap: () async {
                                 final date = await showDatePicker(
                                   context: context,
-                                  initialDate: _validityFromDate ?? DateTime.now(),
-                                  firstDate: _validityFromDate ?? DateTime(2000),
+                                  initialDate:
+                                      _validityFromDate ?? DateTime.now(),
+                                  firstDate:
+                                      _validityFromDate ?? DateTime(2000),
                                   lastDate: DateTime(2100),
                                 );
-                                if (date != null) setState(() => _validityToDate = date);
+                                if (date != null)
+                                  setState(() => _validityToDate = date);
                               },
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Remarks
                       CustomTextField(
                         label: 'Remarks / Notes',
@@ -832,7 +943,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         controller: _remarksController,
                         maxLines: 3,
                       ),
-                      
+
                       // OTP Verification Notice
                       const SizedBox(height: 20),
                       Container(
@@ -844,12 +955,19 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.verified, color: Colors.green.shade700, size: 20),
+                            Icon(
+                              Icons.verified,
+                              color: Colors.green.shade700,
+                              size: 20,
+                            ),
                             const SizedBox(width: 12),
                             const Expanded(
                               child: Text(
                                 'OTP verification required for Email & Mobile for authenticity',
-                                style: TextStyle(fontSize: 13, color: Colors.black87),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black87,
+                                ),
                               ),
                             ),
                           ],
@@ -1033,7 +1151,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       ],
     );
   }
-  
+
   Widget _buildFileUploadButton({
     required String label,
     String? subtitle,
@@ -1060,12 +1178,16 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: file != null ? Colors.green.shade100 : Colors.grey.shade200,
+                color: file != null
+                    ? Colors.green.shade100
+                    : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 file != null ? Icons.check_circle : icon,
-                color: file != null ? Colors.green.shade700 : Colors.grey.shade600,
+                color: file != null
+                    ? Colors.green.shade700
+                    : Colors.grey.shade600,
                 size: 24,
               ),
             ),
@@ -1079,21 +1201,29 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: file != null ? Colors.green.shade900 : AppTheme.charcoal,
+                      color: file != null
+                          ? Colors.green.shade900
+                          : AppTheme.charcoal,
                     ),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                   if (file != null) ...[
                     const SizedBox(height: 4),
                     Text(
                       file.path.split('/').last,
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1111,7 +1241,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
       ),
     );
   }
-  
+
   Widget _buildDateField({
     required String label,
     required DateTime? date,
@@ -1146,7 +1276,9 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: date != null ? AppTheme.charcoal : Colors.grey.shade400,
+                      color: date != null
+                          ? AppTheme.charcoal
+                          : Colors.grey.shade400,
                     ),
                   ),
                 ],

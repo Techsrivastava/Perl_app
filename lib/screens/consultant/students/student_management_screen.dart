@@ -5,15 +5,17 @@ class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
 
   @override
-  State<StudentManagementScreen> createState() => _StudentManagementScreenState();
+  State<StudentManagementScreen> createState() =>
+      _StudentManagementScreenState();
 }
 
-class _StudentManagementScreenState extends State<StudentManagementScreen> with SingleTickerProviderStateMixin {
+class _StudentManagementScreenState extends State<StudentManagementScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
   String _selectedUniversity = 'All';
   String _selectedCourse = 'All';
-  
+
   final List<Map<String, dynamic>> _allStudents = [
     {
       'student_id': 'STU5010',
@@ -130,7 +132,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       'documents': ['10th', '12th', 'Aadhar'],
       'documents_verified': false,
       'remarks': 'TC document missing - please upload',
-      'university_remarks': 'Transfer Certificate not submitted. Please upload within 7 days.',
+      'university_remarks':
+          'Transfer Certificate not submitted. Please upload within 7 days.',
     },
     {
       'student_id': 'STU5013',
@@ -208,7 +211,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       'documents': ['10th', '12th', 'Aadhar'],
       'documents_verified': false,
       'remarks': 'Application rejected by university',
-      'university_remarks': 'Rejected - Below 50% in 12th standard. Minimum eligibility not met.',
+      'university_remarks':
+          'Rejected - Below 50% in 12th standard. Minimum eligibility not met.',
     },
     {
       'student_id': 'STU5015',
@@ -364,7 +368,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       'documents': ['10th', '12th', 'Aadhar'],
       'documents_verified': false,
       'remarks': 'Graduation certificate pending',
-      'university_remarks': 'Bachelor degree certificate required for M.Tech admission. Please upload within 5 days.',
+      'university_remarks':
+          'Bachelor degree certificate required for M.Tech admission. Please upload within 5 days.',
     },
     {
       'student_id': 'STU5019',
@@ -530,15 +535,23 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Student'),
-        content: Text('Delete ${student['name']}? This action cannot be undone.'),
+        content: Text(
+          'Delete ${student['name']}? This action cannot be undone.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => _allStudents.remove(student));
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Student deleted successfully'), backgroundColor: Colors.red),
+                const SnackBar(
+                  content: Text('Student deleted successfully'),
+                  backgroundColor: Colors.red,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -558,21 +571,32 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Forward this application to university for verification?'),
+            const Text(
+              'Forward this application to university for verification?',
+            ),
             const SizedBox(height: 12),
-            Text('Student: ${student['name']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Student: ${student['name']}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text('University: ${student['university']}'),
             Text('Course: ${student['course']}'),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => student['status'] = 'Applied');
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Application forwarded successfully'), backgroundColor: Colors.green),
+                const SnackBar(
+                  content: Text('Application forwarded successfully'),
+                  backgroundColor: Colors.green,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -596,24 +620,48 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppTheme.primaryBlue, Color(0xFF1565C0)]),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  gradient: const LinearGradient(
+                    colors: [AppTheme.primaryBlue, Color(0xFF1565C0)],
+                  ),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.track_changes, color: Colors.white, size: 28),
+                    const Icon(
+                      Icons.track_changes,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Track Application', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Track Application',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 4),
-                          Text(student['student_id'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                          Text(
+                            student['student_id'],
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(ctx)),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
                   ],
                 ),
               ),
@@ -632,33 +680,106 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.person, size: 20, color: AppTheme.primaryBlue),
+                            const Icon(
+                              Icons.person,
+                              size: 20,
+                              color: AppTheme.primaryBlue,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(student['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                  Text('${student['course']} - ${student['university']}', style: const TextStyle(fontSize: 12)),
+                                  Text(
+                                    student['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${student['course']} - ${student['university']}',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Timeline
-                      const Text('Application Timeline', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+                      const Text(
+                        'Application Timeline',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryBlue,
+                        ),
+                      ),
                       const SizedBox(height: 16),
-                      
-                      _buildTimelineItem('Application Registered', student['registered_date'], 'Student added to system', Colors.blue, true),
-                      _buildTimelineItem('Documents Uploaded', _getDocumentUploadDate(student), '${student['documents'].length} documents submitted', student['documents'].isNotEmpty ? Colors.green : Colors.grey, student['documents'].isNotEmpty),
-                      _buildTimelineItem('Application Submitted', student['status'] == 'Applied' || student['status'] == 'Admission Approved' || student['status'] == 'Reverted' ? student['registered_date'] : '', 'Forwarded to university', student['status'] != 'Lead' ? Colors.orange : Colors.grey, student['status'] != 'Lead'),
-                      _buildTimelineItem('University Review', student['status'] == 'Admission Approved' || student['status'] == 'Reverted' || student['status'] == 'Rejected' ? student['registered_date'] : '', 'Under verification', student['status'] == 'Admission Approved' || student['status'] == 'Reverted' || student['status'] == 'Rejected' ? Colors.purple : Colors.grey, student['status'] == 'Admission Approved' || student['status'] == 'Reverted' || student['status'] == 'Rejected'),
-                      _buildTimelineItem('Admission Approved', student['status'] == 'Admission Approved' ? student['registered_date'] : '', 'Admission confirmed', student['status'] == 'Admission Approved' ? Colors.green : Colors.grey, student['status'] == 'Admission Approved', isLast: true),
-                      
+
+                      _buildTimelineItem(
+                        'Application Registered',
+                        student['registered_date'],
+                        'Student added to system',
+                        Colors.blue,
+                        true,
+                      ),
+                      _buildTimelineItem(
+                        'Documents Uploaded',
+                        _getDocumentUploadDate(student),
+                        '${student['documents'].length} documents submitted',
+                        student['documents'].isNotEmpty
+                            ? Colors.green
+                            : Colors.grey,
+                        student['documents'].isNotEmpty,
+                      ),
+                      _buildTimelineItem(
+                        'Application Submitted',
+                        student['status'] == 'Applied' ||
+                                student['status'] == 'Admission Approved' ||
+                                student['status'] == 'Reverted'
+                            ? student['registered_date']
+                            : '',
+                        'Forwarded to university',
+                        student['status'] != 'Lead'
+                            ? Colors.orange
+                            : Colors.grey,
+                        student['status'] != 'Lead',
+                      ),
+                      _buildTimelineItem(
+                        'University Review',
+                        student['status'] == 'Admission Approved' ||
+                                student['status'] == 'Reverted' ||
+                                student['status'] == 'Rejected'
+                            ? student['registered_date']
+                            : '',
+                        'Under verification',
+                        student['status'] == 'Admission Approved' ||
+                                student['status'] == 'Reverted' ||
+                                student['status'] == 'Rejected'
+                            ? Colors.purple
+                            : Colors.grey,
+                        student['status'] == 'Admission Approved' ||
+                            student['status'] == 'Reverted' ||
+                            student['status'] == 'Rejected',
+                      ),
+                      _buildTimelineItem(
+                        'Admission Approved',
+                        student['status'] == 'Admission Approved'
+                            ? student['registered_date']
+                            : '',
+                        'Admission confirmed',
+                        student['status'] == 'Admission Approved'
+                            ? Colors.green
+                            : Colors.grey,
+                        student['status'] == 'Admission Approved',
+                        isLast: true,
+                      ),
+
                       if (student['status'] == 'Reverted') ...[
                         const SizedBox(height: 16),
                         Container(
@@ -670,15 +791,30 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.warning_amber, color: Colors.red, size: 20),
+                              const Icon(
+                                Icons.warning_amber,
+                                color: Colors.red,
+                                size: 20,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Action Required', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
+                                    const Text(
+                                      'Action Required',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                     const SizedBox(height: 4),
-                                    Text(student['university_remarks'] ?? 'Please correct the application', style: const TextStyle(fontSize: 12)),
+                                    Text(
+                                      student['university_remarks'] ??
+                                          'Please correct the application',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -686,7 +822,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                           ),
                         ),
                       ],
-                      
+
                       if (student['status'] == 'Rejected') ...[
                         const SizedBox(height: 16),
                         Container(
@@ -698,15 +834,30 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.cancel, color: Colors.red, size: 20),
+                              const Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                                size: 20,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Application Rejected', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
+                                    const Text(
+                                      'Application Rejected',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                     const SizedBox(height: 4),
-                                    Text(student['university_remarks'] ?? 'Application declined', style: const TextStyle(fontSize: 12)),
+                                    Text(
+                                      student['university_remarks'] ??
+                                          'Application declined',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -729,7 +880,14 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
     return student['documents'].isNotEmpty ? student['registered_date'] : '';
   }
 
-  Widget _buildTimelineItem(String title, String date, String description, Color color, bool isActive, {bool isLast = false}) {
+  Widget _buildTimelineItem(
+    String title,
+    String date,
+    String description,
+    Color color,
+    bool isActive, {
+    bool isLast = false,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -751,7 +909,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
               Container(
                 width: 2,
                 height: 60,
-                color: isActive ? color.withValues(alpha: 0.3) : Colors.grey[300],
+                color: isActive
+                    ? color.withValues(alpha: 0.3)
+                    : Colors.grey[300],
               ),
           ],
         ),
@@ -760,13 +920,29 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isActive ? color : Colors.grey)),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: isActive ? color : Colors.grey,
+                ),
+              ),
               if (date.isNotEmpty) ...[
                 const SizedBox(height: 2),
-                Text(date, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(
+                  date,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                ),
               ],
               const SizedBox(height: 4),
-              Text(description, style: TextStyle(fontSize: 12, color: isActive ? Colors.grey[700] : Colors.grey)),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isActive ? Colors.grey[700] : Colors.grey,
+                ),
+              ),
               const SizedBox(height: 16),
             ],
           ),
@@ -777,11 +953,16 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Admission Approved': return Colors.green;
-      case 'Applied': return Colors.orange;
-      case 'Reverted': return Colors.red;
-      case 'Rejected': return Colors.red[900]!;
-      default: return Colors.blue;
+      case 'Admission Approved':
+        return Colors.green;
+      case 'Applied':
+        return Colors.orange;
+      case 'Reverted':
+        return Colors.red;
+      case 'Rejected':
+        return Colors.red[900]!;
+      default:
+        return Colors.blue;
     }
   }
 
@@ -790,7 +971,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withValues(alpha: 0.12), color.withValues(alpha: 0.05)],
+          colors: [
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.3)),
@@ -799,13 +983,25 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
         children: [
           Text(label, style: TextStyle(fontSize: 9, color: Colors.grey[700])),
           const SizedBox(height: 3),
-          Text(amount, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String label, String count, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String count,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -821,9 +1017,20 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
         children: [
           Icon(icon, size: 20, color: color),
           const SizedBox(height: 6),
-          Text(count, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600]), textAlign: TextAlign.center),
+          Text(
+            label,
+            style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -831,10 +1038,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
 
   List<Map<String, dynamic>> get _filteredStudents {
     return _allStudents.where((s) {
-      final matchesSearch = _searchQuery.isEmpty || s['name'].toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch =
+          _searchQuery.isEmpty ||
+          s['name'].toLowerCase().contains(_searchQuery.toLowerCase());
       final tabIndex = _tabController.index;
       if (tabIndex == 1) return s['status'] == 'Applied' && matchesSearch;
-      if (tabIndex == 2) return s['status'] == 'Admission Approved' && matchesSearch;
+      if (tabIndex == 2)
+        return s['status'] == 'Admission Approved' && matchesSearch;
       if (tabIndex == 3) return s['status'] == 'Reverted' && matchesSearch;
       if (tabIndex == 4) return s['status'] == 'Rejected' && matchesSearch;
       return matchesSearch;
@@ -861,11 +1071,58 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: [
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.people, size: 16), const SizedBox(width: 6), Text('All (${_getStatusCount('All')})')])),
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.hourglass_empty, size: 16), const SizedBox(width: 6), Text('Applied (${_getStatusCount('Applied')})')])),
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.check_circle, size: 16), const SizedBox(width: 6), Text('Admission Approved (${_getStatusCount('Admission Approved')})')])),
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.refresh, size: 16), const SizedBox(width: 6), Text('Reverted (${_getStatusCount('Reverted')})')])),
-            Tab(child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.cancel, size: 16), const SizedBox(width: 6), Text('Rejected (${_getStatusCount('Rejected')})')])),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.people, size: 16),
+                  const SizedBox(width: 6),
+                  Text('All (${_getStatusCount('All')})'),
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.hourglass_empty, size: 16),
+                  const SizedBox(width: 6),
+                  Text('Applied (${_getStatusCount('Applied')})'),
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Admission Approved (${_getStatusCount('Admission Approved')})',
+                  ),
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.refresh, size: 16),
+                  const SizedBox(width: 6),
+                  Text('Reverted (${_getStatusCount('Reverted')})'),
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.cancel, size: 16),
+                  const SizedBox(width: 6),
+                  Text('Rejected (${_getStatusCount('Rejected')})'),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -877,17 +1134,45 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Expanded(child: _buildStatCard('Total', _allStudents.length.toString(), Icons.people, Colors.blue)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Total',
+                    _allStudents.length.toString(),
+                    Icons.people,
+                    Colors.blue,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Approved', _getStatusCount('Admission Approved').toString(), Icons.check_circle, Colors.green)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Approved',
+                    _getStatusCount('Admission Approved').toString(),
+                    Icons.check_circle,
+                    Colors.green,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Applied', _getStatusCount('Applied').toString(), Icons.hourglass_empty, Colors.orange)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Applied',
+                    _getStatusCount('Applied').toString(),
+                    Icons.hourglass_empty,
+                    Colors.orange,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatCard('Reverted', _getStatusCount('Reverted').toString(), Icons.refresh, Colors.red)),
+                Expanded(
+                  child: _buildStatCard(
+                    'Reverted',
+                    _getStatusCount('Reverted').toString(),
+                    Icons.refresh,
+                    Colors.red,
+                  ),
+                ),
               ],
             ),
           ),
-          
+
           // Search Bar
           Container(
             color: Colors.white,
@@ -897,8 +1182,14 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
               decoration: InputDecoration(
                 hintText: 'Search by name, ID, or mobile...',
                 prefixIcon: const Icon(Icons.search, size: 20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey[300]!)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 isDense: true,
               ),
             ),
@@ -932,8 +1223,17 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _getStatusColor(student['status']).withValues(alpha: 0.2), width: 1.5),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        border: Border.all(
+          color: _getStatusColor(student['status']).withValues(alpha: 0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -942,39 +1242,88 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [_getStatusColor(student['status']).withValues(alpha: 0.1), _getStatusColor(student['status']).withValues(alpha: 0.03)],
+                colors: [
+                  _getStatusColor(student['status']).withValues(alpha: 0.1),
+                  _getStatusColor(student['status']).withValues(alpha: 0.03),
+                ],
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [_getStatusColor(student['status']), _getStatusColor(student['status']).withValues(alpha: 0.7)]),
+                    gradient: LinearGradient(
+                      colors: [
+                        _getStatusColor(student['status']),
+                        _getStatusColor(
+                          student['status'],
+                        ).withValues(alpha: 0.7),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.person, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(student['name'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      Text(
+                        student['name'],
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 3),
-                      Text(student['student_id'], style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                      Text(
+                        student['student_id'],
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [_getStatusColor(student['status']).withValues(alpha: 0.15), _getStatusColor(student['status']).withValues(alpha: 0.08)]),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _getStatusColor(student['status']).withValues(alpha: 0.4), width: 1.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                  child: Text(student['status'], style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _getStatusColor(student['status']))),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _getStatusColor(
+                          student['status'],
+                        ).withValues(alpha: 0.15),
+                        _getStatusColor(
+                          student['status'],
+                        ).withValues(alpha: 0.08),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _getStatusColor(
+                        student['status'],
+                      ).withValues(alpha: 0.4),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    student['status'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: _getStatusColor(student['status']),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -991,11 +1340,21 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                   children: [
                     Icon(Icons.phone, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 6),
-                    Text(student['mobile'], style: const TextStyle(fontSize: 12)),
+                    Text(
+                      student['mobile'],
+                      style: const TextStyle(fontSize: 12),
+                    ),
                     const SizedBox(width: 16),
-                    Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.grey[600],
+                    ),
                     const SizedBox(width: 6),
-                    Text(student['registered_date'], style: const TextStyle(fontSize: 12)),
+                    Text(
+                      student['registered_date'],
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1005,7 +1364,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                   children: [
                     Icon(Icons.school, size: 14, color: AppTheme.primaryBlue),
                     const SizedBox(width: 6),
-                    Expanded(child: Text(student['course'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+                    Expanded(
+                      child: Text(
+                        student['course'],
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -1013,7 +1380,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                   children: [
                     Icon(Icons.business, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 6),
-                    Expanded(child: Text(student['university'], style: TextStyle(fontSize: 12, color: Colors.grey[700]))),
+                    Expanded(
+                      child: Text(
+                        student['university'],
+                        style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1026,16 +1398,26 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                         children: [
                           Icon(Icons.book, size: 14, color: Colors.grey[600]),
                           const SizedBox(width: 6),
-                          Text(student['mode'] ?? 'Regular', style: const TextStyle(fontSize: 11)),
+                          Text(
+                            student['mode'] ?? 'Regular',
+                            style: const TextStyle(fontSize: 11),
+                          ),
                         ],
                       ),
                     ),
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.location_city, size: 14, color: Colors.grey[600]),
+                          Icon(
+                            Icons.location_city,
+                            size: 14,
+                            color: Colors.grey[600],
+                          ),
                           const SizedBox(width: 6),
-                          Text(student['city'], style: const TextStyle(fontSize: 11)),
+                          Text(
+                            student['city'],
+                            style: const TextStyle(fontSize: 11),
+                          ),
                         ],
                       ),
                     ),
@@ -1044,7 +1426,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                         children: [
                           Icon(Icons.people, size: 14, color: Colors.grey[600]),
                           const SizedBox(width: 6),
-                          Expanded(child: Text(student['agent'], style: const TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis)),
+                          Expanded(
+                            child: Text(
+                              student['agent'],
+                              style: const TextStyle(fontSize: 11),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1056,11 +1444,29 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                 // Fee Summary Cards
                 Row(
                   children: [
-                    Expanded(child: _buildMiniCard('Total', '₹${(student['total_fee'] / 1000).toStringAsFixed(0)}K', Colors.blue)),
+                    Expanded(
+                      child: _buildMiniCard(
+                        'Total',
+                        '₹${(student['total_fee'] / 1000).toStringAsFixed(0)}K',
+                        Colors.blue,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _buildMiniCard('Paid', '₹${(student['paid_amount'] / 1000).toStringAsFixed(0)}K', Colors.green)),
+                    Expanded(
+                      child: _buildMiniCard(
+                        'Paid',
+                        '₹${(student['paid_amount'] / 1000).toStringAsFixed(0)}K',
+                        Colors.green,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _buildMiniCard('Pending', '₹${(student['pending_amount'] / 1000).toStringAsFixed(0)}K', Colors.orange)),
+                    Expanded(
+                      child: _buildMiniCard(
+                        'Pending',
+                        '₹${(student['pending_amount'] / 1000).toStringAsFixed(0)}K',
+                        Colors.orange,
+                      ),
+                    ),
                   ],
                 ),
 
@@ -1069,15 +1475,30 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.folder, size: 14, color: student['documents_verified'] == true ? Colors.green : Colors.orange),
+                      Icon(
+                        Icons.folder,
+                        size: 14,
+                        color: student['documents_verified'] == true
+                            ? Colors.green
+                            : Colors.orange,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         '${student['documents'].length} docs uploaded',
-                        style: TextStyle(fontSize: 11, color: student['documents_verified'] == true ? Colors.green : Colors.orange),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: student['documents_verified'] == true
+                              ? Colors.green
+                              : Colors.orange,
+                        ),
                       ),
                       if (student['documents_verified'] == true) ...[
                         const SizedBox(width: 6),
-                        const Icon(Icons.verified, size: 14, color: Colors.green),
+                        const Icon(
+                          Icons.verified,
+                          size: 14,
+                          color: Colors.green,
+                        ),
                       ],
                     ],
                   ),
@@ -1092,10 +1513,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                       child: OutlinedButton.icon(
                         onPressed: () => _viewStudent(student),
                         icon: const Icon(Icons.visibility, size: 16),
-                        label: const Text('View', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'View',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: BorderSide(color: AppTheme.primaryBlue.withValues(alpha: 0.5)),
+                          side: BorderSide(
+                            color: AppTheme.primaryBlue.withValues(alpha: 0.5),
+                          ),
                           foregroundColor: AppTheme.primaryBlue,
                         ),
                       ),
@@ -1105,7 +1531,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                       child: ElevatedButton.icon(
                         onPressed: () => _trackApplication(student),
                         icon: const Icon(Icons.track_changes, size: 16),
-                        label: const Text('Track', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'Track',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
                           foregroundColor: Colors.white,
@@ -1115,9 +1544,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Action Buttons Row 2
                 Row(
                   children: [
@@ -1125,10 +1554,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                       child: OutlinedButton.icon(
                         onPressed: () => _editStudent(student),
                         icon: const Icon(Icons.edit, size: 16),
-                        label: const Text('Edit', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'Edit',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: BorderSide(color: AppTheme.primaryBlue.withValues(alpha: 0.5)),
+                          side: BorderSide(
+                            color: AppTheme.primaryBlue.withValues(alpha: 0.5),
+                          ),
                           foregroundColor: AppTheme.primaryBlue,
                         ),
                       ),
@@ -1139,7 +1573,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                         child: ElevatedButton.icon(
                           onPressed: () => _deleteStudent(student),
                           icon: const Icon(Icons.delete_outline, size: 16),
-                          label: const Text('Delete', style: TextStyle(fontSize: 12)),
+                          label: const Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
@@ -1147,12 +1584,16 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                           ),
                         ),
                       ),
-                    if (student['status'] == 'Applied' || student['status'] == 'Lead')
+                    if (student['status'] == 'Applied' ||
+                        student['status'] == 'Lead')
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () => _forwardToUniversity(student),
                           icon: const Icon(Icons.send, size: 16),
-                          label: const Text('Forward', style: TextStyle(fontSize: 12)),
+                          label: const Text(
+                            'Forward',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
@@ -1165,11 +1606,17 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> with 
                         child: ElevatedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Downloading Admission Slip...'), backgroundColor: Colors.green),
+                              const SnackBar(
+                                content: Text('Downloading Admission Slip...'),
+                                backgroundColor: Colors.green,
+                              ),
                             );
                           },
                           icon: const Icon(Icons.download, size: 16),
-                          label: const Text('Admission Slip', style: TextStyle(fontSize: 12)),
+                          label: const Text(
+                            'Admission Slip',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
@@ -1224,15 +1671,29 @@ class _StudentDetailsView extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber, color: Colors.red, size: 20),
+                    const Icon(
+                      Icons.warning_amber,
+                      color: Colors.red,
+                      size: 20,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('University Remarks', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
+                          const Text(
+                            'University Remarks',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
                           const SizedBox(height: 4),
-                          Text(student['university_remarks'] ?? '', style: const TextStyle(fontSize: 12)),
+                          Text(
+                            student['university_remarks'] ?? '',
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                     ),
@@ -1244,26 +1705,54 @@ class _StudentDetailsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [AppTheme.primaryBlue, Color(0xFF1565C0)]),
+                gradient: const LinearGradient(
+                  colors: [AppTheme.primaryBlue, Color(0xFF1565C0)],
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(Icons.person, color: Colors.white, size: 32),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(student['student_id'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        Text(
+                          student['student_id'],
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text(student['name'], style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(
+                          student['name'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text('${student['course']}', style: const TextStyle(color: Colors.white, fontSize: 13)),
+                        Text(
+                          '${student['course']}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1274,73 +1763,71 @@ class _StudentDetailsView extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Basic Information
-            _buildSection(
-              'Basic Information',
-              Icons.person_outline,
-              [
-                _buildRow('Full Name', student['name']),
-                _buildRow('Father Name', student['father_name'] ?? 'N/A'),
-                _buildRow('Mother Name', student['mother_name'] ?? 'N/A'),
-                _buildRow('Mobile Number', student['mobile']),
-                _buildRow('Email', student['email'] ?? 'N/A'),
-                _buildRow('Date of Birth', student['dob'] ?? 'N/A'),
-                _buildRow('Gender', student['gender'] ?? 'N/A'),
-                _buildRow('Category', student['category'] ?? 'N/A'),
-              ],
-            ),
+            _buildSection('Basic Information', Icons.person_outline, [
+              _buildRow('Full Name', student['name']),
+              _buildRow('Father Name', student['father_name'] ?? 'N/A'),
+              _buildRow('Mother Name', student['mother_name'] ?? 'N/A'),
+              _buildRow('Mobile Number', student['mobile']),
+              _buildRow('Email', student['email'] ?? 'N/A'),
+              _buildRow('Date of Birth', student['dob'] ?? 'N/A'),
+              _buildRow('Gender', student['gender'] ?? 'N/A'),
+              _buildRow('Category', student['category'] ?? 'N/A'),
+            ]),
 
             const SizedBox(height: 16),
 
             // Address
-            _buildSection(
-              'Address Details',
-              Icons.location_on_outlined,
-              [
-                _buildRow('Address', student['address'] ?? 'N/A'),
-                _buildRow('City', student['city'] ?? 'N/A'),
-                _buildRow('State', student['state'] ?? 'N/A'),
-                _buildRow('Pincode', student['pincode'] ?? 'N/A'),
-              ],
-            ),
+            _buildSection('Address Details', Icons.location_on_outlined, [
+              _buildRow('Address', student['address'] ?? 'N/A'),
+              _buildRow('City', student['city'] ?? 'N/A'),
+              _buildRow('State', student['state'] ?? 'N/A'),
+              _buildRow('Pincode', student['pincode'] ?? 'N/A'),
+            ]),
 
             const SizedBox(height: 16),
 
             // Academic Details
-            _buildSection(
-              'Academic Details',
-              Icons.school_outlined,
-              [
-                const Text('10th Standard', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryBlue)),
-                const SizedBox(height: 8),
-                _buildRow('Board/University', student['10th_board'] ?? 'N/A'),
-                _buildRow('Marks/Percentage', student['10th_marks'] ?? 'N/A'),
-                _buildRow('Passing Year', student['10th_year'] ?? 'N/A'),
-                const Divider(height: 24),
-                const Text('12th Standard', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryBlue)),
-                const SizedBox(height: 8),
-                _buildRow('Board/University', student['12th_board'] ?? 'N/A'),
-                _buildRow('Marks/Percentage', student['12th_marks'] ?? 'N/A'),
-                _buildRow('Passing Year', student['12th_year'] ?? 'N/A'),
-              ],
-            ),
+            _buildSection('Academic Details', Icons.school_outlined, [
+              const Text(
+                '10th Standard',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppTheme.primaryBlue,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildRow('Board/University', student['10th_board'] ?? 'N/A'),
+              _buildRow('Marks/Percentage', student['10th_marks'] ?? 'N/A'),
+              _buildRow('Passing Year', student['10th_year'] ?? 'N/A'),
+              const Divider(height: 24),
+              const Text(
+                '12th Standard',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppTheme.primaryBlue,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildRow('Board/University', student['12th_board'] ?? 'N/A'),
+              _buildRow('Marks/Percentage', student['12th_marks'] ?? 'N/A'),
+              _buildRow('Passing Year', student['12th_year'] ?? 'N/A'),
+            ]),
 
             const SizedBox(height: 16),
 
             // Course & University
-            _buildSection(
-              'Course & University',
-              Icons.business_outlined,
-              [
-                _buildRow('Course', student['course']),
-                _buildRow('University', student['university']),
-                _buildRow('Mode', student['mode'] ?? 'N/A'),
-                _buildRow('Duration', student['duration'] ?? 'N/A'),
-                _buildRow('Added By', student['added_by'] ?? 'N/A'),
-                _buildRow('Agent', student['agent'] ?? 'N/A'),
-                _buildRow('Status', student['status']),
-                _buildRow('Registered Date', student['registered_date']),
-              ],
-            ),
+            _buildSection('Course & University', Icons.business_outlined, [
+              _buildRow('Course', student['course']),
+              _buildRow('University', student['university']),
+              _buildRow('Mode', student['mode'] ?? 'N/A'),
+              _buildRow('Duration', student['duration'] ?? 'N/A'),
+              _buildRow('Added By', student['added_by'] ?? 'N/A'),
+              _buildRow('Agent', student['agent'] ?? 'N/A'),
+              _buildRow('Status', student['status']),
+              _buildRow('Registered Date', student['registered_date']),
+            ]),
 
             const SizedBox(height: 16),
 
@@ -1351,23 +1838,50 @@ class _StudentDetailsView extends StatelessWidget {
               [
                 Row(
                   children: [
-                    Expanded(child: _buildFeeCard('Total Fee', '₹${student['total_fee']}', Colors.blue)),
+                    Expanded(
+                      child: _buildFeeCard(
+                        'Total Fee',
+                        '₹${student['total_fee']}',
+                        Colors.blue,
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildFeeCard('Paid', '₹${student['paid_amount']}', Colors.green)),
+                    Expanded(
+                      child: _buildFeeCard(
+                        'Paid',
+                        '₹${student['paid_amount']}',
+                        Colors.green,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Expanded(child: _buildFeeCard('Pending', '₹${student['pending_amount']}', Colors.orange)),
+                    Expanded(
+                      child: _buildFeeCard(
+                        'Pending',
+                        '₹${student['pending_amount']}',
+                        Colors.orange,
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildFeeCard('Commission', '₹${student['consultant_share']}', AppTheme.primaryBlue)),
+                    Expanded(
+                      child: _buildFeeCard(
+                        'Commission',
+                        '₹${student['consultant_share']}',
+                        AppTheme.primaryBlue,
+                      ),
+                    ),
                   ],
                 ),
                 if (student['utr_number']?.toString().isNotEmpty ?? false) ...[
                   const SizedBox(height: 12),
                   _buildRow('UTR Number', student['utr_number']),
-                  _buildRow('Payment Status', student['payment_status'] ?? 'N/A'),
+                  _buildRow(
+                    'Payment Status',
+                    student['payment_status'] ?? 'N/A',
+                  ),
                 ],
               ],
             ),
@@ -1375,48 +1889,69 @@ class _StudentDetailsView extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Documents
-            _buildSection(
-              'Documents Submitted',
-              Icons.upload_file,
-              [
-                _buildDocStatus('10th Marksheet', student['documents'].contains('10th')),
-                _buildDocStatus('12th Marksheet', student['documents'].contains('12th')),
-                _buildDocStatus('Transfer Certificate', student['documents'].contains('TC')),
-                _buildDocStatus('Aadhar Card', student['documents'].contains('Aadhar')),
-                _buildDocStatus('Passport Photo', student['documents'].contains('Photo')),
-                _buildDocStatus('Migration Certificate', student['documents'].contains('Migration')),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      student['documents_verified'] == true ? Icons.verified : Icons.pending,
-                      color: student['documents_verified'] == true ? Colors.green : Colors.orange,
-                      size: 20,
+            _buildSection('Documents Submitted', Icons.upload_file, [
+              _buildDocStatus(
+                '10th Marksheet',
+                student['documents'].contains('10th'),
+              ),
+              _buildDocStatus(
+                '12th Marksheet',
+                student['documents'].contains('12th'),
+              ),
+              _buildDocStatus(
+                'Transfer Certificate',
+                student['documents'].contains('TC'),
+              ),
+              _buildDocStatus(
+                'Aadhar Card',
+                student['documents'].contains('Aadhar'),
+              ),
+              _buildDocStatus(
+                'Passport Photo',
+                student['documents'].contains('Photo'),
+              ),
+              _buildDocStatus(
+                'Migration Certificate',
+                student['documents'].contains('Migration'),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    student['documents_verified'] == true
+                        ? Icons.verified
+                        : Icons.pending,
+                    color: student['documents_verified'] == true
+                        ? Colors.green
+                        : Colors.orange,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    student['documents_verified'] == true
+                        ? 'All documents verified'
+                        : 'Verification pending',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: student['documents_verified'] == true
+                          ? Colors.green
+                          : Colors.orange,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      student['documents_verified'] == true ? 'All documents verified' : 'Verification pending',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: student['documents_verified'] == true ? Colors.green : Colors.orange,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ]),
 
             const SizedBox(height: 16),
 
             // Remarks
-            _buildSection(
-              'Remarks',
-              Icons.note_outlined,
-              [
-                Text(student['remarks'] ?? 'No remarks', style: const TextStyle(fontSize: 13, height: 1.5)),
-              ],
-            ),
+            _buildSection('Remarks', Icons.note_outlined, [
+              Text(
+                student['remarks'] ?? 'No remarks',
+                style: const TextStyle(fontSize: 13, height: 1.5),
+              ),
+            ]),
 
             const SizedBox(height: 80),
           ],
@@ -1440,7 +1975,14 @@ class _StudentDetailsView extends StatelessWidget {
             children: [
               Icon(icon, size: 20, color: AppTheme.primaryBlue),
               const SizedBox(width: 8),
-              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryBlue,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -1456,8 +1998,19 @@ class _StudentDetailsView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 140, child: Text('$label:', style: TextStyle(fontSize: 13, color: Colors.grey[600]))),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+          SizedBox(
+            width: 140,
+            child: Text(
+              '$label:',
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
         ],
       ),
     );
@@ -1468,7 +2021,10 @@ class _StudentDetailsView extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withValues(alpha: 0.3)),
@@ -1477,7 +2033,14 @@ class _StudentDetailsView extends StatelessWidget {
         children: [
           Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[700])),
           const SizedBox(height: 6),
-          Text(amount, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -1488,16 +2051,28 @@ class _StudentDetailsView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(uploaded ? Icons.check_circle : Icons.cancel, size: 18, color: uploaded ? Colors.green : Colors.red),
+          Icon(
+            uploaded ? Icons.check_circle : Icons.cancel,
+            size: 18,
+            color: uploaded ? Colors.green : Colors.red,
+          ),
           const SizedBox(width: 8),
           Expanded(child: Text(name, style: const TextStyle(fontSize: 13))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: uploaded ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+              color: uploaded
+                  ? Colors.green.withValues(alpha: 0.1)
+                  : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(uploaded ? 'Uploaded' : 'Missing', style: TextStyle(fontSize: 10, color: uploaded ? Colors.green : Colors.red)),
+            child: Text(
+              uploaded ? 'Uploaded' : 'Missing',
+              style: TextStyle(
+                fontSize: 10,
+                color: uploaded ? Colors.green : Colors.red,
+              ),
+            ),
           ),
         ],
       ),
@@ -1505,7 +2080,7 @@ class _StudentDetailsView extends StatelessWidget {
   }
 }
 
-// Edit Student Form Widget - Complete editable admission form  
+// Edit Student Form Widget - Complete editable admission form
 class _EditStudentForm extends StatefulWidget {
   final Map<String, dynamic> student;
   final Function(Map<String, dynamic>) onSave;
@@ -1518,7 +2093,7 @@ class _EditStudentForm extends StatefulWidget {
 
 class _EditStudentFormState extends State<_EditStudentForm> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   late TextEditingController _nameController;
   late TextEditingController _fatherNameController;
@@ -1537,7 +2112,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
   late TextEditingController _twelfth_marksController;
   late TextEditingController _twelfth_yearController;
   late TextEditingController _remarksController;
-  
+
   String _gender = 'Male';
   String _category = 'General';
 
@@ -1545,22 +2120,48 @@ class _EditStudentFormState extends State<_EditStudentForm> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.student['name']);
-    _fatherNameController = TextEditingController(text: widget.student['father_name'] ?? '');
-    _motherNameController = TextEditingController(text: widget.student['mother_name'] ?? '');
+    _fatherNameController = TextEditingController(
+      text: widget.student['father_name'] ?? '',
+    );
+    _motherNameController = TextEditingController(
+      text: widget.student['mother_name'] ?? '',
+    );
     _mobileController = TextEditingController(text: widget.student['mobile']);
-    _emailController = TextEditingController(text: widget.student['email'] ?? '');
+    _emailController = TextEditingController(
+      text: widget.student['email'] ?? '',
+    );
     _dobController = TextEditingController(text: widget.student['dob'] ?? '');
-    _addressController = TextEditingController(text: widget.student['address'] ?? '');
+    _addressController = TextEditingController(
+      text: widget.student['address'] ?? '',
+    );
     _cityController = TextEditingController(text: widget.student['city'] ?? '');
-    _stateController = TextEditingController(text: widget.student['state'] ?? '');
-    _pincodeController = TextEditingController(text: widget.student['pincode'] ?? '');
-    _tenth_boardController = TextEditingController(text: widget.student['10th_board'] ?? '');
-    _tenth_marksController = TextEditingController(text: widget.student['10th_marks'] ?? '');
-    _tenth_yearController = TextEditingController(text: widget.student['10th_year'] ?? '');
-    _twelfth_boardController = TextEditingController(text: widget.student['12th_board'] ?? '');
-    _twelfth_marksController = TextEditingController(text: widget.student['12th_marks'] ?? '');
-    _twelfth_yearController = TextEditingController(text: widget.student['12th_year'] ?? '');
-    _remarksController = TextEditingController(text: widget.student['remarks'] ?? '');
+    _stateController = TextEditingController(
+      text: widget.student['state'] ?? '',
+    );
+    _pincodeController = TextEditingController(
+      text: widget.student['pincode'] ?? '',
+    );
+    _tenth_boardController = TextEditingController(
+      text: widget.student['10th_board'] ?? '',
+    );
+    _tenth_marksController = TextEditingController(
+      text: widget.student['10th_marks'] ?? '',
+    );
+    _tenth_yearController = TextEditingController(
+      text: widget.student['10th_year'] ?? '',
+    );
+    _twelfth_boardController = TextEditingController(
+      text: widget.student['12th_board'] ?? '',
+    );
+    _twelfth_marksController = TextEditingController(
+      text: widget.student['12th_marks'] ?? '',
+    );
+    _twelfth_yearController = TextEditingController(
+      text: widget.student['12th_year'] ?? '',
+    );
+    _remarksController = TextEditingController(
+      text: widget.student['remarks'] ?? '',
+    );
     _gender = widget.student['gender'] ?? 'Male';
     _category = widget.student['category'] ?? 'General';
   }
@@ -1604,26 +2205,26 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             // Basic Information Section
             _buildSectionTitle('Basic Information', Icons.person_outline),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _nameController,
               decoration: _inputDecoration('Full Name *', Icons.person),
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _fatherNameController,
               decoration: _inputDecoration('Father Name', Icons.person),
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _motherNameController,
               decoration: _inputDecoration('Mother Name', Icons.person),
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _mobileController,
               decoration: _inputDecoration('Mobile Number *', Icons.phone),
@@ -1631,81 +2232,101 @@ class _EditStudentFormState extends State<_EditStudentForm> {
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _emailController,
               decoration: _inputDecoration('Email', Icons.email),
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _dobController,
-              decoration: _inputDecoration('Date of Birth (DD/MM/YYYY)', Icons.calendar_today),
+              decoration: _inputDecoration(
+                'Date of Birth (DD/MM/YYYY)',
+                Icons.calendar_today,
+              ),
             ),
             const SizedBox(height: 12),
-            
+
             DropdownButtonFormField<String>(
               value: _gender,
               decoration: _inputDecoration('Gender', Icons.wc),
-              items: ['Male', 'Female', 'Other'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              items: [
+                'Male',
+                'Female',
+                'Other',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _gender = v!),
             ),
             const SizedBox(height: 12),
-            
+
             DropdownButtonFormField<String>(
               value: _category,
               decoration: _inputDecoration('Category', Icons.category),
-              items: ['General', 'OBC', 'SC', 'ST', 'EWS'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              items: [
+                'General',
+                'OBC',
+                'SC',
+                'ST',
+                'EWS',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _category = v!),
             ),
-            
+
             const SizedBox(height: 24),
 
             // Address Section
             _buildSectionTitle('Address Details', Icons.location_on_outlined),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _addressController,
               decoration: _inputDecoration('Full Address', Icons.home),
               maxLines: 2,
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _cityController,
               decoration: _inputDecoration('City', Icons.location_city),
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _stateController,
               decoration: _inputDecoration('State', Icons.map),
             ),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _pincodeController,
               decoration: _inputDecoration('Pincode', Icons.pin_drop),
               keyboardType: TextInputType.number,
             ),
-            
+
             const SizedBox(height: 24),
 
             // Academic Details Section
             _buildSectionTitle('Academic Details', Icons.school_outlined),
             const SizedBox(height: 12),
-            
-            const Text('10th Standard', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryBlue)),
+
+            const Text(
+              '10th Standard',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
             const SizedBox(height: 8),
-            
+
             TextFormField(
               controller: _tenth_boardController,
               decoration: _inputDecoration('Board/University', Icons.school),
             ),
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
@@ -1724,20 +2345,27 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 16),
-            
-            const Text('12th Standard', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryBlue)),
+
+            const Text(
+              '12th Standard',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
             const SizedBox(height: 8),
-            
+
             TextFormField(
               controller: _twelfth_boardController,
               decoration: _inputDecoration('Board/University', Icons.school),
             ),
             const SizedBox(height: 12),
-            
+
             Row(
               children: [
                 Expanded(
@@ -1756,37 +2384,40 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
 
             // Course Info (Read-only)
-            _buildSectionTitle('Course & University (Read-only)', Icons.business_outlined),
+            _buildSectionTitle(
+              'Course & University (Read-only)',
+              Icons.business_outlined,
+            ),
             const SizedBox(height: 12),
-            
+
             _buildReadOnlyField('Course', widget.student['course']),
             const SizedBox(height: 12),
             _buildReadOnlyField('University', widget.student['university']),
             const SizedBox(height: 12),
             _buildReadOnlyField('Status', widget.student['status']),
-            
+
             const SizedBox(height: 24),
 
             // Remarks
             _buildSectionTitle('Remarks', Icons.note_outlined),
             const SizedBox(height: 12),
-            
+
             TextFormField(
               controller: _remarksController,
               decoration: _inputDecoration('Add Remarks', Icons.comment),
               maxLines: 3,
             ),
-            
+
             const SizedBox(height: 24),
 
             // Documents Status (Read-only)
             _buildSectionTitle('Documents Status', Icons.folder),
             const SizedBox(height: 12),
-            
+
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1796,15 +2427,30 @@ class _EditStudentFormState extends State<_EditStudentForm> {
               ),
               child: Column(
                 children: [
-                  _buildDocRow('10th Marksheet', widget.student['documents'].contains('10th')),
-                  _buildDocRow('12th Marksheet', widget.student['documents'].contains('12th')),
-                  _buildDocRow('Transfer Certificate', widget.student['documents'].contains('TC')),
-                  _buildDocRow('Aadhar Card', widget.student['documents'].contains('Aadhar')),
-                  _buildDocRow('Passport Photo', widget.student['documents'].contains('Photo')),
+                  _buildDocRow(
+                    '10th Marksheet',
+                    widget.student['documents'].contains('10th'),
+                  ),
+                  _buildDocRow(
+                    '12th Marksheet',
+                    widget.student['documents'].contains('12th'),
+                  ),
+                  _buildDocRow(
+                    'Transfer Certificate',
+                    widget.student['documents'].contains('TC'),
+                  ),
+                  _buildDocRow(
+                    'Aadhar Card',
+                    widget.student['documents'].contains('Aadhar'),
+                  ),
+                  _buildDocRow(
+                    'Passport Photo',
+                    widget.student['documents'].contains('Photo'),
+                  ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
 
             // Save Button
@@ -1834,7 +2480,10 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                   });
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Student updated successfully'), backgroundColor: Colors.green),
+                    const SnackBar(
+                      content: Text('Student updated successfully'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 }
               },
@@ -1846,7 +2495,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                 padding: const EdgeInsets.all(16),
               ),
             ),
-            
+
             const SizedBox(height: 80),
           ],
         ),
@@ -1859,7 +2508,14 @@ class _EditStudentFormState extends State<_EditStudentForm> {
       children: [
         Icon(icon, size: 20, color: AppTheme.primaryBlue),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primaryBlue,
+          ),
+        ),
       ],
     );
   }
@@ -1885,8 +2541,14 @@ class _EditStudentFormState extends State<_EditStudentForm> {
       ),
       child: Row(
         children: [
-          Text('$label: ', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-          Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(
+            '$label: ',
+            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -1897,10 +2559,20 @@ class _EditStudentFormState extends State<_EditStudentForm> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(uploaded ? Icons.check_circle : Icons.cancel, size: 16, color: uploaded ? Colors.green : Colors.red),
+          Icon(
+            uploaded ? Icons.check_circle : Icons.cancel,
+            size: 16,
+            color: uploaded ? Colors.green : Colors.red,
+          ),
           const SizedBox(width: 8),
           Expanded(child: Text(name, style: const TextStyle(fontSize: 12))),
-          Text(uploaded ? 'Uploaded' : 'Missing', style: TextStyle(fontSize: 10, color: uploaded ? Colors.green : Colors.red)),
+          Text(
+            uploaded ? 'Uploaded' : 'Missing',
+            style: TextStyle(
+              fontSize: 10,
+              color: uploaded ? Colors.green : Colors.red,
+            ),
+          ),
         ],
       ),
     );

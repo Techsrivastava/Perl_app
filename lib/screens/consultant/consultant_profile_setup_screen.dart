@@ -65,7 +65,7 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Content Card
               Expanded(
                 child: Container(
@@ -99,7 +99,7 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        
+
                         // Checklist
                         _buildChecklistItem(
                           icon: Icons.person,
@@ -111,7 +111,8 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                         _buildChecklistItem(
                           icon: Icons.business,
                           title: 'Business Details',
-                          description: 'Consultancy information and registration',
+                          description:
+                              'Consultancy information and registration',
                           color: Colors.purple,
                         ),
                         const SizedBox(height: 16),
@@ -135,9 +136,9 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                           description: 'Preferences and security',
                           color: Colors.green,
                         ),
-                        
+
                         const SizedBox(height: 32),
-                        
+
                         // Info Card
                         Container(
                           padding: const EdgeInsets.all(16),
@@ -148,20 +149,27 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline, color: Colors.amber[900], size: 24),
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.amber[900],
+                                size: 24,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   'Your profile will be verified by our admin team within 24-48 hours',
-                                  style: TextStyle(fontSize: 13, color: Colors.amber[900]),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.amber[900],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Continue Button
                         SizedBox(
                           width: double.infinity,
@@ -170,7 +178,8 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const ConsultantProfileScreen(),
+                                  builder: (context) =>
+                                      const ConsultantProfileScreen(),
                                 ),
                               );
                             },
@@ -187,7 +196,10 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   'Complete My Profile',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 SizedBox(width: 8),
                                 Icon(Icons.arrow_forward),
@@ -195,14 +207,17 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Skip for now
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/consultant-dashboard');
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/consultant-dashboard',
+                              );
                             },
                             child: const Text(
                               'Skip for now (Complete later)',
@@ -267,10 +282,7 @@ class ConsultantProfileSetupScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),

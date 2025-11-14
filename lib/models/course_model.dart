@@ -24,7 +24,7 @@ class Course {
   bool? placementSupport;
   DateTime? createdAt;
   DateTime? updatedAt;
-  
+
   // Indian Education System Specific Fields
   String? specialization;
   String? accreditation; // NAAC, NBA, etc.
@@ -39,7 +39,7 @@ class Course {
   bool? industryTieups;
   String? labFacilities;
   String? researchOpportunities;
-  
+
   // Additional India-Specific Fields
   String? recognizedBy; // UGC, AICTE, MCI, DCI, BCI, PCI, INC, COA
   String? universityType; // Central, State, Deemed, Private
@@ -246,14 +246,15 @@ class Course {
       internshipIncluded: internshipIncluded ?? this.internshipIncluded,
       industryTieups: industryTieups ?? this.industryTieups,
       labFacilities: labFacilities ?? this.labFacilities,
-      researchOpportunities: researchOpportunities ?? this.researchOpportunities,
+      researchOpportunities:
+          researchOpportunities ?? this.researchOpportunities,
     );
   }
 
   // Helper methods for status
   bool get isDraft => (status ?? 'draft') == 'draft';
   bool get isPublished => status == 'published';
-  
+
   // Update status methods
   Course publish() => copyWith(status: 'published');
   Course saveToDraft() => copyWith(status: 'draft');

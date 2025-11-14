@@ -87,12 +87,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
         _isLoading = false;
       });
 
-      // Navigate to main screen
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-        (route) => false,
-      );
+      // Navigate based on email
+      if (widget.email.contains('consultant')) {
+        Navigator.pushReplacementNamed(context, '/consultant-dashboard');
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:university_app_2/models/course_model.dart';
 /// Comprehensive Indian Courses Database with In-depth Details
 /// Organized by streams with complete India-specific information
 class IndianCoursesData {
-  
   // Get all courses
   static List<Course> getIndianCourses() {
     return [
@@ -17,7 +16,7 @@ class IndianCoursesData {
       ...getPharmacyCourses(),
     ];
   }
-  
+
   // ENGINEERING COURSES
   static List<Course> getEngineeringCourses() {
     return [
@@ -38,8 +37,13 @@ class IndianCoursesData {
         fees: 150000,
         totalSeats: 120,
         availableSeats: 45,
-        description: 'Bachelor of Technology in Computer Science and Engineering is a comprehensive program covering software development, algorithms, data structures, AI, and machine learning.',
-        eligibility: ['10+2 with Physics, Chemistry, and Mathematics', 'Minimum 75% aggregate', 'Valid JEE Main/Advanced score'],
+        description:
+            'Bachelor of Technology in Computer Science and Engineering is a comprehensive program covering software development, algorithms, data structures, AI, and machine learning.',
+        eligibility: [
+          '10+2 with Physics, Chemistry, and Mathematics',
+          'Minimum 75% aggregate',
+          'Valid JEE Main/Advanced score',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -50,14 +54,21 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'JEE Main/Advanced',
         cutoffPercentage: 75.0,
-        careerOptions: ['Software Engineer', 'Data Scientist', 'AI Engineer', 'Full Stack Developer', 'Cloud Architect'],
+        careerOptions: [
+          'Software Engineer',
+          'Data Scientist',
+          'AI Engineer',
+          'Full Stack Developer',
+          'Cloud Architect',
+        ],
         affiliatedUniversity: 'APJ Abdul Kalam Technical University',
         internshipIncluded: true,
         industryTieups: true,
         labFacilities: 'Advanced Computing Labs, AI Lab, IoT Lab, Robotics Lab',
-        researchOpportunities: 'Research projects in AI, ML, Blockchain, and Cyber Security',
+        researchOpportunities:
+            'Research projects in AI, ML, Blockchain, and Cyber Security',
       ),
-      
+
       Course(
         id: 'course_002',
         universityId: 'univ_001',
@@ -71,8 +82,13 @@ class IndianCoursesData {
         fees: 140000,
         totalSeats: 100,
         availableSeats: 38,
-        description: 'B.Tech in Electronics and Communication Engineering focuses on electronic devices, communication systems, VLSI design, and embedded systems.',
-        eligibility: ['10+2 with PCM', 'Minimum 70% aggregate', 'JEE Main score'],
+        description:
+            'B.Tech in Electronics and Communication Engineering focuses on electronic devices, communication systems, VLSI design, and embedded systems.',
+        eligibility: [
+          '10+2 with PCM',
+          'Minimum 70% aggregate',
+          'JEE Main score',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -83,12 +99,19 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'JEE Main',
         cutoffPercentage: 70.0,
-        careerOptions: ['Electronics Engineer', 'VLSI Designer', 'Telecom Engineer', 'Embedded Systems Developer'],
+        careerOptions: [
+          'Electronics Engineer',
+          'VLSI Designer',
+          'Telecom Engineer',
+          'Embedded Systems Developer',
+        ],
         affiliatedUniversity: 'APJ Abdul Kalam Technical University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'VLSI Lab, Communication Lab, Microprocessor Lab, Digital Electronics Lab',
-        researchOpportunities: 'Research in 5G, IoT, VLSI, and Signal Processing',
+        labFacilities:
+            'VLSI Lab, Communication Lab, Microprocessor Lab, Digital Electronics Lab',
+        researchOpportunities:
+            'Research in 5G, IoT, VLSI, and Signal Processing',
       ),
 
       Course(
@@ -104,8 +127,13 @@ class IndianCoursesData {
         fees: 135000,
         totalSeats: 90,
         availableSeats: 32,
-        description: 'B.Tech in Mechanical Engineering covers thermodynamics, fluid mechanics, manufacturing processes, CAD/CAM, and automotive engineering.',
-        eligibility: ['10+2 with PCM', 'Minimum 70% aggregate', 'JEE Main score'],
+        description:
+            'B.Tech in Mechanical Engineering covers thermodynamics, fluid mechanics, manufacturing processes, CAD/CAM, and automotive engineering.',
+        eligibility: [
+          '10+2 with PCM',
+          'Minimum 70% aggregate',
+          'JEE Main score',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -116,12 +144,19 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'JEE Main',
         cutoffPercentage: 70.0,
-        careerOptions: ['Mechanical Engineer', 'Automotive Designer', 'Manufacturing Engineer', 'CAD Engineer'],
+        careerOptions: [
+          'Mechanical Engineer',
+          'Automotive Designer',
+          'Manufacturing Engineer',
+          'CAD Engineer',
+        ],
         affiliatedUniversity: 'APJ Abdul Kalam Technical University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'CAD/CAM Lab, Thermal Lab, Manufacturing Lab, Robotics Lab',
-        researchOpportunities: 'Research in Renewable Energy, Robotics, and Advanced Manufacturing',
+        labFacilities:
+            'CAD/CAM Lab, Thermal Lab, Manufacturing Lab, Robotics Lab',
+        researchOpportunities:
+            'Research in Renewable Energy, Robotics, and Advanced Manufacturing',
       ),
 
       // Medical Courses
@@ -138,8 +173,13 @@ class IndianCoursesData {
         fees: 500000,
         totalSeats: 150,
         availableSeats: 12,
-        description: 'MBBS is a professional degree in medicine. The program includes theoretical knowledge and practical training in various medical specialties.',
-        eligibility: ['10+2 with Physics, Chemistry, Biology', 'Minimum 50% aggregate (40% for SC/ST/OBC)', 'NEET-UG qualification'],
+        description:
+            'MBBS is a professional degree in medicine. The program includes theoretical knowledge and practical training in various medical specialties.',
+        eligibility: [
+          '10+2 with Physics, Chemistry, Biology',
+          'Minimum 50% aggregate (40% for SC/ST/OBC)',
+          'NEET-UG qualification',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -150,12 +190,20 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'NEET-UG',
         cutoffPercentage: 50.0,
-        careerOptions: ['Doctor', 'Surgeon', 'Medical Researcher', 'Public Health Officer', 'Medical Consultant'],
+        careerOptions: [
+          'Doctor',
+          'Surgeon',
+          'Medical Researcher',
+          'Public Health Officer',
+          'Medical Consultant',
+        ],
         affiliatedUniversity: 'Deemed Medical University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Anatomy Lab, Pathology Lab, Microbiology Lab, Multi-specialty Hospital',
-        researchOpportunities: 'Clinical research, Medical innovations, Public health studies',
+        labFacilities:
+            'Anatomy Lab, Pathology Lab, Microbiology Lab, Multi-specialty Hospital',
+        researchOpportunities:
+            'Clinical research, Medical innovations, Public health studies',
       ),
 
       Course(
@@ -171,8 +219,13 @@ class IndianCoursesData {
         fees: 350000,
         totalSeats: 100,
         availableSeats: 25,
-        description: 'BDS is a professional degree in dental medicine covering oral health, dental surgery, orthodontics, and periodontics.',
-        eligibility: ['10+2 with PCB', 'Minimum 50% aggregate', 'NEET-UG qualification'],
+        description:
+            'BDS is a professional degree in dental medicine covering oral health, dental surgery, orthodontics, and periodontics.',
+        eligibility: [
+          '10+2 with PCB',
+          'Minimum 50% aggregate',
+          'NEET-UG qualification',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -183,11 +236,17 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'NEET-UG',
         cutoffPercentage: 50.0,
-        careerOptions: ['Dentist', 'Orthodontist', 'Oral Surgeon', 'Dental Researcher'],
+        careerOptions: [
+          'Dentist',
+          'Orthodontist',
+          'Oral Surgeon',
+          'Dental Researcher',
+        ],
         affiliatedUniversity: 'Deemed Medical University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Dental Clinic, Oral Surgery Lab, Orthodontics Lab, Prosthodontics Lab',
+        labFacilities:
+            'Dental Clinic, Oral Surgery Lab, Orthodontics Lab, Prosthodontics Lab',
         researchOpportunities: 'Dental research, Oral health studies',
       ),
 
@@ -205,8 +264,13 @@ class IndianCoursesData {
         fees: 400000,
         totalSeats: 180,
         availableSeats: 55,
-        description: 'MBA is a postgraduate program in business management covering finance, marketing, HR, operations, and strategic management.',
-        eligibility: ['Bachelor degree in any discipline', 'Minimum 50% aggregate', 'CAT/MAT/XAT/CMAT score'],
+        description:
+            'MBA is a postgraduate program in business management covering finance, marketing, HR, operations, and strategic management.',
+        eligibility: [
+          'Bachelor degree in any discipline',
+          'Minimum 50% aggregate',
+          'CAT/MAT/XAT/CMAT score',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -217,12 +281,20 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'CAT/MAT/XAT/CMAT',
         cutoffPercentage: 50.0,
-        careerOptions: ['Business Analyst', 'Marketing Manager', 'Financial Analyst', 'HR Manager', 'Operations Manager'],
+        careerOptions: [
+          'Business Analyst',
+          'Marketing Manager',
+          'Financial Analyst',
+          'HR Manager',
+          'Operations Manager',
+        ],
         affiliatedUniversity: 'Autonomous',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Business Analytics Lab, Finance Lab, Marketing Research Center',
-        researchOpportunities: 'Business research, Market analysis, Financial modeling',
+        labFacilities:
+            'Business Analytics Lab, Finance Lab, Marketing Research Center',
+        researchOpportunities:
+            'Business research, Market analysis, Financial modeling',
       ),
 
       // Commerce Courses
@@ -239,7 +311,8 @@ class IndianCoursesData {
         fees: 45000,
         totalSeats: 200,
         availableSeats: 78,
-        description: 'B.Com is an undergraduate program in commerce covering accounting, taxation, business law, economics, and finance.',
+        description:
+            'B.Com is an undergraduate program in commerce covering accounting, taxation, business law, economics, and finance.',
         eligibility: ['10+2 with Commerce/Any stream', 'Minimum 50% aggregate'],
         isActive: true,
         scholarshipAvailable: true,
@@ -251,7 +324,13 @@ class IndianCoursesData {
         mediumOfInstruction: 'English/Hindi',
         entranceExam: 'University Entrance Test',
         cutoffPercentage: 50.0,
-        careerOptions: ['Accountant', 'Tax Consultant', 'Financial Analyst', 'Auditor', 'Banking Professional'],
+        careerOptions: [
+          'Accountant',
+          'Tax Consultant',
+          'Financial Analyst',
+          'Auditor',
+          'Banking Professional',
+        ],
         affiliatedUniversity: 'Delhi University',
         internshipIncluded: true,
         industryTieups: true,
@@ -273,8 +352,13 @@ class IndianCoursesData {
         fees: 120000,
         totalSeats: 120,
         availableSeats: 42,
-        description: 'LLB is a professional law degree covering constitutional law, criminal law, civil law, corporate law, and legal procedures.',
-        eligibility: ['Bachelor degree in any discipline', 'Minimum 45% aggregate', 'CLAT/University entrance test'],
+        description:
+            'LLB is a professional law degree covering constitutional law, criminal law, civil law, corporate law, and legal procedures.',
+        eligibility: [
+          'Bachelor degree in any discipline',
+          'Minimum 45% aggregate',
+          'CLAT/University entrance test',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -285,7 +369,13 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'CLAT/University Test',
         cutoffPercentage: 45.0,
-        careerOptions: ['Lawyer', 'Legal Advisor', 'Corporate Counsel', 'Judge', 'Legal Researcher'],
+        careerOptions: [
+          'Lawyer',
+          'Legal Advisor',
+          'Corporate Counsel',
+          'Judge',
+          'Legal Researcher',
+        ],
         affiliatedUniversity: 'National Law University',
         internshipIncluded: true,
         industryTieups: true,
@@ -307,7 +397,8 @@ class IndianCoursesData {
         fees: 60000,
         totalSeats: 80,
         availableSeats: 35,
-        description: 'B.Sc Physics is an undergraduate program covering classical mechanics, quantum mechanics, thermodynamics, and modern physics.',
+        description:
+            'B.Sc Physics is an undergraduate program covering classical mechanics, quantum mechanics, thermodynamics, and modern physics.',
         eligibility: ['10+2 with PCM', 'Minimum 50% aggregate'],
         isActive: true,
         scholarshipAvailable: true,
@@ -319,12 +410,18 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'University Entrance Test',
         cutoffPercentage: 50.0,
-        careerOptions: ['Research Scientist', 'Physics Teacher', 'Lab Technician', 'Data Analyst'],
+        careerOptions: [
+          'Research Scientist',
+          'Physics Teacher',
+          'Lab Technician',
+          'Data Analyst',
+        ],
         affiliatedUniversity: 'State University',
         internshipIncluded: false,
         industryTieups: false,
         labFacilities: 'Physics Lab, Optics Lab, Electronics Lab',
-        researchOpportunities: 'Research in Quantum Physics, Astrophysics, Material Science',
+        researchOpportunities:
+            'Research in Quantum Physics, Astrophysics, Material Science',
       ),
 
       // Computer Applications
@@ -341,8 +438,13 @@ class IndianCoursesData {
         fees: 180000,
         totalSeats: 60,
         availableSeats: 22,
-        description: 'MCA is a postgraduate program in computer applications covering software development, database management, networking, and web technologies.',
-        eligibility: ['Bachelor degree with Mathematics', 'Minimum 50% aggregate', 'NIMCET/University entrance test'],
+        description:
+            'MCA is a postgraduate program in computer applications covering software development, database management, networking, and web technologies.',
+        eligibility: [
+          'Bachelor degree with Mathematics',
+          'Minimum 50% aggregate',
+          'NIMCET/University entrance test',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -353,12 +455,18 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'NIMCET',
         cutoffPercentage: 50.0,
-        careerOptions: ['Software Developer', 'System Analyst', 'Database Administrator', 'Cloud Engineer'],
+        careerOptions: [
+          'Software Developer',
+          'System Analyst',
+          'Database Administrator',
+          'Cloud Engineer',
+        ],
         affiliatedUniversity: 'APJ Abdul Kalam Technical University',
         internshipIncluded: true,
         industryTieups: true,
         labFacilities: 'Software Development Lab, Cloud Lab, Networking Lab',
-        researchOpportunities: 'Research in Cloud Computing, Big Data, Cyber Security',
+        researchOpportunities:
+            'Research in Cloud Computing, Big Data, Cyber Security',
       ),
 
       // Pharmacy
@@ -375,8 +483,13 @@ class IndianCoursesData {
         fees: 120000,
         totalSeats: 100,
         availableSeats: 40,
-        description: 'B.Pharm is a professional degree in pharmaceutical sciences covering drug formulation, pharmacology, medicinal chemistry, and pharmacy practice.',
-        eligibility: ['10+2 with PCB/PCM', 'Minimum 50% aggregate', 'State entrance test'],
+        description:
+            'B.Pharm is a professional degree in pharmaceutical sciences covering drug formulation, pharmacology, medicinal chemistry, and pharmacy practice.',
+        eligibility: [
+          '10+2 with PCB/PCM',
+          'Minimum 50% aggregate',
+          'State entrance test',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -387,11 +500,17 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'State Pharmacy Entrance Test',
         cutoffPercentage: 50.0,
-        careerOptions: ['Pharmacist', 'Drug Inspector', 'Pharmaceutical Researcher', 'Quality Control Officer'],
+        careerOptions: [
+          'Pharmacist',
+          'Drug Inspector',
+          'Pharmaceutical Researcher',
+          'Quality Control Officer',
+        ],
         affiliatedUniversity: 'Medical University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Pharmaceutical Chemistry Lab, Pharmacology Lab, Drug Formulation Lab',
+        labFacilities:
+            'Pharmaceutical Chemistry Lab, Pharmacology Lab, Drug Formulation Lab',
         researchOpportunities: 'Drug development, Pharmaceutical research',
       ),
 
@@ -409,8 +528,13 @@ class IndianCoursesData {
         fees: 200000,
         totalSeats: 40,
         availableSeats: 15,
-        description: 'B.Arch is a professional degree in architecture covering architectural design, building construction, urban planning, and sustainable architecture.',
-        eligibility: ['10+2 with PCM or 10+3 Diploma', 'Minimum 50% aggregate', 'NATA/JEE Main Paper 2'],
+        description:
+            'B.Arch is a professional degree in architecture covering architectural design, building construction, urban planning, and sustainable architecture.',
+        eligibility: [
+          '10+2 with PCM or 10+3 Diploma',
+          'Minimum 50% aggregate',
+          'NATA/JEE Main Paper 2',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -421,12 +545,19 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'NATA/JEE Main Paper 2',
         cutoffPercentage: 50.0,
-        careerOptions: ['Architect', 'Urban Planner', 'Interior Designer', 'Landscape Architect'],
+        careerOptions: [
+          'Architect',
+          'Urban Planner',
+          'Interior Designer',
+          'Landscape Architect',
+        ],
         affiliatedUniversity: 'Autonomous',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Design Studio, CAD Lab, Model Making Workshop, Material Testing Lab',
-        researchOpportunities: 'Sustainable architecture, Urban design, Heritage conservation',
+        labFacilities:
+            'Design Studio, CAD Lab, Model Making Workshop, Material Testing Lab',
+        researchOpportunities:
+            'Sustainable architecture, Urban design, Heritage conservation',
       ),
 
       // Education
@@ -443,8 +574,13 @@ class IndianCoursesData {
         fees: 80000,
         totalSeats: 100,
         availableSeats: 48,
-        description: 'B.Ed is a professional degree in education preparing students for teaching careers in schools covering pedagogy, educational psychology, and teaching methods.',
-        eligibility: ['Bachelor degree in any discipline', 'Minimum 50% aggregate', 'State B.Ed entrance test'],
+        description:
+            'B.Ed is a professional degree in education preparing students for teaching careers in schools covering pedagogy, educational psychology, and teaching methods.',
+        eligibility: [
+          'Bachelor degree in any discipline',
+          'Minimum 50% aggregate',
+          'State B.Ed entrance test',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -455,11 +591,17 @@ class IndianCoursesData {
         mediumOfInstruction: 'English/Hindi',
         entranceExam: 'State B.Ed Entrance Test',
         cutoffPercentage: 50.0,
-        careerOptions: ['School Teacher', 'Education Counselor', 'Curriculum Developer', 'Education Administrator'],
+        careerOptions: [
+          'School Teacher',
+          'Education Counselor',
+          'Curriculum Developer',
+          'Education Administrator',
+        ],
         affiliatedUniversity: 'State University',
         internshipIncluded: true,
         industryTieups: false,
-        labFacilities: 'Psychology Lab, Teaching Practice School, Educational Technology Lab',
+        labFacilities:
+            'Psychology Lab, Teaching Practice School, Educational Technology Lab',
         researchOpportunities: 'Educational research, Pedagogy studies',
       ),
 
@@ -477,8 +619,13 @@ class IndianCoursesData {
         fees: 180000,
         totalSeats: 60,
         availableSeats: 28,
-        description: 'BHM is a professional degree in hotel management covering hospitality operations, food production, front office management, and event management.',
-        eligibility: ['10+2 in any stream', 'Minimum 50% aggregate', 'NCHMCT JEE'],
+        description:
+            'BHM is a professional degree in hotel management covering hospitality operations, food production, front office management, and event management.',
+        eligibility: [
+          '10+2 in any stream',
+          'Minimum 50% aggregate',
+          'NCHMCT JEE',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -489,11 +636,18 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'NCHMCT JEE',
         cutoffPercentage: 50.0,
-        careerOptions: ['Hotel Manager', 'Event Manager', 'Chef', 'Restaurant Manager', 'Tourism Manager'],
+        careerOptions: [
+          'Hotel Manager',
+          'Event Manager',
+          'Chef',
+          'Restaurant Manager',
+          'Tourism Manager',
+        ],
         affiliatedUniversity: 'Autonomous',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Training Kitchen, Front Office Lab, Housekeeping Lab, Restaurant',
+        labFacilities:
+            'Training Kitchen, Front Office Lab, Housekeeping Lab, Restaurant',
         researchOpportunities: 'Hospitality research, Tourism studies',
       ),
 
@@ -511,8 +665,13 @@ class IndianCoursesData {
         fees: 90000,
         totalSeats: 80,
         availableSeats: 35,
-        description: 'BMC is an undergraduate program in mass communication covering journalism, advertising, public relations, digital media, and film production.',
-        eligibility: ['10+2 in any stream', 'Minimum 50% aggregate', 'University entrance test'],
+        description:
+            'BMC is an undergraduate program in mass communication covering journalism, advertising, public relations, digital media, and film production.',
+        eligibility: [
+          '10+2 in any stream',
+          'Minimum 50% aggregate',
+          'University entrance test',
+        ],
         isActive: true,
         scholarshipAvailable: true,
         placementSupport: true,
@@ -523,46 +682,53 @@ class IndianCoursesData {
         mediumOfInstruction: 'English',
         entranceExam: 'University Entrance Test',
         cutoffPercentage: 50.0,
-        careerOptions: ['Journalist', 'Content Writer', 'PR Executive', 'Social Media Manager', 'Film Producer'],
+        careerOptions: [
+          'Journalist',
+          'Content Writer',
+          'PR Executive',
+          'Social Media Manager',
+          'Film Producer',
+        ],
         affiliatedUniversity: 'State University',
         internshipIncluded: true,
         industryTieups: true,
-        labFacilities: 'Media Studio, Radio Station, TV Production Lab, Photography Lab',
+        labFacilities:
+            'Media Studio, Radio Station, TV Production Lab, Photography Lab',
         researchOpportunities: 'Media research, Communication studies',
       ),
     ];
   }
-  
+
   // MEDICAL COURSES - Return empty list since medical courses are already in getEngineeringCourses
   static List<Course> getMedicalCourses() {
     return [];
   }
-  
+
   // MANAGEMENT COURSES - Return empty list since management courses are already in getEngineeringCourses
   static List<Course> getManagementCourses() {
     return [];
   }
-  
+
   // COMMERCE COURSES - Return empty list since commerce courses are already in getEngineeringCourses
   static List<Course> getCommerceCourses() {
     return [];
   }
-  
+
   // LAW COURSES - Return empty list since law courses are already in getEngineeringCourses
   static List<Course> getLawCourses() {
     return [];
   }
-  
+
   // SCIENCE COURSES - Return empty list since science courses are already in getEngineeringCourses
   static List<Course> getScienceCourses() {
     return [];
   }
-  
+
   // COMPUTER COURSES - Return empty list since computer courses are already in getEngineeringCourses
   static List<Course> getComputerCourses() {
     return [];
   }
-  
+
   // PHARMACY COURSES - Return empty list since pharmacy courses are already in getEngineeringCourses
   static List<Course> getPharmacyCourses() {
     return [];

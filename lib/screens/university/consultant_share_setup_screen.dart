@@ -9,35 +9,37 @@ class ConsultantShareSetupScreen extends StatefulWidget {
   const ConsultantShareSetupScreen({Key? key}) : super(key: key);
 
   @override
-  State<ConsultantShareSetupScreen> createState() => _ConsultantShareSetupScreenState();
+  State<ConsultantShareSetupScreen> createState() =>
+      _ConsultantShareSetupScreenState();
 }
 
-class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen> {
+class _ConsultantShareSetupScreenState
+    extends State<ConsultantShareSetupScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   final _shareValueController = TextEditingController();
   final _remarksController = TextEditingController();
   final _consultantSearchController = TextEditingController();
   final _courseSearchController = TextEditingController();
-  
+
   // Search & Filter
   String _consultantSearchQuery = '';
   String _courseSearchQuery = '';
   String _courseCategoryFilter = 'All';
   double _minFeeFilter = 0;
   double _maxFeeFilter = 100000;
-  
+
   // Share Type
   String _shareType = 'Percentage';
   final List<String> _shareTypes = ['Percentage', 'Flat', 'One-Time'];
-  
+
   // Application Scope
   String _applyTo = 'All Courses';
-  
+
   // Duration for One-Time
   String _duration = '1st Year Only';
-  
+
   // Selected Consultants
   List<String> _selectedConsultants = [];
   final List<Map<String, String>> _consultants = [
@@ -47,31 +49,46 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
     {'id': 'C004', 'name': 'Neha Singh', 'region': 'East'},
     {'id': 'C005', 'name': 'Sanjay Gupta', 'region': 'Central'},
   ];
-  
+
   // Selected Courses
   List<String> _selectedCourses = [];
   final List<Map<String, dynamic>> _courses = [
-    {'id': 'CS001', 'name': 'B.Tech Computer Science', 'fee': 50000, 'category': 'Engineering'},
+    {
+      'id': 'CS001',
+      'name': 'B.Tech Computer Science',
+      'fee': 50000,
+      'category': 'Engineering',
+    },
     {'id': 'CS002', 'name': 'MBA', 'fee': 80000, 'category': 'Management'},
-    {'id': 'CS003', 'name': 'M.Tech AI/ML', 'fee': 60000, 'category': 'Engineering'},
+    {
+      'id': 'CS003',
+      'name': 'M.Tech AI/ML',
+      'fee': 60000,
+      'category': 'Engineering',
+    },
     {'id': 'CS004', 'name': 'BBA', 'fee': 40000, 'category': 'Management'},
-    {'id': 'CS005', 'name': 'B.Sc Data Science', 'fee': 45000, 'category': 'Science'},
+    {
+      'id': 'CS005',
+      'name': 'B.Sc Data Science',
+      'fee': 45000,
+      'category': 'Science',
+    },
   ];
-  
+
   // Document upload
   String? _uploadedDocumentName;
-  
+
   // Calculation results
   double _courseFee = 0;
   double _consultantShare = 0;
   double _universityProfit = 0;
-  
+
   // Apply same share to all courses
   bool _applySameShareToAll = true;
-  
+
   // Loading state
   bool _isLoading = false;
-  
+
   @override
   void dispose() {
     _shareValueController.dispose();
@@ -80,28 +97,40 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
     _courseSearchController.dispose();
     super.dispose();
   }
-  
+
   List<Map<String, String>> get _filteredConsultants {
     return _consultants.where((consultant) {
-      final matchesSearch = _consultantSearchQuery.isEmpty ||
-          consultant['name']!.toLowerCase().contains(_consultantSearchQuery.toLowerCase()) ||
-          consultant['id']!.toLowerCase().contains(_consultantSearchQuery.toLowerCase()) ||
-          consultant['region']!.toLowerCase().contains(_consultantSearchQuery.toLowerCase());
+      final matchesSearch =
+          _consultantSearchQuery.isEmpty ||
+          consultant['name']!.toLowerCase().contains(
+            _consultantSearchQuery.toLowerCase(),
+          ) ||
+          consultant['id']!.toLowerCase().contains(
+            _consultantSearchQuery.toLowerCase(),
+          ) ||
+          consultant['region']!.toLowerCase().contains(
+            _consultantSearchQuery.toLowerCase(),
+          );
       return matchesSearch;
     }).toList();
   }
-  
+
   List<Map<String, dynamic>> get _filteredCourses {
     return _courses.where((course) {
-      final matchesSearch = _courseSearchQuery.isEmpty ||
-          course['name'].toString().toLowerCase().contains(_courseSearchQuery.toLowerCase());
-      final matchesCategory = _courseCategoryFilter == 'All' ||
+      final matchesSearch =
+          _courseSearchQuery.isEmpty ||
+          course['name'].toString().toLowerCase().contains(
+            _courseSearchQuery.toLowerCase(),
+          );
+      final matchesCategory =
+          _courseCategoryFilter == 'All' ||
           course['category'] == _courseCategoryFilter;
-      final matchesFee = course['fee'] >= _minFeeFilter && course['fee'] <= _maxFeeFilter;
+      final matchesFee =
+          course['fee'] >= _minFeeFilter && course['fee'] <= _maxFeeFilter;
       return matchesSearch && matchesCategory && matchesFee;
     }).toList();
   }
-  
+
   void _calculateShare() {
     if (_shareValueController.text.isEmpty || _selectedCourses.isEmpty) {
       setState(() {
@@ -111,17 +140,19 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       });
       return;
     }
-    
+
     // Get average fee if multiple courses selected
     double totalFee = 0;
     for (var courseId in _selectedCourses) {
       var course = _courses.firstWhere((c) => c['id'] == courseId);
       totalFee += course['fee'];
     }
-    _courseFee = _selectedCourses.isNotEmpty ? totalFee / _selectedCourses.length : 0;
-    
+    _courseFee = _selectedCourses.isNotEmpty
+        ? totalFee / _selectedCourses.length
+        : 0;
+
     double shareValue = double.tryParse(_shareValueController.text) ?? 0;
-    
+
     if (_shareType == 'Percentage') {
       _consultantShare = (_courseFee * shareValue) / 100;
     } else if (_shareType == 'Flat') {
@@ -129,19 +160,19 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
     } else if (_shareType == 'One-Time') {
       _consultantShare = shareValue;
     }
-    
+
     _universityProfit = _courseFee - _consultantShare;
-    
+
     setState(() {});
   }
-  
+
   Future<void> _pickDocument() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx'],
       );
-      
+
       if (result != null) {
         setState(() {
           _uploadedDocumentName = result.files.single.name;
@@ -162,7 +193,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       );
     }
   }
-  
+
   void _showPreviewModal() {
     if (_formKey.currentState!.validate()) {
       if (_selectedConsultants.isEmpty) {
@@ -174,7 +205,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
         );
         return;
       }
-      
+
       if (_applyTo == 'Specific Courses' && _selectedCourses.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -184,11 +215,13 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
         );
         return;
       }
-      
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text(
             'Preview Share Summary',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -200,19 +233,26 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
               children: [
                 _buildPreviewRow('Share Type', _shareType),
                 const Divider(),
-                _buildPreviewRow('Share Value', 
-                  _shareType == 'Percentage' 
-                    ? '${_shareValueController.text}%' 
-                    : '₹${_shareValueController.text}'),
+                _buildPreviewRow(
+                  'Share Value',
+                  _shareType == 'Percentage'
+                      ? '${_shareValueController.text}%'
+                      : '₹${_shareValueController.text}',
+                ),
                 const Divider(),
                 _buildPreviewRow('Apply To', _applyTo),
                 const Divider(),
-                _buildPreviewRow('Selected Consultants', '${_selectedConsultants.length}'),
-                if (_applyTo == 'Specific Courses')
-                  ...[
-                    const Divider(),
-                    _buildPreviewRow('Selected Courses', '${_selectedCourses.length}'),
-                  ],
+                _buildPreviewRow(
+                  'Selected Consultants',
+                  '${_selectedConsultants.length}',
+                ),
+                if (_applyTo == 'Specific Courses') ...[
+                  const Divider(),
+                  _buildPreviewRow(
+                    'Selected Courses',
+                    '${_selectedCourses.length}',
+                  ),
+                ],
                 const Divider(),
                 const SizedBox(height: 12),
                 const Text(
@@ -220,11 +260,20 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
-                _buildPreviewRow('Course Fee', '₹${NumberFormat('#,##,###').format(_courseFee)}'),
-                _buildPreviewRow('Consultant Share', '₹${NumberFormat('#,##,###').format(_consultantShare)}', 
-                  valueColor: AppTheme.warning),
-                _buildPreviewRow('University Profit', '₹${NumberFormat('#,##,###').format(_universityProfit)}',
-                  valueColor: AppTheme.success),
+                _buildPreviewRow(
+                  'Course Fee',
+                  '₹${NumberFormat('#,##,###').format(_courseFee)}',
+                ),
+                _buildPreviewRow(
+                  'Consultant Share',
+                  '₹${NumberFormat('#,##,###').format(_consultantShare)}',
+                  valueColor: AppTheme.warning,
+                ),
+                _buildPreviewRow(
+                  'University Profit',
+                  '₹${NumberFormat('#,##,###').format(_universityProfit)}',
+                  valueColor: AppTheme.success,
+                ),
               ],
             ),
           ),
@@ -240,16 +289,21 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryBlue,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: const Text('Confirm & Save', style: TextStyle(color: AppTheme.white)),
+              child: const Text(
+                'Confirm & Save',
+                style: TextStyle(color: AppTheme.white),
+              ),
             ),
           ],
         ),
       );
     }
   }
-  
+
   Widget _buildPreviewRow(String label, String value, {Color? valueColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -272,25 +326,27 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ),
     );
   }
-  
+
   Future<void> _saveShareSetup() async {
     setState(() => _isLoading = true);
-    
+
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
-    
+
     setState(() => _isLoading = false);
-    
+
     if (!mounted) return;
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('✅ Consultant share setup saved successfully!\n📤 Consultants have been notified.'),
+        content: Text(
+          '✅ Consultant share setup saved successfully!\n📤 Consultants have been notified.',
+        ),
         backgroundColor: AppTheme.success,
         duration: Duration(seconds: 3),
       ),
     );
-    
+
     // Reset form
     _formKey.currentState!.reset();
     setState(() {
@@ -304,7 +360,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       _universityProfit = 0;
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -321,31 +377,31 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                   children: [
                     // Module Description (Compact)
                     _buildInfoCard(),
-                    
+
                     const SizedBox(height: 10),
-                    
+
                     // 1. Share Type Section
                     _buildSectionCard(
                       title: '1️⃣ Share Type',
                       child: _buildShareTypeSection(),
                     ),
-                    
+
                     const SizedBox(height: 10),
-                    
+
                     // 2. Select Consultants Section
                     _buildSectionCard(
                       title: '2️⃣ Consultants',
                       child: _buildConsultantSelectionSection(),
                     ),
-                    
+
                     const SizedBox(height: 10),
-                    
+
                     // 3. Apply To Section
                     _buildSectionCard(
                       title: '3️⃣ Scope',
                       child: _buildApplicationScopeSection(),
                     ),
-                    
+
                     if (_applyTo == 'Specific Courses') ...[
                       const SizedBox(height: 10),
                       _buildSectionCard(
@@ -353,36 +409,39 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                         child: _buildCourseSelectionSection(),
                       ),
                     ],
-                    
+
                     const SizedBox(height: 10),
-                    
+
                     // 4. Enter Share Details
                     _buildSectionCard(
-                      title: '${_applyTo == 'Specific Courses' ? '5️⃣' : '4️⃣'} Share Value',
+                      title:
+                          '${_applyTo == 'Specific Courses' ? '5️⃣' : '4️⃣'} Share Value',
                       child: _buildShareDetailsSection(),
                     ),
-                    
+
                     const SizedBox(height: 10),
-                    
+
                     // 5. Auto Calculation Summary
                     _buildSectionCard(
-                      title: '${_applyTo == 'Specific Courses' ? '6️⃣' : '5️⃣'} Auto Calculation Summary',
+                      title:
+                          '${_applyTo == 'Specific Courses' ? '6️⃣' : '5️⃣'} Auto Calculation Summary',
                       child: _buildCalculationSummary(),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // 6. Upload Document
                     _buildSectionCard(
-                      title: '${_applyTo == 'Specific Courses' ? '7️⃣' : '6️⃣'} Upload Supporting Document (Optional)',
+                      title:
+                          '${_applyTo == 'Specific Courses' ? '7️⃣' : '6️⃣'} Upload Supporting Document (Optional)',
                       child: _buildDocumentUploadSection(),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Action Buttons
                     _buildActionButtons(),
-                    
+
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -390,7 +449,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
             ),
     );
   }
-  
+
   Widget _buildInfoCard() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -411,20 +470,28 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
               color: AppTheme.primaryBlue.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.info_outline, color: AppTheme.primaryBlue, size: 24),
+            child: const Icon(
+              Icons.info_outline,
+              color: AppTheme.primaryBlue,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
               'Define and manage commission structure for consultants. Auto-calculate profit distribution for transparent revenue sharing.',
-              style: TextStyle(fontSize: 12, color: AppTheme.charcoal, height: 1.4),
+              style: TextStyle(
+                fontSize: 12,
+                color: AppTheme.charcoal,
+                height: 1.4,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-  
+
   Widget _buildSectionCard({required String title, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -456,26 +523,36 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ),
     );
   }
-  
+
   Widget _buildShareTypeSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Share Type',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.mediumGray),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.mediumGray,
+          ),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _shareType,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: AppTheme.lightGray.withOpacity(0.3),
           ),
           items: _shareTypes.map((type) {
-            return DropdownMenuItem(value: type, child: Text(type, style: const TextStyle(fontSize: 13)));
+            return DropdownMenuItem(
+              value: type,
+              child: Text(type, style: const TextStyle(fontSize: 13)),
+            );
           }).toList(),
           onChanged: (value) {
             setState(() {
@@ -489,17 +566,21 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           _shareType == 'Percentage'
               ? '📊 Share calculated as % of course fee'
               : _shareType == 'Flat'
-                  ? '💰 Fixed amount per student enrollment'
-                  : '🎯 One-time payment (1st year or full duration)',
-          style: TextStyle(fontSize: 11, color: AppTheme.mediumGray.withOpacity(0.8), fontStyle: FontStyle.italic),
+              ? '💰 Fixed amount per student enrollment'
+              : '🎯 One-time payment (1st year or full duration)',
+          style: TextStyle(
+            fontSize: 11,
+            color: AppTheme.mediumGray.withOpacity(0.8),
+            fontStyle: FontStyle.italic,
+          ),
         ),
       ],
     );
   }
-  
+
   Widget _buildConsultantSelectionSection() {
     final filteredConsultants = _filteredConsultants;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -509,7 +590,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           decoration: InputDecoration(
             hintText: '🔍 Search consultants by name, ID, or region...',
             hintStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: AppTheme.lightGray.withOpacity(0.3),
@@ -527,7 +611,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           onChanged: (value) => setState(() => _consultantSearchQuery = value),
         ),
         const SizedBox(height: 10),
-        
+
         // Consultant List (Compact)
         Container(
           constraints: const BoxConstraints(maxHeight: 180),
@@ -541,42 +625,62 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                     padding: EdgeInsets.all(16),
                     child: Text(
                       'No consultants found',
-                      style: TextStyle(fontSize: 11, color: AppTheme.mediumGray),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.mediumGray,
+                      ),
                     ),
                   ),
                 )
               : ListView(
                   shrinkWrap: true,
                   children: filteredConsultants.map((consultant) {
-                    bool isSelected = _selectedConsultants.contains(consultant['id']);
+                    bool isSelected = _selectedConsultants.contains(
+                      consultant['id'],
+                    );
                     return CheckboxListTile(
                       dense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 0,
+                      ),
                       title: Row(
                         children: [
                           Expanded(
                             child: Text(
                               consultant['name']!,
-                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppTheme.primaryBlue.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               consultant['id']!,
-                              style: const TextStyle(fontSize: 9, color: AppTheme.primaryBlue),
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppTheme.primaryBlue,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       subtitle: Text(
                         consultant['region']!,
-                        style: const TextStyle(fontSize: 9, color: AppTheme.mediumGray),
+                        style: const TextStyle(
+                          fontSize: 9,
+                          color: AppTheme.mediumGray,
+                        ),
                       ),
                       value: isSelected,
                       activeColor: AppTheme.primaryBlue,
@@ -599,13 +703,20 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           children: [
             Text(
               '✅ Selected: ${_selectedConsultants.length}',
-              style: const TextStyle(fontSize: 10, color: AppTheme.success, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppTheme.success,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             if (_selectedConsultants.isNotEmpty)
               TextButton(
                 onPressed: () => setState(() => _selectedConsultants.clear()),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -616,14 +727,18 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildApplicationScopeSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Apply To',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.mediumGray),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.mediumGray,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -632,7 +747,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
               child: RadioListTile<String>(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                title: const Text('All Courses', style: TextStyle(fontSize: 12)),
+                title: const Text(
+                  'All Courses',
+                  style: TextStyle(fontSize: 12),
+                ),
                 value: 'All Courses',
                 groupValue: _applyTo,
                 activeColor: AppTheme.primaryBlue,
@@ -640,7 +758,9 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                   setState(() {
                     _applyTo = value!;
                     if (_applyTo == 'All Courses') {
-                      _selectedCourses = _courses.map((c) => c['id'] as String).toList();
+                      _selectedCourses = _courses
+                          .map((c) => c['id'] as String)
+                          .toList();
                     } else {
                       _selectedCourses.clear();
                     }
@@ -653,7 +773,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
               child: RadioListTile<String>(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Specific Courses', style: TextStyle(fontSize: 12)),
+                title: const Text(
+                  'Specific Courses',
+                  style: TextStyle(fontSize: 12),
+                ),
                 value: 'Specific Courses',
                 groupValue: _applyTo,
                 activeColor: AppTheme.primaryBlue,
@@ -671,10 +794,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildCourseSelectionSection() {
     final filteredCourses = _filteredCourses;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -684,7 +807,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           decoration: InputDecoration(
             hintText: '🔍 Search courses...',
             hintStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: AppTheme.lightGray.withOpacity(0.3),
@@ -702,7 +828,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           onChanged: (value) => setState(() => _courseSearchQuery = value),
         ),
         const SizedBox(height: 8),
-        
+
         // Filters Row (Compact)
         Row(
           children: [
@@ -713,15 +839,23 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                 decoration: InputDecoration(
                   labelText: 'Category',
                   labelStyle: const TextStyle(fontSize: 10),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
                   isDense: true,
                 ),
                 style: const TextStyle(fontSize: 11, color: AppTheme.charcoal),
-                items: ['All', 'Engineering', 'Management', 'Science'].map((cat) {
+                items: ['All', 'Engineering', 'Management', 'Science'].map((
+                  cat,
+                ) {
                   return DropdownMenuItem(value: cat, child: Text(cat));
                 }).toList(),
-                onChanged: (value) => setState(() => _courseCategoryFilter = value!),
+                onChanged: (value) =>
+                    setState(() => _courseCategoryFilter = value!),
               ),
             ),
             const SizedBox(width: 8),
@@ -772,7 +906,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           ],
         ),
         const SizedBox(height: 8),
-        
+
         // Course List (Compact)
         Container(
           constraints: const BoxConstraints(maxHeight: 200),
@@ -786,7 +920,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                     padding: EdgeInsets.all(16),
                     child: Text(
                       'No courses found',
-                      style: TextStyle(fontSize: 11, color: AppTheme.mediumGray),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.mediumGray,
+                      ),
                     ),
                   ),
                 )
@@ -796,13 +933,19 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                     bool isSelected = _selectedCourses.contains(course['id']);
                     return CheckboxListTile(
                       dense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 0,
+                      ),
                       title: Row(
                         children: [
                           Expanded(
                             child: Text(
                               course['name'],
-                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -812,20 +955,30 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                       subtitle: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppTheme.success.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               '₹${NumberFormat('#,##,###').format(course['fee'])}',
-                              style: const TextStyle(fontSize: 9, color: AppTheme.success, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppTheme.success,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             course['category'],
-                            style: const TextStyle(fontSize: 9, color: AppTheme.mediumGray),
+                            style: const TextStyle(
+                              fontSize: 9,
+                              color: AppTheme.mediumGray,
+                            ),
                           ),
                         ],
                       ),
@@ -854,7 +1007,8 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                 Checkbox(
                   value: _applySameShareToAll,
                   activeColor: AppTheme.primaryBlue,
-                  onChanged: (value) => setState(() => _applySameShareToAll = value!),
+                  onChanged: (value) =>
+                      setState(() => _applySameShareToAll = value!),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 const Text('Same share', style: TextStyle(fontSize: 10)),
@@ -862,7 +1016,11 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
             ),
             Text(
               '✅ ${_selectedCourses.length} selected',
-              style: const TextStyle(fontSize: 10, color: AppTheme.success, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppTheme.success,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             if (_selectedCourses.isNotEmpty)
               TextButton(
@@ -871,7 +1029,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                   _calculateShare();
                 }),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -882,14 +1043,16 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildShareDetailsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTextField(
           label: 'Consultant Share Value',
-          hint: _shareType == 'Percentage' ? 'Enter percentage (e.g., 10)' : 'Enter amount (e.g., 5000)',
+          hint: _shareType == 'Percentage'
+              ? 'Enter percentage (e.g., 10)'
+              : 'Enter amount (e.g., 5000)',
           controller: _shareValueController,
           keyboardType: TextInputType.number,
           validator: (value) {
@@ -906,12 +1069,16 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           },
           onChanged: (value) => _calculateShare(),
         ),
-        
+
         if (_shareType == 'One-Time') ...[
           const SizedBox(height: 12),
           const Text(
             'Duration',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.mediumGray),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.mediumGray,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -920,7 +1087,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                 child: RadioListTile<String>(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('1st Year Only', style: TextStyle(fontSize: 12)),
+                  title: const Text(
+                    '1st Year Only',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   value: '1st Year Only',
                   groupValue: _duration,
                   activeColor: AppTheme.primaryBlue,
@@ -931,7 +1101,10 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
                 child: RadioListTile<String>(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Full Duration', style: TextStyle(fontSize: 12)),
+                  title: const Text(
+                    'Full Duration',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   value: 'Full Duration',
                   groupValue: _duration,
                   activeColor: AppTheme.primaryBlue,
@@ -944,7 +1117,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildCalculationSummary() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -983,8 +1156,13 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ),
     );
   }
-  
-  Widget _buildCalculationRow(String label, String value, IconData icon, Color color) {
+
+  Widget _buildCalculationRow(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Row(
       children: [
         Container(
@@ -1013,7 +1191,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildDocumentUploadSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1024,7 +1202,9 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           label: Text(_uploadedDocumentName ?? 'Upload MOU / Agreement'),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
         if (_uploadedDocumentName != null) ...[
@@ -1059,7 +1239,7 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
       ],
     );
   }
-  
+
   Widget _buildActionButtons() {
     return Row(
       children: [
@@ -1072,7 +1252,9 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
             label: const Text('View Reports'),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ),
@@ -1082,11 +1264,16 @@ class _ConsultantShareSetupScreenState extends State<ConsultantShareSetupScreen>
           child: ElevatedButton.icon(
             onPressed: _showPreviewModal,
             icon: const Icon(Icons.preview, size: 18, color: AppTheme.white),
-            label: const Text('Preview & Save', style: TextStyle(color: AppTheme.white)),
+            label: const Text(
+              'Preview & Save',
+              style: TextStyle(color: AppTheme.white),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryBlue,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ),

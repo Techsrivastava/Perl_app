@@ -6,13 +6,15 @@ class ComprehensiveConsultantRegisterScreen extends StatefulWidget {
   const ComprehensiveConsultantRegisterScreen({super.key});
 
   @override
-  State<ComprehensiveConsultantRegisterScreen> createState() => _ComprehensiveConsultantRegisterScreenState();
+  State<ComprehensiveConsultantRegisterScreen> createState() =>
+      _ComprehensiveConsultantRegisterScreenState();
 }
 
-class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveConsultantRegisterScreen> {
+class _ComprehensiveConsultantRegisterScreenState
+    extends State<ComprehensiveConsultantRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
-  
+
   // Step 1: Basic Information
   final _nameController = TextEditingController();
   final _contactController = TextEditingController();
@@ -27,7 +29,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
   final _pincodeController = TextEditingController();
   File? _profilePhoto;
   bool _passwordVisible = false;
-  
+
   // Step 2: Business Details
   final _businessNameController = TextEditingController();
   String _registrationType = 'Individual';
@@ -39,7 +41,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
   final _officeAddressController = TextEditingController();
   final _websiteController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   // Step 3: Bank Details (Optional)
   final _accountHolderController = TextEditingController();
   final _accountNumberController = TextEditingController();
@@ -50,7 +52,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
   File? _qrCode;
   final _panController = TextEditingController();
   File? _cancelledCheque;
-  
+
   // Step 4: Documents (Optional)
   final _aadharNumberController = TextEditingController();
   File? _aadharFront;
@@ -58,14 +60,39 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
   final _panNumberController = TextEditingController();
   File? _panCard;
   File? _gstCertificate;
-  
+
   final List<String> _indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
-    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-    'Delhi', 'Jammu and Kashmir', 'Ladakh'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh',
   ];
 
   @override
@@ -144,15 +171,23 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('🎉 Registration Successful!'),
-        content: const Text('Your consultant account has been created. You will be redirected to complete your profile.'),
+        content: const Text(
+          'Your consultant account has been created. You will be redirected to complete your profile.',
+        ),
         actions: [
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/consultant-profile-setup');
+              Navigator.pushReplacementNamed(
+                context,
+                '/consultant-profile-setup',
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
-            child: const Text('Continue', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Continue',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -191,7 +226,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                   final isCompleted = index < _currentStep;
                   final isCurrent = index == _currentStep;
                   final isUpcoming = index > _currentStep;
-                  
+
                   return Expanded(
                     child: Row(
                       children: [
@@ -205,26 +240,35 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                                 height: 40,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: isCompleted 
-                                      ? AppTheme.success 
-                                      : isCurrent 
-                                          ? AppTheme.primaryBlue 
-                                          : Colors.grey[300],
-                                  boxShadow: isCurrent ? [
-                                    BoxShadow(
-                                      color: AppTheme.primaryBlue.withValues(alpha: 0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ] : [],
+                                  color: isCompleted
+                                      ? AppTheme.success
+                                      : isCurrent
+                                      ? AppTheme.primaryBlue
+                                      : Colors.grey[300],
+                                  boxShadow: isCurrent
+                                      ? [
+                                          BoxShadow(
+                                            color: AppTheme.primaryBlue
+                                                .withValues(alpha: 0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ]
+                                      : [],
                                 ),
                                 child: Center(
                                   child: isCompleted
-                                      ? const Icon(Icons.check, color: Colors.white, size: 20)
+                                      ? const Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                          size: 20,
+                                        )
                                       : Text(
                                           '${index + 1}',
                                           style: TextStyle(
-                                            color: isUpcoming ? Colors.grey[600] : Colors.white,
+                                            color: isUpcoming
+                                                ? Colors.grey[600]
+                                                : Colors.white,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
@@ -237,8 +281,12 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                                 _getStepLabel(index),
                                 style: TextStyle(
                                   fontSize: 10,
-                                  fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
-                                  color: isCompleted || isCurrent ? AppTheme.primaryBlue : Colors.grey[600],
+                                  fontWeight: isCurrent
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isCompleted || isCurrent
+                                      ? AppTheme.primaryBlue
+                                      : Colors.grey[600],
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 2,
@@ -267,7 +315,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                 }),
               ),
             ),
-            
+
             // Step Title
             Container(
               color: Colors.white,
@@ -281,10 +329,12 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                   const SizedBox(width: 8),
                   Text(
                     _getStepTitle(),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  if (_currentStep > 1)
-                    const Spacer(),
+                  if (_currentStep > 1) const Spacer(),
                   if (_currentStep > 1)
                     Text(
                       '(Optional)',
@@ -293,7 +343,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                 ],
               ),
             ),
-            
+
             // Step Content
             Expanded(
               child: SingleChildScrollView(
@@ -301,7 +351,7 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                 child: _buildStepContent(),
               ),
             ),
-            
+
             // Navigation Buttons
             Container(
               padding: const EdgeInsets.all(16),
@@ -333,15 +383,18 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                     child: ElevatedButton(
                       onPressed: _handleNext,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _currentStep == 3 ? AppTheme.success : AppTheme.primaryBlue,
+                        backgroundColor: _currentStep == 3
+                            ? AppTheme.success
+                            : AppTheme.primaryBlue,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: Text(_currentStep == 3 ? 'Complete Registration' : 'Next'),
+                      child: Text(
+                        _currentStep == 3 ? 'Complete Registration' : 'Next',
+                      ),
                     ),
                   ),
-                  if (_currentStep > 1)
-                    const SizedBox(width: 12),
+                  if (_currentStep > 1) const SizedBox(width: 12),
                   if (_currentStep > 1)
                     TextButton(
                       onPressed: () => setState(() => _currentStep++),
@@ -405,36 +458,96 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoCard('Personal & Contact Details', 'Fill your basic information'),
+        _buildInfoCard(
+          'Personal & Contact Details',
+          'Fill your basic information',
+        ),
         const SizedBox(height: 16),
-        
+
         _buildTextField('Full Name *', _nameController, Icons.person),
         const SizedBox(height: 16),
-        _buildTextField('Email Address *', _emailController, Icons.email, keyboardType: TextInputType.emailAddress),
+        _buildTextField(
+          'Email Address *',
+          _emailController,
+          Icons.email,
+          keyboardType: TextInputType.emailAddress,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Mobile Number *', _contactController, Icons.phone, keyboardType: TextInputType.phone),
+        _buildTextField(
+          'Mobile Number *',
+          _contactController,
+          Icons.phone,
+          keyboardType: TextInputType.phone,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Alternate Contact', _altContactController, Icons.phone_android, keyboardType: TextInputType.phone),
+        _buildTextField(
+          'Alternate Contact',
+          _altContactController,
+          Icons.phone_android,
+          keyboardType: TextInputType.phone,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('WhatsApp Number', _whatsappController, Icons.chat, keyboardType: TextInputType.phone),
+        _buildTextField(
+          'WhatsApp Number',
+          _whatsappController,
+          Icons.chat,
+          keyboardType: TextInputType.phone,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Password *', _passwordController, Icons.lock, isPassword: true),
+        _buildTextField(
+          'Password *',
+          _passwordController,
+          Icons.lock,
+          isPassword: true,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Confirm Password *', _confirmPasswordController, Icons.lock_clock, isPassword: true),
+        _buildTextField(
+          'Confirm Password *',
+          _confirmPasswordController,
+          Icons.lock_clock,
+          isPassword: true,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Address', _addressController, Icons.location_on, maxLines: 2),
+        _buildTextField(
+          'Address',
+          _addressController,
+          Icons.location_on,
+          maxLines: 2,
+        ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField('City *', _cityController, Icons.location_city)),
+            Expanded(
+              child: _buildTextField(
+                'City *',
+                _cityController,
+                Icons.location_city,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildDropdown('State *', _selectedState, _indianStates, (v) => setState(() => _selectedState = v!))),
+            Expanded(
+              child: _buildDropdown(
+                'State *',
+                _selectedState,
+                _indianStates,
+                (v) => setState(() => _selectedState = v!),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField('Pincode', _pincodeController, Icons.pin_drop, keyboardType: TextInputType.number),
+        _buildTextField(
+          'Pincode',
+          _pincodeController,
+          Icons.pin_drop,
+          keyboardType: TextInputType.number,
+        ),
         const SizedBox(height: 16),
-        _buildFileUpload('Profile Photo', _profilePhoto, (file) => setState(() => _profilePhoto = file)),
+        _buildFileUpload(
+          'Profile Photo',
+          _profilePhoto,
+          (file) => setState(() => _profilePhoto = file),
+        ),
       ],
     );
   }
@@ -443,10 +556,17 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoCard('Business / Consultancy Information', 'Provide your business details'),
+        _buildInfoCard(
+          'Business / Consultancy Information',
+          'Provide your business details',
+        ),
         const SizedBox(height: 16),
-        
-        _buildTextField('Business / Consultancy Name *', _businessNameController, Icons.business),
+
+        _buildTextField(
+          'Business / Consultancy Name *',
+          _businessNameController,
+          Icons.business,
+        ),
         const SizedBox(height: 16),
         _buildDropdown(
           'Registration Type *',
@@ -455,11 +575,23 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
           (v) => setState(() => _registrationType = v!),
         ),
         const SizedBox(height: 16),
-        _buildTextField('Registration / GST / CIN Number', _registrationNoController, Icons.confirmation_number),
+        _buildTextField(
+          'Registration / GST / CIN Number',
+          _registrationNoController,
+          Icons.confirmation_number,
+        ),
         const SizedBox(height: 16),
-        _buildFileUpload('Registration Proof', _registrationProof, (file) => setState(() => _registrationProof = file)),
+        _buildFileUpload(
+          'Registration Proof',
+          _registrationProof,
+          (file) => setState(() => _registrationProof = file),
+        ),
         const SizedBox(height: 16),
-        _buildFileUpload('Consultancy Logo', _consultancyLogo, (file) => setState(() => _consultancyLogo = file)),
+        _buildFileUpload(
+          'Consultancy Logo',
+          _consultancyLogo,
+          (file) => setState(() => _consultancyLogo = file),
+        ),
         const SizedBox(height: 16),
         _buildDropdown(
           'Consultancy Type *',
@@ -468,13 +600,33 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
           (v) => setState(() => _consultancyType = v!),
         ),
         const SizedBox(height: 16),
-        _buildTextField('Establishment Year', _establishedYearController, Icons.calendar_today, keyboardType: TextInputType.number),
+        _buildTextField(
+          'Establishment Year',
+          _establishedYearController,
+          Icons.calendar_today,
+          keyboardType: TextInputType.number,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Office Address', _officeAddressController, Icons.location_on, maxLines: 2),
+        _buildTextField(
+          'Office Address',
+          _officeAddressController,
+          Icons.location_on,
+          maxLines: 2,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Website / Social Links', _websiteController, Icons.link),
+        _buildTextField(
+          'Website / Social Links',
+          _websiteController,
+          Icons.link,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Consultancy Description', _descriptionController, Icons.description, maxLines: 4, hint: 'Max 250 words'),
+        _buildTextField(
+          'Consultancy Description',
+          _descriptionController,
+          Icons.description,
+          maxLines: 4,
+          hint: 'Max 250 words',
+        ),
       ],
     );
   }
@@ -483,7 +635,10 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoCard('Bank & Payment Details', 'For commission transfer (can be added later)'),
+        _buildInfoCard(
+          'Bank & Payment Details',
+          'For commission transfer (can be added later)',
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -506,12 +661,25 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
           ),
         ),
         const SizedBox(height: 16),
-        
-        _buildTextField('Account Holder Name', _accountHolderController, Icons.person),
+
+        _buildTextField(
+          'Account Holder Name',
+          _accountHolderController,
+          Icons.person,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Account Number', _accountNumberController, Icons.account_balance_wallet, keyboardType: TextInputType.number),
+        _buildTextField(
+          'Account Number',
+          _accountNumberController,
+          Icons.account_balance_wallet,
+          keyboardType: TextInputType.number,
+        ),
         const SizedBox(height: 16),
-        _buildTextField('Bank Name', _bankNameController, Icons.account_balance),
+        _buildTextField(
+          'Bank Name',
+          _bankNameController,
+          Icons.account_balance,
+        ),
         const SizedBox(height: 16),
         _buildTextField('Branch Name', _branchController, Icons.location_city),
         const SizedBox(height: 16),
@@ -519,11 +687,19 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
         const SizedBox(height: 16),
         _buildTextField('UPI ID', _upiController, Icons.payment),
         const SizedBox(height: 16),
-        _buildFileUpload('QR Code (UPI/Paytm)', _qrCode, (file) => setState(() => _qrCode = file)),
+        _buildFileUpload(
+          'QR Code (UPI/Paytm)',
+          _qrCode,
+          (file) => setState(() => _qrCode = file),
+        ),
         const SizedBox(height: 16),
         _buildTextField('PAN Number', _panController, Icons.credit_card),
         const SizedBox(height: 16),
-        _buildFileUpload('Cancelled Cheque', _cancelledCheque, (file) => setState(() => _cancelledCheque = file)),
+        _buildFileUpload(
+          'Cancelled Cheque',
+          _cancelledCheque,
+          (file) => setState(() => _cancelledCheque = file),
+        ),
       ],
     );
   }
@@ -532,7 +708,10 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoCard('Documents & KYC Verification', 'Upload verification documents (can be added later)'),
+        _buildInfoCard(
+          'Documents & KYC Verification',
+          'Upload verification documents (can be added later)',
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -555,22 +734,51 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
           ),
         ),
         const SizedBox(height: 16),
-        
-        _buildTextField('Aadhar Card Number', _aadharNumberController, Icons.credit_card, keyboardType: TextInputType.number),
+
+        _buildTextField(
+          'Aadhar Card Number',
+          _aadharNumberController,
+          Icons.credit_card,
+          keyboardType: TextInputType.number,
+        ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildFileUpload('Aadhar Front', _aadharFront, (file) => setState(() => _aadharFront = file))),
+            Expanded(
+              child: _buildFileUpload(
+                'Aadhar Front',
+                _aadharFront,
+                (file) => setState(() => _aadharFront = file),
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildFileUpload('Aadhar Back', _aadharBack, (file) => setState(() => _aadharBack = file))),
+            Expanded(
+              child: _buildFileUpload(
+                'Aadhar Back',
+                _aadharBack,
+                (file) => setState(() => _aadharBack = file),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField('PAN Card Number', _panNumberController, Icons.credit_card),
+        _buildTextField(
+          'PAN Card Number',
+          _panNumberController,
+          Icons.credit_card,
+        ),
         const SizedBox(height: 16),
-        _buildFileUpload('PAN Card', _panCard, (file) => setState(() => _panCard = file)),
+        _buildFileUpload(
+          'PAN Card',
+          _panCard,
+          (file) => setState(() => _panCard = file),
+        ),
         const SizedBox(height: 16),
-        _buildFileUpload('GST Certificate', _gstCertificate, (file) => setState(() => _gstCertificate = file)),
+        _buildFileUpload(
+          'GST Certificate',
+          _gstCertificate,
+          (file) => setState(() => _gstCertificate = file),
+        ),
       ],
     );
   }
@@ -580,7 +788,10 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.primaryBlue.withValues(alpha: 0.1), AppTheme.primaryBlue.withValues(alpha: 0.05)],
+          colors: [
+            AppTheme.primaryBlue.withValues(alpha: 0.1),
+            AppTheme.primaryBlue.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.3)),
@@ -593,15 +804,29 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
               color: AppTheme.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.info_outline, color: AppTheme.primaryBlue, size: 20),
+            child: const Icon(
+              Icons.info_outline,
+              color: AppTheme.primaryBlue,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
-                Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryBlue,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                ),
               ],
             ),
           ),
@@ -610,7 +835,10 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller,
+    IconData icon, {
     bool isPassword = false,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
@@ -627,8 +855,11 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
         prefixIcon: Icon(icon, size: 20),
         suffixIcon: isPassword
             ? IconButton(
-                icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                icon: Icon(
+                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () =>
+                    setState(() => _passwordVisible = !_passwordVisible),
               )
             : null,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -638,7 +869,12 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
     );
   }
 
-  Widget _buildDropdown(String label, String value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropdown(
+    String label,
+    String value,
+    List<String> items,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
@@ -647,24 +883,34 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
         filled: true,
         fillColor: Colors.white,
       ),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
       onChanged: onChanged,
     );
   }
 
-  Widget _buildFileUpload(String label, File? file, Function(File?) onFilePicked) {
+  Widget _buildFileUpload(
+    String label,
+    File? file,
+    Function(File?) onFilePicked,
+  ) {
     return InkWell(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File picker for $label')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('File picker for $label')));
       },
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: file != null ? AppTheme.success.withValues(alpha: 0.1) : Colors.white,
+          color: file != null
+              ? AppTheme.success.withValues(alpha: 0.1)
+              : Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: file != null ? AppTheme.success : Colors.grey[300]!),
+          border: Border.all(
+            color: file != null ? AppTheme.success : Colors.grey[300]!,
+          ),
         ),
         child: Row(
           children: [
@@ -680,7 +926,9 @@ class _ComprehensiveConsultantRegisterScreenState extends State<ComprehensiveCon
                 style: TextStyle(
                   fontSize: 13,
                   color: file != null ? AppTheme.success : Colors.grey[700],
-                  fontWeight: file != null ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: file != null
+                      ? FontWeight.w600
+                      : FontWeight.normal,
                 ),
               ),
             ),

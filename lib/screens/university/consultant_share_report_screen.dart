@@ -7,17 +7,19 @@ class ConsultantShareReportScreen extends StatefulWidget {
   const ConsultantShareReportScreen({Key? key}) : super(key: key);
 
   @override
-  State<ConsultantShareReportScreen> createState() => _ConsultantShareReportScreenState();
+  State<ConsultantShareReportScreen> createState() =>
+      _ConsultantShareReportScreenState();
 }
 
-class _ConsultantShareReportScreenState extends State<ConsultantShareReportScreen> {
+class _ConsultantShareReportScreenState
+    extends State<ConsultantShareReportScreen> {
   // Search and Filter
   final _searchController = TextEditingController();
   String _searchQuery = '';
   String _sortBy = 'Recent Updates';
   DateTime? _startDate;
   DateTime? _endDate;
-  
+
   // Mock Data
   final List<Map<String, dynamic>> _shareRecords = [
     {
@@ -81,61 +83,79 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       'lastUpdated': DateTime.now().subtract(const Duration(days: 3)),
     },
   ];
-  
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
-  
+
   List<Map<String, dynamic>> get _filteredRecords {
     var records = List<Map<String, dynamic>>.from(_shareRecords);
-    
+
     // Search filter
     if (_searchQuery.isNotEmpty) {
       records = records.where((record) {
-        return record['consultantName'].toString().toLowerCase().contains(_searchQuery.toLowerCase()) ||
-               record['courseName'].toString().toLowerCase().contains(_searchQuery.toLowerCase()) ||
-               record['consultantId'].toString().toLowerCase().contains(_searchQuery.toLowerCase());
+        return record['consultantName'].toString().toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            ) ||
+            record['courseName'].toString().toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            ) ||
+            record['consultantId'].toString().toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
       }).toList();
     }
-    
+
     // Date range filter
     if (_startDate != null && _endDate != null) {
       records = records.where((record) {
         final date = record['lastUpdated'] as DateTime;
         return date.isAfter(_startDate!.subtract(const Duration(days: 1))) &&
-               date.isBefore(_endDate!.add(const Duration(days: 1)));
+            date.isBefore(_endDate!.add(const Duration(days: 1)));
       }).toList();
     }
-    
+
     // Sort
     switch (_sortBy) {
       case 'Highest Share':
-        records.sort((a, b) => (b['consultantShare'] as double).compareTo(a['consultantShare'] as double));
+        records.sort(
+          (a, b) => (b['consultantShare'] as double).compareTo(
+            a['consultantShare'] as double,
+          ),
+        );
         break;
       case 'Lowest Share':
-        records.sort((a, b) => (a['consultantShare'] as double).compareTo(b['consultantShare'] as double));
+        records.sort(
+          (a, b) => (a['consultantShare'] as double).compareTo(
+            b['consultantShare'] as double,
+          ),
+        );
         break;
       case 'Recent Updates':
       default:
-        records.sort((a, b) => (b['lastUpdated'] as DateTime).compareTo(a['lastUpdated'] as DateTime));
+        records.sort(
+          (a, b) => (b['lastUpdated'] as DateTime).compareTo(
+            a['lastUpdated'] as DateTime,
+          ),
+        );
         break;
     }
-    
+
     return records;
   }
-  
+
   Future<void> _selectDate(bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: isStartDate 
-          ? (_startDate ?? DateTime.now()) 
+      initialDate: isStartDate
+          ? (_startDate ?? DateTime.now())
           : (_endDate ?? DateTime.now()),
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    
+
     if (picked != null) {
       setState(() {
         if (isStartDate) {
@@ -146,7 +166,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       });
     }
   }
-  
+
   void _clearFilters() {
     setState(() {
       _searchController.clear();
@@ -156,7 +176,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       _sortBy = 'Recent Updates';
     });
   }
-  
+
   void _exportReport(String format) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -165,11 +185,11 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final filteredRecords = _filteredRecords;
-    
+
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       appBar: const AppHeader(title: '📊 Consultant Share Reports'),
@@ -198,16 +218,21 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                             },
                           )
                         : null,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     filled: true,
                     fillColor: AppTheme.lightGray.withOpacity(0.3),
                   ),
                   onChanged: (value) => setState(() => _searchQuery = value),
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Date Range and Sort
                 Row(
                   children: [
@@ -216,9 +241,14 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                       child: InkWell(
                         onTap: () => _selectDate(true),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                            border: Border.all(
+                              color: AppTheme.mediumGray.withOpacity(0.3),
+                            ),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
@@ -230,10 +260,16 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                                     : 'Start Date',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: _startDate != null ? AppTheme.charcoal : AppTheme.mediumGray,
+                                  color: _startDate != null
+                                      ? AppTheme.charcoal
+                                      : AppTheme.mediumGray,
                                 ),
                               ),
-                              Icon(Icons.calendar_today, size: 14, color: AppTheme.mediumGray),
+                              Icon(
+                                Icons.calendar_today,
+                                size: 14,
+                                color: AppTheme.mediumGray,
+                              ),
                             ],
                           ),
                         ),
@@ -245,9 +281,14 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                       child: InkWell(
                         onTap: () => _selectDate(false),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+                            border: Border.all(
+                              color: AppTheme.mediumGray.withOpacity(0.3),
+                            ),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
@@ -259,10 +300,16 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                                     : 'End Date',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: _endDate != null ? AppTheme.charcoal : AppTheme.mediumGray,
+                                  color: _endDate != null
+                                      ? AppTheme.charcoal
+                                      : AppTheme.mediumGray,
                                 ),
                               ),
-                              Icon(Icons.calendar_today, size: 14, color: AppTheme.mediumGray),
+                              Icon(
+                                Icons.calendar_today,
+                                size: 14,
+                                color: AppTheme.mediumGray,
+                              ),
                             ],
                           ),
                         ),
@@ -274,35 +321,59 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                       child: DropdownButtonFormField<String>(
                         value: _sortBy,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                           isDense: true,
                         ),
-                        style: const TextStyle(fontSize: 11, color: AppTheme.charcoal),
-                        items: ['Recent Updates', 'Highest Share', 'Lowest Share'].map((sort) {
-                          return DropdownMenuItem(value: sort, child: Text(sort));
-                        }).toList(),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.charcoal,
+                        ),
+                        items:
+                            [
+                              'Recent Updates',
+                              'Highest Share',
+                              'Lowest Share',
+                            ].map((sort) {
+                              return DropdownMenuItem(
+                                value: sort,
+                                child: Text(sort),
+                              );
+                            }).toList(),
                         onChanged: (value) => setState(() => _sortBy = value!),
                       ),
                     ),
                   ],
                 ),
-                
+
                 // Clear Filters Button
-                if (_searchQuery.isNotEmpty || _startDate != null || _endDate != null || _sortBy != 'Recent Updates')
+                if (_searchQuery.isNotEmpty ||
+                    _startDate != null ||
+                    _endDate != null ||
+                    _sortBy != 'Recent Updates')
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: TextButton.icon(
                       onPressed: _clearFilters,
                       icon: const Icon(Icons.clear_all, size: 16),
-                      label: const Text('Clear All Filters', style: TextStyle(fontSize: 11)),
-                      style: TextButton.styleFrom(foregroundColor: AppTheme.error),
+                      label: const Text(
+                        'Clear All Filters',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppTheme.error,
+                      ),
                     ),
                   ),
               ],
             ),
           ),
-          
+
           // Stats Summary
           Container(
             padding: const EdgeInsets.all(16),
@@ -332,7 +403,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
               ],
             ),
           ),
-          
+
           // Records List
           Expanded(
             child: filteredRecords.isEmpty
@@ -340,11 +411,18 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off, size: 64, color: AppTheme.mediumGray.withOpacity(0.5)),
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: AppTheme.mediumGray.withOpacity(0.5),
+                        ),
                         const SizedBox(height: 16),
                         const Text(
                           'No records found',
-                          style: TextStyle(fontSize: 14, color: AppTheme.mediumGray),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.mediumGray,
+                          ),
                         ),
                       ],
                     ),
@@ -368,8 +446,13 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       ),
     );
   }
-  
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -410,7 +493,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       ),
     );
   }
-  
+
   Widget _buildRecordCard(Map<String, dynamic> record) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -441,7 +524,10 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                       const SizedBox(height: 2),
                       Text(
                         record['consultantId'],
-                        style: const TextStyle(fontSize: 11, color: AppTheme.mediumGray),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.mediumGray,
+                        ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -449,9 +535,14 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getShareTypeColor(record['shareType']).withOpacity(0.1),
+                    color: _getShareTypeColor(
+                      record['shareType'],
+                    ).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -465,9 +556,9 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Course Name
             Row(
               children: [
@@ -476,16 +567,19 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                 Expanded(
                   child: Text(
                     record['courseName'],
-                    style: const TextStyle(fontSize: 12, color: AppTheme.charcoal),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.charcoal,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
                 ),
               ],
             ),
-            
+
             const Divider(height: 20),
-            
+
             // Financial Details
             Row(
               children: [
@@ -512,13 +606,17 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Footer
             Text(
               'Updated: ${DateFormat('MMM dd, yyyy').format(record['lastUpdated'])}',
-              style: const TextStyle(fontSize: 10, color: AppTheme.mediumGray, fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppTheme.mediumGray,
+                fontStyle: FontStyle.italic,
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -527,7 +625,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       ),
     );
   }
-  
+
   Widget _buildDetailColumn(String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,7 +650,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
       ],
     );
   }
-  
+
   Color _getShareTypeColor(String type) {
     switch (type) {
       case 'Percentage':
@@ -565,7 +663,7 @@ class _ConsultantShareReportScreenState extends State<ConsultantShareReportScree
         return AppTheme.mediumGray;
     }
   }
-  
+
   void _showExportOptions() {
     showModalBottomSheet(
       context: context,
