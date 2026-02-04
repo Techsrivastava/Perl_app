@@ -1,3 +1,29 @@
+class CommissionModel {
+  final String type; // FLAT, PERCENTAGE, MIXED
+  final double flatAmount;
+  final double percentage;
+
+  CommissionModel({
+    required this.type,
+    this.flatAmount = 0.0,
+    this.percentage = 0.0,
+  });
+
+  factory CommissionModel.fromJson(Map<String, dynamic> json) {
+    return CommissionModel(
+      type: json['type'] ?? 'PERCENTAGE',
+      flatAmount: (json['flatAmount'] ?? 0).toDouble(),
+      percentage: (json['percentage'] ?? 0).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'flatAmount': flatAmount,
+    'percentage': percentage,
+  };
+}
+
 class University {
   final String id;
   final String name;
@@ -19,6 +45,10 @@ class University {
   final String? ifscCode;
   final String? branch;
 
+  // SaaS Specific Fields
+  final CommissionModel? commissionModel;
+  final bool isActive;
+
   University({
     required this.id,
     required this.name,
@@ -37,11 +67,13 @@ class University {
     this.accountNumber,
     this.ifscCode,
     this.branch,
+    this.commissionModel,
+    this.isActive = true,
   });
 
   factory University.fromJson(Map<String, dynamic> json) {
     return University(
-      id: json['id'] ?? '',
+      id: json['id'] ?? json['_id'] ?? '',
       name: json['name'] ?? '',
       abbreviation: json['abbreviation'] ?? '',
       establishedYear: json['establishedYear'] ?? 0,
@@ -58,12 +90,14 @@ class University {
       updatedAt: DateTime.parse(
         json['updatedAt'] ?? DateTime.now().toIso8601String(),
       ),
-
-      // ✅ Added JSON parsing for bank fields
       bankName: json['bankName'],
       accountNumber: json['accountNumber'],
       ifscCode: json['ifscCode'],
       branch: json['branch'],
+      commissionModel: json['commissionModel'] != null
+          ? CommissionModel.fromJson(json['commissionModel'])
+          : null,
+      isActive: json['isActive'] ?? true,
     );
   }
 
@@ -82,12 +116,12 @@ class University {
       'address': address,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-
-      // ✅ Added for saving to backend
       'bankName': bankName,
       'accountNumber': accountNumber,
       'ifscCode': ifscCode,
       'branch': branch,
+      'commissionModel': commissionModel?.toJson(),
+      'isActive': isActive,
     };
   }
 
@@ -109,6 +143,8 @@ class University {
     String? accountNumber,
     String? ifscCode,
     String? branch,
+    CommissionModel? commissionModel,
+    bool? isActive,
   }) {
     return University(
       id: id ?? this.id,
@@ -128,6 +164,8 @@ class University {
       accountNumber: accountNumber ?? this.accountNumber,
       ifscCode: ifscCode ?? this.ifscCode,
       branch: branch ?? this.branch,
+      commissionModel: commissionModel ?? this.commissionModel,
+      isActive: isActive ?? this.isActive,
     );
   }
 }
