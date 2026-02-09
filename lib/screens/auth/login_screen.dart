@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
-import 'package:university_app_2/screens/auth/verification_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
+import 'package:educonnect/screens/auth/verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

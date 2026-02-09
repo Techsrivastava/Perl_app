@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
@@ -13,8 +13,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
-  String _selectedUniversity = 'All';
-  String _selectedCourse = 'All';
+  final String _selectedUniversity = 'All';
+  final String _selectedCourse = 'All';
 
   final List<Map<String, dynamic>> _allStudents = [
     {
@@ -1043,8 +1043,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
           s['name'].toLowerCase().contains(_searchQuery.toLowerCase());
       final tabIndex = _tabController.index;
       if (tabIndex == 1) return s['status'] == 'Applied' && matchesSearch;
-      if (tabIndex == 2)
+      if (tabIndex == 2) {
         return s['status'] == 'Admission Approved' && matchesSearch;
+      }
       if (tabIndex == 3) return s['status'] == 'Reverted' && matchesSearch;
       if (tabIndex == 4) return s['status'] == 'Rejected' && matchesSearch;
       return matchesSearch;
@@ -2250,7 +2251,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             const SizedBox(height: 12),
 
             DropdownButtonFormField<String>(
-              value: _gender,
+              initialValue: _gender,
               decoration: _inputDecoration('Gender', Icons.wc),
               items: [
                 'Male',
@@ -2262,7 +2263,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             const SizedBox(height: 12),
 
             DropdownButtonFormField<String>(
-              value: _category,
+              initialValue: _category,
               decoration: _inputDecoration('Category', Icons.category),
               items: [
                 'General',

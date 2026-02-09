@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
 
 class CourseFeeField extends StatelessWidget {
   final String label;
@@ -9,12 +9,12 @@ class CourseFeeField extends StatelessWidget {
   final IconData icon;
 
   const CourseFeeField({
-    Key? key,
+    super.key,
     required this.label,
     required this.controller,
     required this.unit,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

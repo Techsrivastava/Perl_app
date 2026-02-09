@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/core/utils/responsive_utils.dart';
+import 'package:educonnect/core/utils/responsive_utils.dart';
 
 class ResponsiveCard extends StatelessWidget {
   final Widget child;

@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/core/routes/app_routes.dart';
+import 'package:educonnect/core/routes/app_routes.dart';
 
 // Auth
-import 'package:university_app_2/screens/auth/login_screen.dart';
-import 'package:university_app_2/screens/auth/university_register_screen.dart';
+import 'package:educonnect/screens/auth/login_screen.dart';
+import 'package:educonnect/screens/auth/university_register_screen.dart';
 
 // University
-import 'package:university_app_2/screens/dashboard/dashboard_screen.dart';
-import 'package:university_app_2/screens/profile/profile_screen.dart';
-import 'package:university_app_2/screens/courses/comprehensive_add_course_screen.dart';
-import 'package:university_app_2/screens/courses/courses_screen.dart';
-import 'package:university_app_2/screens/students/students_screen.dart';
-import 'package:university_app_2/screens/university/consultant_share_setup_screen.dart';
-import 'package:university_app_2/screens/university/consultant_share_report_screen.dart';
-import 'package:university_app_2/screens/university/fee_student_reports_screen.dart';
-import 'package:university_app_2/screens/fee_management/one_time_fee_template_screen.dart';
-import 'package:university_app_2/screens/notifications/notifications_screen.dart';
-import 'package:university_app_2/screens/settings/settings_screen.dart';
-import 'package:university_app_2/screens/support/support_screen.dart';
+import 'package:educonnect/screens/dashboard/dashboard_screen.dart';
+import 'package:educonnect/screens/profile/profile_screen.dart';
+import 'package:educonnect/screens/courses/comprehensive_add_course_screen.dart';
+import 'package:educonnect/screens/courses/courses_screen.dart';
+import 'package:educonnect/screens/students/students_screen.dart';
+import 'package:educonnect/screens/university/consultant_share_setup_screen.dart';
+import 'package:educonnect/screens/university/consultant_share_report_screen.dart';
+import 'package:educonnect/screens/university/fee_student_reports_screen.dart';
+import 'package:educonnect/screens/fee_management/one_time_fee_template_screen.dart';
+import 'package:educonnect/screens/notifications/notifications_screen.dart';
+import 'package:educonnect/screens/settings/settings_screen.dart';
+import 'package:educonnect/screens/support/support_screen.dart';
 
 // Consultant
-import 'package:university_app_2/screens/consultant/consultant_login_screen.dart';
-import 'package:university_app_2/screens/consultant/consultant_dashboard_screen.dart';
-import 'package:university_app_2/screens/consultant/consultant_profile_screen.dart';
-import 'package:university_app_2/screens/consultant/consultant_profile_setup_screen.dart';
-import 'package:university_app_2/screens/consultant/comprehensive_consultant_register_screen.dart';
-import 'package:university_app_2/screens/consultant/quick_actions/view_leads_screen.dart';
-import 'package:university_app_2/screens/consultant/quick_actions/commission_summary_screen.dart';
-import 'package:university_app_2/screens/consultant/notifications/consultant_notifications_screen.dart';
-import 'package:university_app_2/screens/consultant/quick_actions/add_agent_screen.dart';
-import 'package:university_app_2/screens/consultant/quick_actions/pending_payments_screen.dart';
-import 'package:university_app_2/screens/consultant/universities/universities_courses_screen.dart';
-import 'package:university_app_2/screens/consultant/students/student_management_screen.dart';
-import 'package:university_app_2/screens/consultant/agents/agent_management_screen.dart';
-import 'package:university_app_2/screens/consultant/fee_payment/fee_payment_management_screen.dart';
-import 'package:university_app_2/screens/consultant/support/support_consultant_screen.dart';
-import 'package:university_app_2/screens/consultant/admission/admission_form_screen.dart';
+import 'package:educonnect/screens/consultant/consultant_login_screen.dart';
+import 'package:educonnect/screens/consultant/consultant_dashboard_screen.dart';
+import 'package:educonnect/screens/consultant/consultant_profile_screen.dart';
+import 'package:educonnect/screens/consultant/consultant_profile_setup_screen.dart';
+import 'package:educonnect/screens/consultant/comprehensive_consultant_register_screen.dart';
+import 'package:educonnect/screens/consultant/quick_actions/view_leads_screen.dart';
+import 'package:educonnect/screens/consultant/quick_actions/commission_summary_screen.dart';
+import 'package:educonnect/screens/consultant/notifications/consultant_notifications_screen.dart';
+import 'package:educonnect/screens/consultant/quick_actions/add_agent_screen.dart';
+import 'package:educonnect/screens/consultant/quick_actions/pending_payments_screen.dart';
+import 'package:educonnect/screens/consultant/universities/universities_courses_screen.dart';
+import 'package:educonnect/screens/consultant/students/student_management_screen.dart';
+import 'package:educonnect/screens/consultant/agents/agent_management_screen.dart';
+import 'package:educonnect/screens/consultant/fee_payment/fee_payment_management_screen.dart';
+import 'package:educonnect/screens/consultant/support/support_consultant_screen.dart';
+import 'package:educonnect/screens/consultant/admission/admission_form_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

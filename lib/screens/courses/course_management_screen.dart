@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/course_model.dart';
-import 'package:university_app_2/models/stream_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/course_model.dart';
+import 'package:educonnect/models/stream_model.dart';
 
 class CourseManagementScreen extends StatefulWidget {
   const CourseManagementScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/core/utils/responsive_utils.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/core/utils/responsive_utils.dart';
 
 class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -513,7 +513,7 @@ class DashboardScreen extends StatelessWidget {
               isTablet,
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

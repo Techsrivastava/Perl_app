@@ -6,11 +6,11 @@ class AgentProfitDisplay extends StatelessWidget {
   final String subtitle;
 
   const AgentProfitDisplay({
-    Key? key,
+    super.key,
     required this.agentCommission,
     this.label = '💰 Agent Profit',
     this.subtitle = 'Commission Earned',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

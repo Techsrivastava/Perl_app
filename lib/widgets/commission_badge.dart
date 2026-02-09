@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/consultancy_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/consultancy_model.dart';
 
 class CommissionBadge extends StatelessWidget {
   final CommissionType type;

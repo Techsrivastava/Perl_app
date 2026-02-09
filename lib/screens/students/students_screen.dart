@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/screens/students/student_details_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/status_badge.dart';
+import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/screens/students/student_details_screen.dart';
 import 'package:intl/intl.dart';
 
 class StudentsScreen extends StatefulWidget {
@@ -1373,7 +1373,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: DropdownButtonFormField<String>(
-                                  value: selectedIssueType,
+                                  initialValue: selectedIssueType,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     isDense: true,

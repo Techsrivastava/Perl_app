@@ -1,4 +1,4 @@
-import 'package:university_app_2/models/course_model.dart';
+import 'package:educonnect/models/course_model.dart';
 
 /// Comprehensive Indian Courses Database with In-depth Details
 /// Organized by streams with complete India-specific information

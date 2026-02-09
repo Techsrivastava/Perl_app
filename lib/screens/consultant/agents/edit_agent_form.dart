@@ -186,7 +186,7 @@ class _EditAgentFormState extends State<EditAgentForm> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _selectedState,
+                      initialValue: _selectedState,
                       decoration: _inputDecoration('State', Icons.map),
                       items:
                           [

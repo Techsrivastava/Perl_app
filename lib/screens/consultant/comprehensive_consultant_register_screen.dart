@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class ComprehensiveConsultantRegisterScreen extends StatefulWidget {
   const ComprehensiveConsultantRegisterScreen({super.key});
@@ -876,7 +876,7 @@ class _ComprehensiveConsultantRegisterScreenState
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),

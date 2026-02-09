@@ -7,12 +7,12 @@ class FeeCalculationCard extends StatelessWidget {
   final double consultancyShareValue;
 
   const FeeCalculationCard({
-    Key? key,
+    super.key,
     required this.universityFee,
     required this.displayFee,
     required this.consultancyShareType,
     required this.consultancyShareValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class AdmissionApplicationScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -23,13 +23,13 @@ class _AdmissionApplicationScreenState
   final _expenseAmountController = TextEditingController();
   
   String _admissionBy = 'Consultancy'; // Consultancy | Agent
-  String _universityPaymentMode = 'Share Deduct'; // Share Deduct | Full Fee
+  final String _universityPaymentMode = 'Share Deduct'; // Share Deduct | Full Fee
   
   // Mock data - Replace with actual API data
-  double _universityFee = 80000;
-  double _displayFee = 120000;
-  String _consultancyShareType = 'percent';
-  double _consultancyShareValue = 15;
+  final double _universityFee = 80000;
+  final double _displayFee = 120000;
+  final String _consultancyShareType = 'percent';
+  final double _consultancyShareValue = 15;
   
   // Agent data (populated when agent code is entered)
   String? _agentName;
@@ -818,7 +818,7 @@ class _AdmissionApplicationScreenState
                     _buildReadOnlyRow(
                       'Share Value',
                       _agentShareType == 'percent'
-                          ? '${_agentShareValue}%'
+                          ? '$_agentShareValue%'
                           : '₹${_agentShareValue?.toStringAsFixed(0)}',
                     ),
                     const SizedBox(height: 12),
@@ -1860,7 +1860,7 @@ class _AdmissionApplicationScreenState
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             items: items
                 .map(
                   (item) => DropdownMenuItem(
@@ -1906,7 +1906,7 @@ class _AdmissionApplicationScreenState
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: _selectedState,
+            initialValue: _selectedState,
             items: _indianStates
                 .map(
                   (state) => DropdownMenuItem(

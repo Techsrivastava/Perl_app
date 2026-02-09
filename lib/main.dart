@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/core/routes/app_routes.dart';
-import 'package:university_app_2/core/routes/route_generator.dart';
-import 'package:university_app_2/screens/auth/login_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/core/routes/app_routes.dart';
+import 'package:educonnect/core/routes/route_generator.dart';
+import 'package:educonnect/screens/auth/login_screen.dart';
 
 void main() {
   runApp(const UniversityApp());

@@ -14,10 +14,12 @@ class ResponsiveUtils {
 
   static EdgeInsets getScreenPadding(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width < mobileMaxWidth)
+    if (width < mobileMaxWidth) {
       return const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
-    if (width < tabletMaxWidth)
+    }
+    if (width < tabletMaxWidth) {
       return const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0);
+    }
     return const EdgeInsets.symmetric(horizontal: 32.0, vertical: 20.0);
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/admission_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/admission_model.dart';
 import 'fee_module.dart';
 
 class FinancialSummaryScreen extends StatefulWidget {
@@ -284,7 +284,7 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
                                 '₹${(e.amount ?? 0).toStringAsFixed(0)}',
                               ),
                             )
-                            .toList(),
+                            ,
                     ],
                     const Divider(),
                     _buildFinancialRow(
@@ -333,7 +333,7 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
                               '₹${(e.amount ?? 0).toStringAsFixed(0)}',
                             ),
                           )
-                          .toList(),
+                          ,
                   ],
                 ),
               ),

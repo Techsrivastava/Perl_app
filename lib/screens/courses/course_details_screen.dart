@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
-import 'package:university_app_2/models/course_model.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/status_badge.dart';
+import 'package:educonnect/models/course_model.dart';
 import 'package:intl/intl.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final Course? course;
 
-  const CourseDetailsScreen({Key? key, this.course}) : super(key: key);
+  const CourseDetailsScreen({super.key, this.course});
 
   @override
   State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
@@ -268,7 +268,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         child: Switch(
                           value: _isActive,
                           onChanged: (value) => _toggleActiveStatus(),
-                          activeColor: AppTheme.success,
+                          activeThumbColor: AppTheme.success,
                           inactiveThumbColor: AppTheme.warning,
                           inactiveTrackColor: AppTheme.warning.withOpacity(0.3),
                         ),

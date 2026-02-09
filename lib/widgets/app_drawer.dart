@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/screens/auth/login_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final String currentRoute;

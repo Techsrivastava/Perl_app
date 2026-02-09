@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/app_header.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/app_header.dart';
 import 'package:intl/intl.dart';
 
 class ConsultantShareReportScreen extends StatefulWidget {
-  const ConsultantShareReportScreen({Key? key}) : super(key: key);
+  const ConsultantShareReportScreen({super.key});
 
   @override
   State<ConsultantShareReportScreen> createState() =>
@@ -319,7 +319,7 @@ class _ConsultantShareReportScreenState
                     // Sort
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _sortBy,
+                        initialValue: _sortBy,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8,

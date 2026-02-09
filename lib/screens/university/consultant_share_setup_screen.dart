@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
 import 'package:intl/intl.dart';
 
 class ConsultantShareSetupScreen extends StatefulWidget {
-  const ConsultantShareSetupScreen({Key? key}) : super(key: key);
+  const ConsultantShareSetupScreen({super.key});
 
   @override
   State<ConsultantShareSetupScreen> createState() =>
@@ -41,7 +41,7 @@ class _ConsultantShareSetupScreenState
   String _duration = '1st Year Only';
 
   // Selected Consultants
-  List<String> _selectedConsultants = [];
+  final List<String> _selectedConsultants = [];
   final List<Map<String, String>> _consultants = [
     {'id': 'C001', 'name': 'Rajesh Kumar', 'region': 'North'},
     {'id': 'C002', 'name': 'Priya Sharma', 'region': 'South'},
@@ -538,7 +538,7 @@ class _ConsultantShareSetupScreenState
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: _shareType,
+          initialValue: _shareType,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -835,7 +835,7 @@ class _ConsultantShareSetupScreenState
             // Category Filter
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: _courseCategoryFilter,
+                initialValue: _courseCategoryFilter,
                 decoration: InputDecoration(
                   labelText: 'Category',
                   labelStyle: const TextStyle(fontSize: 10),

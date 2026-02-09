@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/consultancy_model.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/consultancy_model.dart';
+import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/status_badge.dart';
 
 class ReportsScreen extends StatefulWidget {
   final Consultancy? consultancy; // ✅ optional: show all or one consultancy
 
   // ❌ removed `const` to make hot reload safe
-  ReportsScreen({super.key, this.consultancy});
+  const ReportsScreen({super.key, this.consultancy});
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();

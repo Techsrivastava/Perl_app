@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/admission_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/admission_model.dart';
 import 'fee_module.dart';
 
 class CourseFeeDetailsScreen extends StatefulWidget {
@@ -258,7 +258,7 @@ class _CourseFeeDetailsScreenState extends State<CourseFeeDetailsScreen> {
             const SizedBox(height: 16),
 
             DropdownButtonFormField<String>(
-              value: selectedUniversity,
+              initialValue: selectedUniversity,
               decoration: InputDecoration(
                 labelText: 'Select University *',
                 prefixIcon: const Icon(Icons.school),
@@ -283,7 +283,7 @@ class _CourseFeeDetailsScreenState extends State<CourseFeeDetailsScreen> {
 
             if (selectedUniversity != null)
               DropdownButtonFormField<String>(
-                value: selectedCourse,
+                initialValue: selectedCourse,
                 decoration: InputDecoration(
                   labelText: 'Select Course *',
                   prefixIcon: const Icon(Icons.book),

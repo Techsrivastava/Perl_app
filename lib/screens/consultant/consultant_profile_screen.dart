@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class ConsultantProfileScreen extends StatefulWidget {
   const ConsultantProfileScreen({super.key});
@@ -61,7 +61,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
   File? _panCard;
   File? _gstCertificate;
   File? _consultantAgreement;
-  String _verificationStatus = 'Pending';
+  final String _verificationStatus = 'Pending';
 
   // Settings
   bool _twoFactorAuth = false;
@@ -561,7 +561,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                     ),
                     value: _twoFactorAuth,
                     onChanged: (v) => setState(() => _twoFactorAuth = v),
-                    activeColor: AppTheme.primaryBlue,
+                    activeThumbColor: AppTheme.primaryBlue,
                   ),
                   const Divider(),
                   const Padding(
@@ -623,7 +623,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                     ),
                     value: _darkMode,
                     onChanged: (v) => setState(() => _darkMode = v),
-                    activeColor: AppTheme.primaryBlue,
+                    activeThumbColor: AppTheme.primaryBlue,
                   ),
                   const Divider(),
                   ListTile(
@@ -925,7 +925,7 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),

@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
 
 class UniversityRegisterScreen extends StatefulWidget {
   const UniversityRegisterScreen({super.key});
@@ -74,8 +74,8 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
   String _selectedType = 'Government';
   String _selectedState = 'Delhi';
   String _selectedCity = '';
-  List<String> _selectedFacilities = [];
-  List<String> _selectedAccreditations = [];
+  final List<String> _selectedFacilities = [];
+  final List<String> _selectedAccreditations = [];
 
   final List<String> _registrationTypeOptions = [
     'University',
@@ -96,7 +96,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
   String _authorizationType = 'individual';
 
   // Company/Agency Tie-Up Details
-  bool _operatedViaAgency = false;
+  final bool _operatedViaAgency = false;
   final _companyNameController = TextEditingController();
   final _registrationNumberController = TextEditingController();
   final _companyAddressController = TextEditingController();
@@ -940,7 +940,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        value: _selectedType,
+                        initialValue: _selectedType,
                         decoration: const InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 12,
@@ -976,7 +976,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedState,
+                initialValue: _selectedState,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 12,
@@ -1820,7 +1820,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _idProofType,
+                initialValue: _idProofType,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 12,

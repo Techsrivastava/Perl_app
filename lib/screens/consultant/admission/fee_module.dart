@@ -1,4 +1,4 @@
-import 'package:university_app_2/models/admission_model.dart';
+import 'package:educonnect/models/admission_model.dart';
 
 /// ADMISSION FEE MODULE (FINANCIAL WORKFLOW ONLY)
 ///

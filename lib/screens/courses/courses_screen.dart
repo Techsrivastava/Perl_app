@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/models/course_model.dart';
-import 'package:university_app_2/screens/courses/comprehensive_add_course_screen.dart';
-import 'package:university_app_2/screens/courses/course_details_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/status_badge.dart';
+import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/models/course_model.dart';
+import 'package:educonnect/screens/courses/comprehensive_add_course_screen.dart';
+import 'package:educonnect/screens/courses/course_details_screen.dart';
 import 'package:intl/intl.dart';
 
 class CoursesScreen extends StatefulWidget {

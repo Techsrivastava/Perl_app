@@ -7,12 +7,12 @@ class ExpenseInputWidget extends StatelessWidget {
   final Color accentColor;
 
   const ExpenseInputWidget({
-    Key? key,
+    super.key,
     required this.titleController,
     required this.amountController,
     required this.onAdd,
     this.accentColor = Colors.blue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +72,12 @@ class ExpenseListItem extends StatelessWidget {
   final Color accentColor;
 
   const ExpenseListItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.amount,
     required this.onDelete,
     this.accentColor = Colors.orange,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

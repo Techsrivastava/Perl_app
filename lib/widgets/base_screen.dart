@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/widgets/app_drawer.dart';
+import 'package:educonnect/widgets/app_drawer.dart';
 
 /// A base screen widget that provides common functionality and layout
 /// for all screens in the app.

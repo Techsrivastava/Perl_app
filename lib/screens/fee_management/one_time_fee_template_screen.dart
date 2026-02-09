@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/app_header.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/app_header.dart';
 
 class OneTimeFeeTemplateScreen extends StatefulWidget {
   const OneTimeFeeTemplateScreen({super.key});
@@ -542,7 +542,7 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  value: selectedType,
+                                  initialValue: selectedType,
                                   decoration: InputDecoration(
                                     labelText: 'Type *',
                                     border: OutlineInputBorder(
@@ -574,7 +574,7 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: selectedStage,
+                            initialValue: selectedStage,
                             decoration: InputDecoration(
                               labelText: 'Applicable Stage *',
                               border: OutlineInputBorder(
@@ -846,7 +846,7 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  value: selectedType,
+                                  initialValue: selectedType,
                                   decoration: InputDecoration(
                                     labelText: 'Type *',
                                     border: OutlineInputBorder(
@@ -878,7 +878,7 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: selectedStage,
+                            initialValue: selectedStage,
                             decoration: InputDecoration(
                               labelText: 'Applicable Stage *',
                               border: OutlineInputBorder(

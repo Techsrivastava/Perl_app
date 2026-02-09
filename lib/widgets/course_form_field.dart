@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
 
 class CourseFormField extends StatelessWidget {
   final String label;
@@ -12,7 +12,7 @@ class CourseFormField extends StatelessWidget {
   final bool isRequired;
 
   const CourseFormField({
-    Key? key,
+    super.key,
     required this.label,
     this.controller,
     this.hint,
@@ -20,7 +20,7 @@ class CourseFormField extends StatelessWidget {
     this.maxLines = 1,
     this.keyboardType = TextInputType.text,
     this.isRequired = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

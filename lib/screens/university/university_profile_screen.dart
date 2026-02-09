@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/university_model.dart';
-import 'package:university_app_2/screens/university/edit_university_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/university_model.dart';
+import 'package:educonnect/screens/university/edit_university_screen.dart';
 
 class UniversityProfileScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -372,16 +372,16 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (university.abbreviation != null) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              university.abbreviation!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppTheme.white.withOpacity(0.95),
-                              ),
+                          ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            university.abbreviation,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppTheme.white.withOpacity(0.95),
                             ),
-                          ],
+                          ),
+                        ],
                         ],
                       ),
                     ),
@@ -400,7 +400,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               child: _buildQuickInfoCard(
                 icon: Icons.calendar_today,
                 label: 'Established',
-                value: university.establishedYear?.toString() ?? 'N/A',
+                value: university.establishedYear.toString() ?? 'N/A',
                 color: Colors.blue,
               ),
             ),
@@ -581,20 +581,17 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               'University Name',
               university.name,
             ),
-            if (university.abbreviation != null)
-              _buildInfoRow(
-                Icons.short_text,
-                'Abbreviation',
-                university.abbreviation!,
-              ),
-            if (university.establishedYear != null)
-              _buildInfoRow(
-                Icons.calendar_today,
-                'Established Year',
-                university.establishedYear.toString(),
-              ),
-            if (university.type != null)
-              _buildInfoRow(Icons.category, 'Type', university.type!),
+            _buildInfoRow(
+              Icons.short_text,
+              'Abbreviation',
+              university.abbreviation,
+            ),
+            _buildInfoRow(
+              Icons.calendar_today,
+              'Established Year',
+              university.establishedYear.toString(),
+            ),
+            _buildInfoRow(Icons.category, 'Type', university.type),
             if (university.description.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Text(
@@ -621,10 +618,8 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _buildInfoCard(
           title: 'Contact Information',
           children: [
-            if (university.contactEmail != null)
-              _buildInfoRow(Icons.email, 'Email', university.contactEmail!),
-            if (university.contactPhone != null)
-              _buildInfoRow(Icons.phone, 'Phone', university.contactPhone!),
+            _buildInfoRow(Icons.email, 'Email', university.contactEmail),
+            _buildInfoRow(Icons.phone, 'Phone', university.contactPhone),
             if (university.address.isNotEmpty)
               _buildInfoRow(Icons.location_on, 'Address', university.address),
           ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/models/consultancy_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/models/consultancy_model.dart';
 
 class EditCommissionScreen extends StatefulWidget {
   final Consultancy consultancy;
@@ -87,7 +87,7 @@ class _EditCommissionScreenState extends State<EditCommissionScreen> {
                 title: 'Commission Settings',
                 children: [
                   DropdownButtonFormField<CommissionType>(
-                    value: _commissionType,
+                    initialValue: _commissionType,
                     decoration: InputDecoration(
                       labelText: 'Commission Type',
                       border: OutlineInputBorder(
@@ -123,10 +123,12 @@ class _EditCommissionScreenState extends State<EditCommissionScreen> {
                       _commissionValue = double.tryParse(value) ?? 0.0;
                     },
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Please enter a value';
-                      if (double.tryParse(value) == null)
+                      }
+                      if (double.tryParse(value) == null) {
                         return 'Invalid number';
+                      }
                       return null;
                     },
                   ),

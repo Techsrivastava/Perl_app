@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class ViewLeadsScreen extends StatefulWidget {
   const ViewLeadsScreen({super.key});
@@ -10,7 +10,7 @@ class ViewLeadsScreen extends StatefulWidget {
 
 class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
   String _statusFilter = 'All';
-  String _sourceFilter = 'All';
+  final String _sourceFilter = 'All';
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -59,11 +59,13 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
   List<Map<String, dynamic>> get _filteredLeads {
     return _leads.where((lead) {
       // Status filter
-      if (_statusFilter != 'All' && lead['status'] != _statusFilter)
+      if (_statusFilter != 'All' && lead['status'] != _statusFilter) {
         return false;
+      }
       // Source filter
-      if (_sourceFilter != 'All' && lead['source'] != _sourceFilter)
+      if (_sourceFilter != 'All' && lead['source'] != _sourceFilter) {
         return false;
+      }
       // Search filter
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
@@ -823,7 +825,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       
                       // Course Dropdown
                       DropdownButtonFormField<String>(
-                        value: selectedCourse,
+                        initialValue: selectedCourse,
                         decoration: const InputDecoration(
                           labelText: 'Course',
                           prefixIcon: Icon(Icons.school_outlined),
@@ -850,7 +852,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       
                       // University Dropdown
                       DropdownButtonFormField<String>(
-                        value: selectedUniversity,
+                        initialValue: selectedUniversity,
                         decoration: const InputDecoration(
                           labelText: 'University',
                           prefixIcon: Icon(Icons.business_outlined),
@@ -875,7 +877,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       
                       // Agent Dropdown
                       DropdownButtonFormField<String>(
-                        value: selectedAgent,
+                        initialValue: selectedAgent,
                         decoration: const InputDecoration(
                           labelText: 'Assign to Agent',
                           prefixIcon: Icon(Icons.person_add_outlined),
@@ -901,7 +903,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       
                       // Source Dropdown
                       DropdownButtonFormField<String>(
-                        value: selectedSource,
+                        initialValue: selectedSource,
                         decoration: const InputDecoration(
                           labelText: 'Lead Source',
                           prefixIcon: Icon(Icons.source_outlined),
@@ -1038,7 +1040,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       const SizedBox(height: 16),
                       
                       DropdownButtonFormField<String>(
-                        value: selectedStatus,
+                        initialValue: selectedStatus,
                         decoration: const InputDecoration(
                           labelText: 'Status',
                           prefixIcon: Icon(Icons.flag_outlined),
@@ -1060,7 +1062,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       const SizedBox(height: 16),
                       
                       DropdownButtonFormField<String>(
-                        value: selectedAgent,
+                        initialValue: selectedAgent,
                         decoration: const InputDecoration(
                           labelText: 'Agent',
                           prefixIcon: Icon(Icons.person_add_outlined),

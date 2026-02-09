@@ -1,4 +1,4 @@
-import 'package:university_app_2/config/constants.dart';
+import 'package:educonnect/config/constants.dart';
 
 enum CommissionType { percentage, flat, oneTime }
 

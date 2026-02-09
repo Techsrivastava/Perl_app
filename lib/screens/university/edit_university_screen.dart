@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
-import 'package:university_app_2/models/university_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
+import 'package:educonnect/models/university_model.dart';
 
 class EditUniversityScreen extends StatefulWidget {
   final University university;
@@ -69,7 +69,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
   // Custom Test
   final _customTestNameController = TextEditingController();
   final _customTestDescriptionController = TextEditingController();
-  bool _hasCustomTest = false;
+  final bool _hasCustomTest = false;
 
   // Files
   File? _logoFile;
@@ -80,7 +80,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
 
   String _selectedType = 'Private';
   List<String> _selectedFacilities = [];
-  List<String> _selectedAccreditations = [];
+  final List<String> _selectedAccreditations = [];
   bool _isLoading = false;
 
   // Authorization Type: 'individual' or 'firm'
@@ -533,7 +533,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                               value: _authorizedViaAgency,
                               onChanged: (value) =>
                                   setState(() => _authorizedViaAgency = value),
-                              activeColor: AppTheme.primaryBlue,
+                              activeThumbColor: AppTheme.primaryBlue,
                             ),
                           ],
                         ),
@@ -908,8 +908,9 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                 );
-                                if (date != null)
+                                if (date != null) {
                                   setState(() => _validityFromDate = date);
+                                }
                               },
                             ),
                           ),
@@ -927,8 +928,9 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                                       _validityFromDate ?? DateTime(2000),
                                   lastDate: DateTime(2100),
                                 );
-                                if (date != null)
+                                if (date != null) {
                                   setState(() => _validityToDate = date);
+                                }
                               },
                             ),
                           ),
@@ -1118,7 +1120,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           decoration: InputDecoration(
             filled: true,
             fillColor: AppTheme.white,

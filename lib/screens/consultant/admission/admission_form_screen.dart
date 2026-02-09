@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/admission_model.dart';
-import 'package:university_app_2/screens/consultant/admission/student_details_screen.dart';
-import 'package:university_app_2/screens/consultant/admission/course_fee_details_screen.dart';
-import 'package:university_app_2/screens/consultant/admission/financial_summary_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/admission_model.dart';
+import 'package:educonnect/screens/consultant/admission/student_details_screen.dart';
+import 'package:educonnect/screens/consultant/admission/course_fee_details_screen.dart';
+import 'package:educonnect/screens/consultant/admission/financial_summary_screen.dart';
 import 'fee_module.dart';
 
 class AdmissionFormScreen extends StatefulWidget {

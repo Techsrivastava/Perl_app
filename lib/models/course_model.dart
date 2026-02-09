@@ -14,7 +14,12 @@ class Course {
   String? duration;
   String? modeOfStudy;
   String? level;
+  // New fields to support separate display and actual fees as per backend API.
+  // [displayFee] is shown to consultants/agents; [actualFee] is charged to students.
+  // We retain [fees] for backward compatibility but prefer using the new fields.
   double? fees;
+  double? displayFee;
+  double? actualFee;
   int? totalSeats;
   int? availableSeats;
   String? description;
@@ -103,6 +108,8 @@ class Course {
     this.modeOfStudy,
     this.level,
     this.fees,
+    this.displayFee,
+    this.actualFee,
     this.totalSeats,
     this.availableSeats,
     this.description,
@@ -188,6 +195,8 @@ class Course {
     String? modeOfStudy,
     String? level,
     double? fees,
+    double? displayFee,
+    double? actualFee,
     int? totalSeats,
     int? availableSeats,
     String? description,
@@ -225,6 +234,8 @@ class Course {
       modeOfStudy: modeOfStudy ?? this.modeOfStudy,
       level: level ?? this.level,
       fees: fees ?? this.fees,
+      displayFee: displayFee ?? this.displayFee,
+      actualFee: actualFee ?? this.actualFee,
       totalSeats: totalSeats ?? this.totalSeats,
       availableSeats: availableSeats ?? this.availableSeats,
       description: description ?? this.description,

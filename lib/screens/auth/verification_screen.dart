@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/screens/main/main_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/screens/main/main_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;

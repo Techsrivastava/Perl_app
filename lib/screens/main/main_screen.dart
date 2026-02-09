@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/widgets/app_bottom_nav.dart';
-import 'package:university_app_2/widgets/app_drawer.dart';
-import 'package:university_app_2/screens/dashboard/dashboard_screen.dart';
-import 'package:university_app_2/screens/courses/courses_screen.dart';
-import 'package:university_app_2/screens/students/students_screen.dart';
-import 'package:university_app_2/screens/consultancy/consultancy_screen.dart';
-import 'package:university_app_2/screens/university/university_profile_screen.dart';
+import 'package:educonnect/widgets/app_bottom_nav.dart';
+import 'package:educonnect/widgets/app_drawer.dart';
+import 'package:educonnect/screens/dashboard/dashboard_screen.dart';
+import 'package:educonnect/screens/courses/courses_screen.dart';
+import 'package:educonnect/screens/students/students_screen.dart';
+import 'package:educonnect/screens/consultancy/consultancy_screen.dart';
+import 'package:educonnect/screens/university/university_profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

@@ -147,12 +147,15 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
 
   int _getStatusCount(String status) {
     if (status == 'All') return _allAgents.length;
-    if (status == 'Active')
+    if (status == 'Active') {
       return _allAgents.where((a) => a['status'] == 'Active').length;
-    if (status == 'Inactive')
+    }
+    if (status == 'Inactive') {
       return _allAgents.where((a) => a['status'] == 'Inactive').length;
-    if (status == 'Blocked')
+    }
+    if (status == 'Blocked') {
       return _allAgents.where((a) => a['blocked'] == true).length;
+    }
     return 0;
   }
 
@@ -164,8 +167,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
           a['agent_id'].toLowerCase().contains(_searchQuery.toLowerCase());
 
       final tabIndex = _tabController.index;
-      if (tabIndex == 6)
+      if (tabIndex == 6) {
         return a['blocked'] == true && matchesSearch; // Blocked tab
+      }
       if (tabIndex == 0) return matchesSearch; // All Agents tab
       return matchesSearch;
     }).toList();
@@ -884,7 +888,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedState,
+                    initialValue: _selectedState,
                     decoration: _inputDecoration('State', Icons.map),
                     items:
                         [
@@ -920,7 +924,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
             const SizedBox(height: 12),
 
             DropdownButtonFormField<String>(
-              value: _idProofType,
+              initialValue: _idProofType,
               decoration: _inputDecoration('ID Proof Type', Icons.badge),
               items: [
                 'Aadhaar',
@@ -1189,7 +1193,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
 
   // Tab 3: Assign Universities/Courses
   Map<String, dynamic>? _selectedAgentForAssign;
-  List<String> _availableUniversities = [
+  final List<String> _availableUniversities = [
     'Sunrise University',
     'MIT University',
     'Global Tech University',
@@ -1234,7 +1238,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<Map<String, dynamic>>(
-                  value: _selectedAgentForAssign,
+                  initialValue: _selectedAgentForAssign,
                   decoration: _inputDecoration(
                     'Choose Agent',
                     Icons.person_search,
@@ -1470,7 +1474,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<Map<String, dynamic>>(
-                  value: _selectedAgentForCommission,
+                  initialValue: _selectedAgentForCommission,
                   decoration: _inputDecoration(
                     'Choose Agent',
                     Icons.person_search,
@@ -1537,7 +1541,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   if (_applyToUniversity == 'Specific') ...[
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _selectedUniversity,
+                      initialValue: _selectedUniversity,
                       decoration: _inputDecoration(
                         'Select University',
                         Icons.business,
@@ -1559,7 +1563,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
 
                   // Commission Type
                   DropdownButtonFormField<String>(
-                    value: _commissionType,
+                    initialValue: _commissionType,
                     decoration: _inputDecoration(
                       'Commission Type',
                       Icons.category,
@@ -2365,7 +2369,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<Map<String, dynamic>>(
-                  value: _selectedAgentForPermissions,
+                  initialValue: _selectedAgentForPermissions,
                   decoration: _inputDecoration(
                     'Choose Agent',
                     Icons.person_search,
@@ -2515,7 +2519,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
           ),
           Switch(
             value: value,
-            activeColor: AppTheme.primaryBlue,
+            activeThumbColor: AppTheme.primaryBlue,
             onChanged: onChanged,
           ),
         ],

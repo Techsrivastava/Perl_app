@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class ConsultantLoginScreen extends StatefulWidget {
   const ConsultantLoginScreen({super.key});
@@ -164,7 +164,7 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                             ),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
-                              value: _registrationType,
+                              initialValue: _registrationType,
                               decoration: InputDecoration(
                                 labelText: 'Registration Type *',
                                 prefixIcon: const Icon(Icons.category),

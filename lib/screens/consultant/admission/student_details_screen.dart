@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/admission_model.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/admission_model.dart';
 
 class StudentDetailsScreen extends StatefulWidget {
   final AdmissionForm admissionForm;
@@ -262,7 +262,7 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedGender,
+                    initialValue: selectedGender,
                     decoration: InputDecoration(
                       labelText: 'Gender *',
                       prefixIcon: const Icon(Icons.wc),

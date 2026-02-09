@@ -2,10 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
 
 // Initialize the image picker
 final ImagePicker _imagePicker = ImagePicker();
@@ -1499,7 +1496,7 @@ class _UniversitySignupScreenState extends State<UniversitySignupScreen> {
         ),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -1756,7 +1753,7 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     required this.hint,
     required this.controller,
@@ -1765,7 +1762,7 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.maxLines = 1,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

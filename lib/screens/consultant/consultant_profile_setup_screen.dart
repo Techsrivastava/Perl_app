@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/screens/consultant/consultant_profile_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/screens/consultant/consultant_profile_screen.dart';
 
 class ConsultantProfileSetupScreen extends StatelessWidget {
   const ConsultantProfileSetupScreen({super.key});

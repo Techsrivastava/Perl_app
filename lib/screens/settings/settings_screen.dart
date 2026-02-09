@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -227,7 +227,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.primaryBlue,
+      activeThumbColor: AppTheme.primaryBlue,
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class CommissionSummaryScreen extends StatefulWidget {
   const CommissionSummaryScreen({super.key});
@@ -426,7 +426,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         const SizedBox(height: 8),
         ...sortedAgents
             .map((entry) => _buildAgentDetailCard(entry.key, entry.value))
-            .toList(),
+            ,
       ],
     );
   }

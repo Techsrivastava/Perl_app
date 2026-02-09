@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/commission_badge.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
-import 'package:university_app_2/screens/consultancy/commission_config_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/commission_badge.dart';
+import 'package:educonnect/widgets/status_badge.dart';
+import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/screens/consultancy/commission_config_screen.dart';
 import 'package:intl/intl.dart';
 
 class ConsultancyScreen extends StatefulWidget {

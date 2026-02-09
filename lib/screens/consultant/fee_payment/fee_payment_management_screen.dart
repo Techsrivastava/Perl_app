@@ -5,7 +5,7 @@ import '../../../config/theme.dart';
 // 5-Tab Fee & Payment Management Module for Consultants
 
 class FeePaymentManagementScreen extends StatefulWidget {
-  const FeePaymentManagementScreen({Key? key}) : super(key: key);
+  const FeePaymentManagementScreen({super.key});
 
   @override
   State<FeePaymentManagementScreen> createState() =>
@@ -318,7 +318,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
           // Compact Fee Records List
           ..._feeRecords
               .map((record) => _buildCompactFeeRecordCard(record))
-              .toList(),
+              ,
         ],
       ),
     );

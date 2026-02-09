@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 class AddAgentScreen extends StatefulWidget {
   const AddAgentScreen({super.key});
@@ -197,7 +197,7 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
               const SizedBox(height: 12),
 
               DropdownButtonFormField<String>(
-                value: _commissionType,
+                initialValue: _commissionType,
                 decoration: InputDecoration(
                   labelText: 'Commission Type *',
                   prefixIcon: const Icon(Icons.category),
@@ -258,7 +258,7 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
                 ),
                 value: _enableDashboard,
                 onChanged: (v) => setState(() => _enableDashboard = v),
-                activeColor: AppTheme.success,
+                activeThumbColor: AppTheme.success,
               ),
 
               const SizedBox(height: 16),

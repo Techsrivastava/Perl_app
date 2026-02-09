@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

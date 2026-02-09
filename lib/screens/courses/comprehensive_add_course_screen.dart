@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/models/course_model.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_text_field.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/data/indian_courses_data.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/models/course_model.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_text_field.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/data/indian_courses_data.dart';
 
 class ComprehensiveAddCourseScreen extends StatefulWidget {
   const ComprehensiveAddCourseScreen({super.key});
@@ -78,7 +78,7 @@ class _ComprehensiveAddCourseScreenState
   File? _certificateFormatFile;
 
   // 3.1 Documents & Requirements Module
-  String _documentTemplateName = 'Default UG Admission Docs';
+  final String _documentTemplateName = 'Default UG Admission Docs';
   final List<Map<String, dynamic>> _documentRequirements = [];
 
   // Default Master Document List
@@ -741,9 +741,7 @@ class _ComprehensiveAddCourseScreenState
 
   Widget _buildMasterCourseDropdown() {
     return DropdownButtonFormField<String>(
-      initialValue: _selectedMasterCourse != null
-          ? _selectedMasterCourse!.id
-          : null,
+      initialValue: _selectedMasterCourse?.id,
       decoration: InputDecoration(
         labelText: 'Select Course from Master List *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -2279,7 +2277,7 @@ class _ComprehensiveAddCourseScreenState
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: selectedType,
+                            initialValue: selectedType,
                             decoration: InputDecoration(
                               labelText: 'Document Type *',
                               border: OutlineInputBorder(

@@ -1,4 +1,7 @@
-enum UserRole { SUPER_ADMIN, CONSULTANT, AGENT }
+/// User roles recognised by the application.  The backend now exposes
+/// additional roles (UNIVERSITY and STUDENT) that must be reflected in
+/// the client.  Keep the order consistent with the backend for clarity.
+enum UserRole { SUPER_ADMIN, UNIVERSITY, CONSULTANT, AGENT, STUDENT }
 
 class User {
   final String id;
@@ -40,10 +43,17 @@ class User {
     switch (role) {
       case 'SUPER_ADMIN':
         return UserRole.SUPER_ADMIN;
+      case 'UNIVERSITY':
+        return UserRole.UNIVERSITY;
+      case 'CONSULTANT':
+        return UserRole.CONSULTANT;
       case 'AGENT':
         return UserRole.AGENT;
+      case 'STUDENT':
+        return UserRole.STUDENT;
       default:
-        return UserRole.CONSULTANT;
+        // Fallback to student for unrecognised roles to ensure minimal access
+        return UserRole.STUDENT;
     }
   }
 

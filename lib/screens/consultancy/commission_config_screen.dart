@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/screens/consultancy/edit_commission_screen.dart';
-import 'package:university_app_2/screens/consultancy/reports_screen.dart';
-import 'package:university_app_2/widgets/app_header.dart';
-import 'package:university_app_2/widgets/custom_button.dart';
-import 'package:university_app_2/widgets/commission_badge.dart';
-import 'package:university_app_2/widgets/status_badge.dart';
-import 'package:university_app_2/models/consultancy_model.dart';
-import 'package:university_app_2/services/mock_data_service.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/screens/consultancy/edit_commission_screen.dart';
+import 'package:educonnect/screens/consultancy/reports_screen.dart';
+import 'package:educonnect/widgets/app_header.dart';
+import 'package:educonnect/widgets/custom_button.dart';
+import 'package:educonnect/widgets/commission_badge.dart';
+import 'package:educonnect/widgets/status_badge.dart';
+import 'package:educonnect/models/consultancy_model.dart';
+import 'package:educonnect/services/mock_data_service.dart';
 
 class CommissionConfigScreen extends StatelessWidget {
   final Consultancy consultancy;

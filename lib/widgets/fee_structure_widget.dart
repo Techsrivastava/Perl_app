@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 // Fee Unit Enum
 enum FeeUnit { perYear, perSemester, oneTime, perMonth }
@@ -52,10 +52,10 @@ class FeeStructureWidget extends StatefulWidget {
   final Function(List<FeeItem>, double, int, int) onFeeStructureChanged;
 
   const FeeStructureWidget({
-    Key? key,
+    super.key,
     required this.durationYears,
     required this.onFeeStructureChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<FeeStructureWidget> createState() => _FeeStructureWidgetState();
@@ -358,11 +358,11 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
 
         ..._feeItems.asMap().entries.map((entry) {
           return _buildFeeRow(entry.value, entry.key, false);
-        }).toList(),
+        }),
 
         ..._customFees.asMap().entries.map((entry) {
           return _buildFeeRow(entry.value, entry.key, true);
-        }).toList(),
+        }),
 
         const SizedBox(height: 12),
 
@@ -527,7 +527,7 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
               Expanded(
                 flex: 2,
                 child: DropdownButtonFormField<FeeUnit>(
-                  value: item.unit,
+                  initialValue: item.unit,
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/models/university_model.dart';
-import 'package:university_app_2/models/course_model.dart';
-import 'package:university_app_2/models/student_model.dart';
-import 'package:university_app_2/models/consultancy_model.dart';
-import 'package:university_app_2/config/constants.dart';
-import 'package:university_app_2/data/indian_courses_data.dart';
+import 'package:educonnect/models/university_model.dart';
+import 'package:educonnect/models/course_model.dart';
+import 'package:educonnect/models/student_model.dart';
+import 'package:educonnect/models/consultancy_model.dart';
+import 'package:educonnect/config/constants.dart';
+import 'package:educonnect/data/indian_courses_data.dart';
 
 class MockDataService {
   static final MockDataService _instance = MockDataService._internal();

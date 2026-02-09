@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 import 'package:intl/intl.dart';
 
 class FeeStudentReportsScreen extends StatefulWidget {
-  const FeeStudentReportsScreen({Key? key}) : super(key: key);
+  const FeeStudentReportsScreen({super.key});
 
   @override
   State<FeeStudentReportsScreen> createState() =>
@@ -268,7 +268,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedCourse,
+                    initialValue: _selectedCourse,
                     decoration: const InputDecoration(
                       labelText: 'Course',
                       isDense: true,
@@ -287,7 +287,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 const SizedBox(width: 10),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedYear,
+                    initialValue: _selectedYear,
                     decoration: const InputDecoration(
                       labelText: 'Year',
                       isDense: true,
@@ -811,11 +811,11 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1224,11 +1224,11 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                           ),
                         ),
                       )
-                      .toList(),
+                      ,
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1562,7 +1562,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1797,7 +1797,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1846,7 +1846,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _exportFormat,
+                  initialValue: _exportFormat,
                   decoration: const InputDecoration(
                     labelText: 'Export Format',
                     isDense: true,

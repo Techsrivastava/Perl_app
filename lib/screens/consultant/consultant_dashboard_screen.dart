@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
-import 'package:university_app_2/screens/consultant/consultant_profile_screen.dart';
-import 'package:university_app_2/screens/consultant/universities/universities_courses_screen.dart';
-import 'package:university_app_2/screens/consultant/students/student_management_screen.dart';
-import 'package:university_app_2/screens/consultant/agents/agent_management_screen.dart';
-import 'package:university_app_2/screens/consultant/fee_payment/fee_payment_management_screen.dart';
-import 'package:university_app_2/screens/auth/login_screen.dart';
+import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/screens/consultant/consultant_profile_screen.dart';
+import 'package:educonnect/screens/consultant/universities/universities_courses_screen.dart';
+import 'package:educonnect/screens/consultant/students/student_management_screen.dart';
+import 'package:educonnect/screens/consultant/agents/agent_management_screen.dart';
+import 'package:educonnect/screens/consultant/fee_payment/fee_payment_management_screen.dart';
+import 'package:educonnect/screens/auth/login_screen.dart';
 
 class ConsultantDashboardScreen extends StatefulWidget {
   const ConsultantDashboardScreen({super.key});
@@ -777,7 +777,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               .map(
                 (notification) => _buildNotificationPreviewCard(notification),
               )
-              .toList(),
+              ,
 
           const SizedBox(height: 8),
         ],

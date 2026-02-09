@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 
 enum ButtonVariant { primary, secondary, success, danger }
 
@@ -124,7 +124,7 @@ class CustomButton extends StatelessWidget {
     };
 
     return buttonStyle.copyWith(
-      textStyle: MaterialStateProperty.all<TextStyle>(textStyle),
+      textStyle: WidgetStateProperty.all<TextStyle>(textStyle),
     );
   }
 }

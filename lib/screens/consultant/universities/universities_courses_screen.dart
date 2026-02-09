@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_app_2/config/theme.dart';
+import 'package:educonnect/config/theme.dart';
 import 'course_details_screen.dart';
 
 class UniversitiesCoursesScreen extends StatefulWidget {
