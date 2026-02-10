@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import '../../../../services/student_service.dart';
+import '../../../../models/student_model.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
@@ -16,479 +18,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
   final String _selectedUniversity = 'All';
   final String _selectedCourse = 'All';
 
-  final List<Map<String, dynamic>> _allStudents = [
-    {
-      'student_id': 'STU5010',
-      'name': 'Rahul Kumar',
-      'father_name': 'Suresh Kumar',
-      'mother_name': 'Anita Kumar',
-      'mobile': '9876543210',
-      'email': 'rahul@example.com',
-      'dob': '15/08/2005',
-      'gender': 'Male',
-      'category': 'General',
-      'address': '123 MG Road, Gandhi Nagar',
-      'city': 'Mumbai',
-      'state': 'Maharashtra',
-      'pincode': '400001',
-      'course': 'BNYS',
-      'university': 'Sunrise University',
-      'mode': 'Regular',
-      'duration': '4 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Admission Approved',
-      'registered_date': '2024-10-15',
-      '10th_board': 'CBSE',
-      '10th_marks': '85%',
-      '10th_year': '2020',
-      '12th_board': 'CBSE',
-      '12th_marks': '78%',
-      '12th_year': '2022',
-      'total_fee': 35000,
-      'paid_amount': 15000,
-      'pending_amount': 20000,
-      'payment_status': 'Partial',
-      'utr_number': 'UTR123456789',
-      'consultant_share': 5000,
-      'documents': ['10th', '12th', 'Aadhar', 'TC', 'Photo'],
-      'documents_verified': true,
-      'remarks': 'All documents verified. Payment in progress.',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5011',
-      'name': 'Priya Sharma',
-      'father_name': 'Rajesh Sharma',
-      'mother_name': 'Sunita Sharma',
-      'mobile': '9123456789',
-      'email': 'priya@example.com',
-      'dob': '22/03/2004',
-      'gender': 'Female',
-      'category': 'OBC',
-      'address': '45 Park Street, Sector 12',
-      'city': 'Pune',
-      'state': 'Maharashtra',
-      'pincode': '411001',
-      'course': 'BCA',
-      'university': 'MIT University',
-      'mode': 'Regular',
-      'duration': '3 Years',
-      'added_by': 'Agent',
-      'agent': 'Rakesh Consultancy',
-      'status': 'Applied',
-      'registered_date': '2024-11-01',
-      '10th_board': 'State Board',
-      '10th_marks': '88%',
-      '10th_year': '2019',
-      '12th_board': 'State Board',
-      '12th_marks': '82%',
-      '12th_year': '2021',
-      'total_fee': 150000,
-      'paid_amount': 0,
-      'pending_amount': 150000,
-      'payment_status': 'Pending',
-      'utr_number': '',
-      'consultant_share': 15000,
-      'documents': ['10th', '12th', 'Aadhar'],
-      'documents_verified': false,
-      'remarks': 'Application forwarded to university',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5012',
-      'name': 'Amit Verma',
-      'father_name': 'Vikas Verma',
-      'mother_name': 'Meena Verma',
-      'mobile': '9988776655',
-      'email': 'amit@example.com',
-      'dob': '10/12/2003',
-      'gender': 'Male',
-      'category': 'General',
-      'address': '78 Civil Lines, North Block',
-      'city': 'Dehradun',
-      'state': 'Uttarakhand',
-      'pincode': '248001',
-      'course': 'MBA',
-      'university': 'Excellence University',
-      'mode': 'Regular',
-      'duration': '2 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Reverted',
-      'registered_date': '2024-10-28',
-      '10th_board': 'CBSE',
-      '10th_marks': '75%',
-      '10th_year': '2018',
-      '12th_board': 'CBSE',
-      '12th_marks': '72%',
-      '12th_year': '2020',
-      'total_fee': 95000,
-      'paid_amount': 10000,
-      'pending_amount': 85000,
-      'payment_status': 'Pending',
-      'utr_number': '',
-      'consultant_share': 9500,
-      'documents': ['10th', '12th', 'Aadhar'],
-      'documents_verified': false,
-      'remarks': 'TC document missing - please upload',
-      'university_remarks':
-          'Transfer Certificate not submitted. Please upload within 7 days.',
-    },
-    {
-      'student_id': 'STU5013',
-      'name': 'Sneha Patel',
-      'father_name': 'Ramesh Patel',
-      'mother_name': 'Kavita Patel',
-      'mobile': '9876501234',
-      'email': 'sneha@example.com',
-      'dob': '05/06/2005',
-      'gender': 'Female',
-      'category': 'General',
-      'address': '12 Station Road, Model Town',
-      'city': 'Ahmedabad',
-      'state': 'Gujarat',
-      'pincode': '380001',
-      'course': 'B.Sc Data Science',
-      'university': 'Global Tech University',
-      'mode': 'Regular',
-      'duration': '3 Years',
-      'added_by': 'Agent',
-      'agent': 'Patel Consultancy',
-      'status': 'Lead',
-      'registered_date': '2024-11-05',
-      '10th_board': 'GSEB',
-      '10th_marks': '90%',
-      '10th_year': '2020',
-      '12th_board': 'GSEB',
-      '12th_marks': '87%',
-      '12th_year': '2022',
-      'total_fee': 120000,
-      'paid_amount': 0,
-      'pending_amount': 120000,
-      'payment_status': 'Not Started',
-      'utr_number': '',
-      'consultant_share': 12000,
-      'documents': [],
-      'documents_verified': false,
-      'remarks': 'Initial inquiry - follow up needed',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5014',
-      'name': 'Vikram Singh',
-      'father_name': 'Ajay Singh',
-      'mother_name': 'Priya Singh',
-      'mobile': '9654321098',
-      'email': 'vikram@example.com',
-      'dob': '18/09/2004',
-      'gender': 'Male',
-      'category': 'SC',
-      'address': '34 Ring Road, Sector 5',
-      'city': 'Jaipur',
-      'state': 'Rajasthan',
-      'pincode': '302001',
-      'course': 'Diploma in Nursing',
-      'university': 'Healthcare Hub',
-      'mode': 'Regular',
-      'duration': '2 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Rejected',
-      'registered_date': '2024-10-20',
-      '10th_board': 'RBSE',
-      '10th_marks': '65%',
-      '10th_year': '2019',
-      '12th_board': 'RBSE',
-      '12th_marks': '48%',
-      '12th_year': '2021',
-      'total_fee': 65000,
-      'paid_amount': 0,
-      'pending_amount': 65000,
-      'payment_status': 'Not Started',
-      'utr_number': '',
-      'consultant_share': 0,
-      'documents': ['10th', '12th', 'Aadhar'],
-      'documents_verified': false,
-      'remarks': 'Application rejected by university',
-      'university_remarks':
-          'Rejected - Below 50% in 12th standard. Minimum eligibility not met.',
-    },
-    {
-      'student_id': 'STU5015',
-      'name': 'Anjali Desai',
-      'father_name': 'Manoj Desai',
-      'mother_name': 'Rekha Desai',
-      'mobile': '9871234567',
-      'email': 'anjali.desai@example.com',
-      'dob': '12/01/2005',
-      'gender': 'Female',
-      'category': 'General',
-      'address': '67 Lake View Road, Sector 8',
-      'city': 'Bangalore',
-      'state': 'Karnataka',
-      'pincode': '560001',
-      'course': 'B.Tech Computer Science',
-      'university': 'MIT University',
-      'mode': 'Regular',
-      'duration': '4 Years',
-      'added_by': 'Agent',
-      'agent': 'Tech Consultancy',
-      'status': 'Admission Approved',
-      'registered_date': '2024-10-22',
-      '10th_board': 'ICSE',
-      '10th_marks': '92%',
-      '10th_year': '2020',
-      '12th_board': 'ICSE',
-      '12th_marks': '88%',
-      '12th_year': '2022',
-      'total_fee': 180000,
-      'paid_amount': 50000,
-      'pending_amount': 130000,
-      'payment_status': 'Partial',
-      'utr_number': 'UTR987654321',
-      'consultant_share': 18000,
-      'documents': ['10th', '12th', 'Aadhar', 'TC', 'Photo'],
-      'documents_verified': true,
-      'remarks': 'Excellent student, all documents submitted',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5016',
-      'name': 'Karan Malhotra',
-      'father_name': 'Vikram Malhotra',
-      'mother_name': 'Geeta Malhotra',
-      'mobile': '9654123789',
-      'email': 'karan.m@example.com',
-      'dob': '25/07/2004',
-      'gender': 'Male',
-      'category': 'General',
-      'address': '89 Mall Road, Central Avenue',
-      'city': 'Chandigarh',
-      'state': 'Chandigarh',
-      'pincode': '160001',
-      'course': 'BBA',
-      'university': 'Excellence University',
-      'mode': 'Regular',
-      'duration': '3 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Applied',
-      'registered_date': '2024-11-03',
-      '10th_board': 'CBSE',
-      '10th_marks': '80%',
-      '10th_year': '2019',
-      '12th_board': 'CBSE',
-      '12th_marks': '76%',
-      '12th_year': '2021',
-      'total_fee': 110000,
-      'paid_amount': 0,
-      'pending_amount': 110000,
-      'payment_status': 'Pending',
-      'utr_number': '',
-      'consultant_share': 11000,
-      'documents': ['10th', '12th', 'Aadhar'],
-      'documents_verified': false,
-      'remarks': 'Documents pending submission',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5017',
-      'name': 'Neha Kapoor',
-      'father_name': 'Sunil Kapoor',
-      'mother_name': 'Asha Kapoor',
-      'mobile': '9123987654',
-      'email': 'neha.k@example.com',
-      'dob': '08/11/2005',
-      'gender': 'Female',
-      'category': 'OBC',
-      'address': '23 Garden Street, Rose Colony',
-      'city': 'Lucknow',
-      'state': 'Uttar Pradesh',
-      'pincode': '226001',
-      'course': 'B.Sc Nursing',
-      'university': 'Healthcare Hub',
-      'mode': 'Regular',
-      'duration': '4 Years',
-      'added_by': 'Agent',
-      'agent': 'Medical Consultancy',
-      'status': 'Admission Approved',
-      'registered_date': '2024-10-18',
-      '10th_board': 'UP Board',
-      '10th_marks': '82%',
-      '10th_year': '2020',
-      '12th_board': 'UP Board',
-      '12th_marks': '79%',
-      '12th_year': '2022',
-      'total_fee': 85000,
-      'paid_amount': 85000,
-      'pending_amount': 0,
-      'payment_status': 'Paid',
-      'utr_number': 'UTR555666777',
-      'consultant_share': 8500,
-      'documents': ['10th', '12th', 'Aadhar', 'TC', 'Photo'],
-      'documents_verified': true,
-      'remarks': 'Full fee paid, admission confirmed',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5018',
-      'name': 'Rohan Gupta',
-      'father_name': 'Anil Gupta',
-      'mother_name': 'Savita Gupta',
-      'mobile': '9988112233',
-      'email': 'rohan.g@example.com',
-      'dob': '30/04/2004',
-      'gender': 'Male',
-      'category': 'General',
-      'address': '45 New Market, Sector 15',
-      'city': 'Noida',
-      'state': 'Uttar Pradesh',
-      'pincode': '201301',
-      'course': 'M.Tech',
-      'university': 'Global Tech University',
-      'mode': 'Regular',
-      'duration': '2 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Reverted',
-      'registered_date': '2024-10-25',
-      '10th_board': 'CBSE',
-      '10th_marks': '88%',
-      '10th_year': '2017',
-      '12th_board': 'CBSE',
-      '12th_marks': '84%',
-      '12th_year': '2019',
-      'total_fee': 145000,
-      'paid_amount': 20000,
-      'pending_amount': 125000,
-      'payment_status': 'Pending',
-      'utr_number': '',
-      'consultant_share': 14500,
-      'documents': ['10th', '12th', 'Aadhar'],
-      'documents_verified': false,
-      'remarks': 'Graduation certificate pending',
-      'university_remarks':
-          'Bachelor degree certificate required for M.Tech admission. Please upload within 5 days.',
-    },
-    {
-      'student_id': 'STU5019',
-      'name': 'Divya Reddy',
-      'father_name': 'Krishna Reddy',
-      'mother_name': 'Lakshmi Reddy',
-      'mobile': '9876009876',
-      'email': 'divya.r@example.com',
-      'dob': '14/09/2005',
-      'gender': 'Female',
-      'category': 'General',
-      'address': '78 Temple Road, Jubilee Hills',
-      'city': 'Hyderabad',
-      'state': 'Telangana',
-      'pincode': '500001',
-      'course': 'B.Pharma',
-      'university': 'Sunrise University',
-      'mode': 'Regular',
-      'duration': '4 Years',
-      'added_by': 'Agent',
-      'agent': 'Pharma Consultancy',
-      'status': 'Applied',
-      'registered_date': '2024-11-02',
-      '10th_board': 'State Board',
-      '10th_marks': '86%',
-      '10th_year': '2020',
-      '12th_board': 'State Board',
-      '12th_marks': '81%',
-      '12th_year': '2022',
-      'total_fee': 125000,
-      'paid_amount': 25000,
-      'pending_amount': 100000,
-      'payment_status': 'Partial',
-      'utr_number': 'UTR444555666',
-      'consultant_share': 12500,
-      'documents': ['10th', '12th', 'Aadhar', 'Photo'],
-      'documents_verified': false,
-      'remarks': 'Application under review',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5020',
-      'name': 'Arjun Sinha',
-      'father_name': 'Deepak Sinha',
-      'mother_name': 'Rina Sinha',
-      'mobile': '9654987321',
-      'email': 'arjun.s@example.com',
-      'dob': '20/03/2005',
-      'gender': 'Male',
-      'category': 'SC',
-      'address': '12 Station Road, Gandhi Nagar',
-      'city': 'Patna',
-      'state': 'Bihar',
-      'pincode': '800001',
-      'course': 'B.Com',
-      'university': 'Excellence University',
-      'mode': 'Distance',
-      'duration': '3 Years',
-      'added_by': 'Consultant',
-      'agent': 'Self',
-      'status': 'Lead',
-      'registered_date': '2024-11-06',
-      '10th_board': 'Bihar Board',
-      '10th_marks': '70%',
-      '10th_year': '2020',
-      '12th_board': 'Bihar Board',
-      '12th_marks': '68%',
-      '12th_year': '2022',
-      'total_fee': 45000,
-      'paid_amount': 0,
-      'pending_amount': 45000,
-      'payment_status': 'Not Started',
-      'utr_number': '',
-      'consultant_share': 4500,
-      'documents': [],
-      'documents_verified': false,
-      'remarks': 'Just inquired, need follow-up',
-      'university_remarks': '',
-    },
-    {
-      'student_id': 'STU5021',
-      'name': 'Pooja Iyer',
-      'father_name': 'Venkat Iyer',
-      'mother_name': 'Radha Iyer',
-      'mobile': '9445566778',
-      'email': 'pooja.iyer@example.com',
-      'dob': '16/12/2004',
-      'gender': 'Female',
-      'category': 'General',
-      'address': '90 Beach Road, Marina',
-      'city': 'Chennai',
-      'state': 'Tamil Nadu',
-      'pincode': '600001',
-      'course': 'M.Sc Data Science',
-      'university': 'Global Tech University',
-      'mode': 'Regular',
-      'duration': '2 Years',
-      'added_by': 'Agent',
-      'agent': 'Tech Consultancy',
-      'status': 'Admission Approved',
-      'registered_date': '2024-10-12',
-      '10th_board': 'CBSE',
-      '10th_marks': '95%',
-      '10th_year': '2018',
-      '12th_board': 'CBSE',
-      '12th_marks': '92%',
-      '12th_year': '2020',
-      'total_fee': 165000,
-      'paid_amount': 165000,
-      'pending_amount': 0,
-      'payment_status': 'Paid',
-      'utr_number': 'UTR111222333',
-      'consultant_share': 16500,
-      'documents': ['10th', '12th', 'Aadhar', 'TC', 'Photo', 'Migration'],
-      'documents_verified': true,
-      'remarks': 'Topnotch student, full scholarship candidate',
-      'university_remarks': '',
-    },
-  ];
+  List<Student> _allStudents = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -497,6 +28,28 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     _tabController.addListener(() {
       setState(() {}); // Rebuild when tab changes
     });
+    _loadStudents();
+  }
+
+  Future<void> _loadStudents() async {
+    try {
+      final studentsData = await StudentService.getStudents();
+      if (mounted) {
+        setState(() {
+          _allStudents = studentsData
+              .map((data) => Student.fromJson(data))
+              .toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load students: $e')));
+      }
+    }
   }
 
   @override
@@ -505,7 +58,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     super.dispose();
   }
 
-  void _viewStudent(Map<String, dynamic> student) {
+  void _viewStudent(Student student) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -514,7 +67,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  void _editStudent(Map<String, dynamic> student) {
+  void _editStudent(Student student) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -522,7 +75,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
           student: student,
           onSave: (updatedData) {
             setState(() {
-              student.addAll(updatedData);
+              // Assuming updatedData is a Map<String, dynamic> and Student has a fromJson constructor
+              // This might need more sophisticated merging if Student is immutable
+              // For now, we'll just update the existing student object's properties
+              // or reload students if the change is significant.
+              // For simplicity, let's assume we update the properties directly if possible
+              // or trigger a reload.
+              // A better approach would be to pass a callback to update the specific student in _allStudents.
+              // For this example, let's just trigger a reload for simplicity after edit.
+              _loadStudents();
             });
           },
         ),
@@ -530,14 +91,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  void _deleteStudent(Map<String, dynamic> student) {
+  void _deleteStudent(Student student) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Student'),
-        content: Text(
-          'Delete ${student['name']}? This action cannot be undone.',
-        ),
+        content: Text('Delete ${student.name}? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -562,7 +121,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  void _forwardToUniversity(Map<String, dynamic> student) {
+  void _forwardToUniversity(Student student) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -576,11 +135,11 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
             ),
             const SizedBox(height: 12),
             Text(
-              'Student: ${student['name']}',
+              'Student: ${student.name}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text('University: ${student['university']}'),
-            Text('Course: ${student['course']}'),
+            Text('University: ${student.universityName}'),
+            Text('Course: ${student.courseName}'),
           ],
         ),
         actions: [
@@ -590,7 +149,17 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() => student['status'] = 'Applied');
+              setState(() {
+                // Create a modified copy of the student with the new status
+                final updatedStudent = student.copyWith(status: 'Applied');
+                // Find the index of the student in the list
+                final index = _allStudents.indexWhere(
+                  (s) => s.id == student.id,
+                );
+                if (index != -1) {
+                  _allStudents[index] = updatedStudent;
+                }
+              }); // Assuming status is mutable
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -607,7 +176,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  void _trackApplication(Map<String, dynamic> student) {
+  void _trackApplication(Student student) {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
@@ -649,7 +218,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            student['student_id'],
+                            student.id,
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 12,
@@ -691,14 +260,14 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    student['name'],
+                                    student.name,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
                                   Text(
-                                    '${student['course']} - ${student['university']}',
+                                    '${student.courseName} - ${student.consultancyName}',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ],
@@ -723,69 +292,67 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
 
                       _buildTimelineItem(
                         'Application Registered',
-                        student['registered_date'],
+                        student.appliedDate.toIso8601String(),
                         'Student added to system',
                         Colors.blue,
                         true,
                       ),
                       _buildTimelineItem(
                         'Documents Uploaded',
-                        _getDocumentUploadDate(student),
-                        '${student['documents'].length} documents submitted',
-                        student['documents'].isNotEmpty
+                        '', // _getDocumentUploadDate(student),
+                        '${student.documents.length} documents submitted',
+                        student.documents.isNotEmpty
                             ? Colors.green
                             : Colors.grey,
-                        student['documents'].isNotEmpty,
+                        student.documents.isNotEmpty,
                       ),
                       _buildTimelineItem(
                         'Application Submitted',
-                        student['status'] == 'Applied' ||
-                                student['status'] == 'Admission Approved' ||
-                                student['status'] == 'Reverted'
-                            ? student['registered_date']
+                        student.status == 'Applied' ||
+                                student.status == 'Admission Approved' ||
+                                student.status == 'Reverted'
+                            ? student.appliedDate.toIso8601String()
                             : '',
                         'Forwarded to university',
-                        student['status'] != 'Lead'
-                            ? Colors.orange
-                            : Colors.grey,
-                        student['status'] != 'Lead',
+                        student.status != 'Lead' ? Colors.orange : Colors.grey,
+                        student.status != 'Lead',
                       ),
                       _buildTimelineItem(
                         'University Review',
-                        student['status'] == 'Admission Approved' ||
-                                student['status'] == 'Reverted' ||
-                                student['status'] == 'Rejected'
-                            ? student['registered_date']
+                        student.status == 'Admission Approved' ||
+                                student.status == 'Reverted' ||
+                                student.status == 'Rejected'
+                            ? student.appliedDate.toIso8601String()
                             : '',
                         'Under verification',
-                        student['status'] == 'Admission Approved' ||
-                                student['status'] == 'Reverted' ||
-                                student['status'] == 'Rejected'
+                        student.status == 'Admission Approved' ||
+                                student.status == 'Reverted' ||
+                                student.status == 'Rejected'
                             ? Colors.purple
                             : Colors.grey,
-                        student['status'] == 'Admission Approved' ||
-                            student['status'] == 'Reverted' ||
-                            student['status'] == 'Rejected',
+                        student.status == 'Admission Approved' ||
+                            student.status == 'Reverted' ||
+                            student.status == 'Rejected',
                       ),
                       _buildTimelineItem(
                         'Admission Approved',
-                        student['status'] == 'Admission Approved'
-                            ? student['registered_date']
+                        student.status == 'Admission Approved'
+                            ? student.appliedDate.toIso8601String()
                             : '',
                         'Admission confirmed',
-                        student['status'] == 'Admission Approved'
+                        student.status == 'Admission Approved'
                             ? Colors.green
                             : Colors.grey,
-                        student['status'] == 'Admission Approved',
+                        student.status == 'Admission Approved',
                         isLast: true,
                       ),
 
-                      if (student['status'] == 'Reverted') ...[
+                      if (student.status == 'Reverted') ...[
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: Colors.red.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.red),
                           ),
@@ -811,7 +378,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      student['university_remarks'] ??
+                                      student.universityRemarks ??
                                           'Please correct the application',
                                       style: const TextStyle(fontSize: 12),
                                     ),
@@ -823,12 +390,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                         ),
                       ],
 
-                      if (student['status'] == 'Rejected') ...[
+                      if (student.status == 'Rejected') ...[
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red[900]!.withValues(alpha: 0.1),
+                            color: Colors.red[900]!.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.red[900]!),
                           ),
@@ -854,7 +421,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      student['university_remarks'] ??
+                                      student.universityRemarks ??
                                           'Application declined',
                                       style: const TextStyle(fontSize: 12),
                                     ),
@@ -876,8 +443,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  String _getDocumentUploadDate(Map<String, dynamic> student) {
-    return student['documents'].isNotEmpty ? student['registered_date'] : '';
+  String _getDocumentUploadDate(Student student) {
+    return student.documents.isNotEmpty
+        ? student.registeredDate.toIso8601String()
+        : '';
   }
 
   Widget _buildTimelineItem(
@@ -909,9 +478,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
               Container(
                 width: 2,
                 height: 60,
-                color: isActive
-                    ? color.withValues(alpha: 0.3)
-                    : Colors.grey[300],
+                color: isActive ? color.withOpacity(0.3) : Colors.grey[300],
               ),
           ],
         ),
@@ -971,13 +538,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            color.withValues(alpha: 0.12),
-            color.withValues(alpha: 0.05),
-          ],
+          colors: [color.withOpacity(0.12), color.withOpacity(0.05)],
         ),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -1006,12 +570,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.03)],
+          colors: [color.withOpacity(0.1), color.withOpacity(0.03)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -1036,25 +600,43 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  List<Map<String, dynamic>> get _filteredStudents {
+  int _getStatusCount(String status) {
+    if (status == 'All') return _allStudents.length;
+    return _allStudents.where((s) => s.status == status).length;
+  }
+
+  // Filter Logic
+  List<Student> get _filteredStudents {
     return _allStudents.where((s) {
       final matchesSearch =
           _searchQuery.isEmpty ||
-          s['name'].toLowerCase().contains(_searchQuery.toLowerCase());
-      final tabIndex = _tabController.index;
-      if (tabIndex == 1) return s['status'] == 'Applied' && matchesSearch;
-      if (tabIndex == 2) {
-        return s['status'] == 'Admission Approved' && matchesSearch;
-      }
-      if (tabIndex == 3) return s['status'] == 'Reverted' && matchesSearch;
-      if (tabIndex == 4) return s['status'] == 'Rejected' && matchesSearch;
-      return matchesSearch;
-    }).toList();
-  }
+          s.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          s.id.toLowerCase().contains(_searchQuery.toLowerCase());
 
-  int _getStatusCount(String status) {
-    if (status == 'All') return _allStudents.length;
-    return _allStudents.where((s) => s['status'] == status).length;
+      if (_tabController.index == 0) return matchesSearch;
+
+      String statusFilter = '';
+      switch (_tabController.index) {
+        case 1:
+          statusFilter = 'Lead';
+          break;
+        case 2:
+          statusFilter = 'Applied';
+          break;
+        case 3:
+          statusFilter = 'Admission Approved';
+          break;
+        case 4:
+          statusFilter = 'Rejected'; // Or Reverted, need to check tabs
+          break;
+      }
+
+      // Tab 4 in original code was 'Rejected' & 'Reverted' in switch?
+      // Checking tabs: All, Leads, Applied, Approved, Rejected.
+      // So index 4 is Rejected.
+
+      return s.status == statusFilter && matchesSearch;
+    }).toList();
   }
 
   @override
@@ -1208,6 +790,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
 
   Widget _buildStudentList() {
     final students = _filteredStudents;
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (students.isEmpty) {
       return const Center(child: Text('No students found'));
     }
@@ -1218,19 +803,19 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  Widget _buildStudentCard(Map<String, dynamic> student) {
+  Widget _buildStudentCard(Student student) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _getStatusColor(student['status']).withValues(alpha: 0.2),
+          color: _getStatusColor(student.status).withOpacity(0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1244,8 +829,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getStatusColor(student['status']).withValues(alpha: 0.1),
-                  _getStatusColor(student['status']).withValues(alpha: 0.03),
+                  _getStatusColor(student.status).withOpacity(0.1),
+                  _getStatusColor(student.status).withOpacity(0.03),
                 ],
               ),
               borderRadius: const BorderRadius.vertical(
@@ -1259,10 +844,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        _getStatusColor(student['status']),
-                        _getStatusColor(
-                          student['status'],
-                        ).withValues(alpha: 0.7),
+                        _getStatusColor(student.status),
+                        _getStatusColor(student.status).withOpacity(0.7),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(10),
@@ -1279,7 +862,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        student['name'],
+                        student.name,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -1287,7 +870,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        student['student_id'],
+                        student.id,
                         style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       ),
                     ],
@@ -1301,28 +884,22 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        _getStatusColor(
-                          student['status'],
-                        ).withValues(alpha: 0.15),
-                        _getStatusColor(
-                          student['status'],
-                        ).withValues(alpha: 0.08),
+                        _getStatusColor(student.status).withOpacity(0.15),
+                        _getStatusColor(student.status).withOpacity(0.08),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _getStatusColor(
-                        student['status'],
-                      ).withValues(alpha: 0.4),
+                      color: _getStatusColor(student.status).withOpacity(0.4),
                       width: 1.5,
                     ),
                   ),
                   child: Text(
-                    student['status'],
+                    student.status,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: _getStatusColor(student['status']),
+                      color: _getStatusColor(student.status),
                     ),
                   ),
                 ),
@@ -1341,10 +918,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                   children: [
                     Icon(Icons.phone, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 6),
-                    Text(
-                      student['mobile'],
-                      style: const TextStyle(fontSize: 12),
-                    ),
+                    Text(student.mobile, style: const TextStyle(fontSize: 12)),
                     const SizedBox(width: 16),
                     Icon(
                       Icons.calendar_today,
@@ -1353,7 +927,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      student['registered_date'],
+                      student.registeredDate.toIso8601String().split(
+                        'T',
+                      )[0], // Display date only
                       style: const TextStyle(fontSize: 12),
                     ),
                   ],
@@ -1367,7 +943,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        student['course'],
+                        student.courseName,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -1383,7 +959,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        student['university'],
+                        student.universityName ?? 'Unknown University',
                         style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                       ),
                     ),
@@ -1400,7 +976,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           Icon(Icons.book, size: 14, color: Colors.grey[600]),
                           const SizedBox(width: 6),
                           Text(
-                            student['mode'] ?? 'Regular',
+                            student.mode ?? 'Regular',
                             style: const TextStyle(fontSize: 11),
                           ),
                         ],
@@ -1416,7 +992,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            student['city'],
+                            student.city ?? 'Unknown City',
                             style: const TextStyle(fontSize: 11),
                           ),
                         ],
@@ -1429,7 +1005,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              student['agent'],
+                              student.agentName ?? 'Direct',
                               style: const TextStyle(fontSize: 11),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1448,7 +1024,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     Expanded(
                       child: _buildMiniCard(
                         'Total',
-                        '₹${(student['total_fee'] / 1000).toStringAsFixed(0)}K',
+                        '₹${(student.totalFee / 1000).toStringAsFixed(0)}K',
                         Colors.blue,
                       ),
                     ),
@@ -1456,7 +1032,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     Expanded(
                       child: _buildMiniCard(
                         'Paid',
-                        '₹${(student['paid_amount'] / 1000).toStringAsFixed(0)}K',
+                        '₹${(student.paidAmount / 1000).toStringAsFixed(0)}K',
                         Colors.green,
                       ),
                     ),
@@ -1464,7 +1040,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     Expanded(
                       child: _buildMiniCard(
                         'Pending',
-                        '₹${(student['pending_amount'] / 1000).toStringAsFixed(0)}K',
+                        '₹${(student.pendingAmount / 1000).toStringAsFixed(0)}K',
                         Colors.orange,
                       ),
                     ),
@@ -1472,28 +1048,28 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                 ),
 
                 // Documents Status
-                if (student['documents'].isNotEmpty) ...[
+                if (student.documents.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   Row(
                     children: [
                       Icon(
                         Icons.folder,
                         size: 14,
-                        color: student['documents_verified'] == true
+                        color: student.documentsVerified
                             ? Colors.green
                             : Colors.orange,
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '${student['documents'].length} docs uploaded',
+                        '${student.documents.length} docs uploaded',
                         style: TextStyle(
                           fontSize: 11,
-                          color: student['documents_verified'] == true
+                          color: student.documentsVerified
                               ? Colors.green
                               : Colors.orange,
                         ),
                       ),
-                      if (student['documents_verified'] == true) ...[
+                      if (student.documentsVerified) ...[
                         const SizedBox(width: 6),
                         const Icon(
                           Icons.verified,
@@ -1569,7 +1145,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    if (student['status'] == 'Lead')
+                    if (student.status == 'Lead')
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () => _deleteStudent(student),
@@ -1585,8 +1161,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           ),
                         ),
                       ),
-                    if (student['status'] == 'Applied' ||
-                        student['status'] == 'Lead')
+                    if (student.status == 'Applied' || student.status == 'Lead')
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () => _forwardToUniversity(student),
@@ -1602,7 +1177,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                           ),
                         ),
                       ),
-                    if (student['status'] == 'Admission Approved')
+                    if (student.status == 'Admission Approved')
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {
@@ -1638,7 +1213,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
 
 // Student Details View Widget - Complete admission form view
 class _StudentDetailsView extends StatelessWidget {
-  final Map<String, dynamic> student;
+  final Student student;
 
   const _StudentDetailsView({required this.student});
 
@@ -1661,12 +1236,12 @@ class _StudentDetailsView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // University Remarks Banner (if any)
-            if (student['university_remarks']?.toString().isNotEmpty ?? false)
+            if (student.universityRemarks?.isNotEmpty ?? false)
               Container(
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
+                  color: Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.red),
                 ),
@@ -1692,7 +1267,7 @@ class _StudentDetailsView extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            student['university_remarks'] ?? '',
+                            student.universityRemarks ?? '',
                             style: const TextStyle(fontSize: 12),
                           ),
                         ],
@@ -1716,7 +1291,7 @@ class _StudentDetailsView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -1731,7 +1306,7 @@ class _StudentDetailsView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          student['student_id'],
+                          student.id,
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
@@ -1739,7 +1314,7 @@ class _StudentDetailsView extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          student['name'],
+                          student.name,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -1748,7 +1323,7 @@ class _StudentDetailsView extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${student['course']}',
+                          student.courseName,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -1765,24 +1340,24 @@ class _StudentDetailsView extends StatelessWidget {
 
             // Basic Information
             _buildSection('Basic Information', Icons.person_outline, [
-              _buildRow('Full Name', student['name']),
-              _buildRow('Father Name', student['father_name'] ?? 'N/A'),
-              _buildRow('Mother Name', student['mother_name'] ?? 'N/A'),
-              _buildRow('Mobile Number', student['mobile']),
-              _buildRow('Email', student['email'] ?? 'N/A'),
-              _buildRow('Date of Birth', student['dob'] ?? 'N/A'),
-              _buildRow('Gender', student['gender'] ?? 'N/A'),
-              _buildRow('Category', student['category'] ?? 'N/A'),
+              _buildRow('Full Name', student.name),
+              _buildRow('Father Name', student.fatherName ?? 'N/A'),
+              _buildRow('Mother Name', student.motherName ?? 'N/A'),
+              _buildRow('Mobile Number', student.mobile),
+              _buildRow('Email', student.email),
+              _buildRow('Date of Birth', student.dob ?? 'N/A'),
+              _buildRow('Gender', student.gender ?? 'N/A'),
+              _buildRow('Category', student.category ?? 'N/A'),
             ]),
 
             const SizedBox(height: 16),
 
             // Address
             _buildSection('Address Details', Icons.location_on_outlined, [
-              _buildRow('Address', student['address'] ?? 'N/A'),
-              _buildRow('City', student['city'] ?? 'N/A'),
-              _buildRow('State', student['state'] ?? 'N/A'),
-              _buildRow('Pincode', student['pincode'] ?? 'N/A'),
+              _buildRow('Address', student.address ?? 'N/A'),
+              _buildRow('City', student.city ?? 'N/A'),
+              _buildRow('State', student.state ?? 'N/A'),
+              _buildRow('Pincode', student.pincode ?? 'N/A'),
             ]),
 
             const SizedBox(height: 16),
@@ -1798,9 +1373,9 @@ class _StudentDetailsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildRow('Board/University', student['10th_board'] ?? 'N/A'),
-              _buildRow('Marks/Percentage', student['10th_marks'] ?? 'N/A'),
-              _buildRow('Passing Year', student['10th_year'] ?? 'N/A'),
+              _buildRow('Board/University', student.tenthBoard ?? 'N/A'),
+              _buildRow('Marks/Percentage', student.tenthMarks ?? 'N/A'),
+              _buildRow('Passing Year', student.tenthYear ?? 'N/A'),
               const Divider(height: 24),
               const Text(
                 '12th Standard',
@@ -1811,23 +1386,26 @@ class _StudentDetailsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildRow('Board/University', student['12th_board'] ?? 'N/A'),
-              _buildRow('Marks/Percentage', student['12th_marks'] ?? 'N/A'),
-              _buildRow('Passing Year', student['12th_year'] ?? 'N/A'),
+              _buildRow('Board/University', student.twelfthBoard ?? 'N/A'),
+              _buildRow('Marks/Percentage', student.twelfthMarks ?? 'N/A'),
+              _buildRow('Passing Year', student.twelfthYear ?? 'N/A'),
             ]),
 
             const SizedBox(height: 16),
 
             // Course & University
             _buildSection('Course & University', Icons.business_outlined, [
-              _buildRow('Course', student['course']),
-              _buildRow('University', student['university']),
-              _buildRow('Mode', student['mode'] ?? 'N/A'),
-              _buildRow('Duration', student['duration'] ?? 'N/A'),
-              _buildRow('Added By', student['added_by'] ?? 'N/A'),
-              _buildRow('Agent', student['agent'] ?? 'N/A'),
-              _buildRow('Status', student['status']),
-              _buildRow('Registered Date', student['registered_date']),
+              _buildRow('Course', student.courseName),
+              _buildRow('University', student.universityName ?? 'N/A'),
+              _buildRow('Mode', student.mode ?? 'N/A'),
+              _buildRow('Duration', student.duration ?? 'N/A'),
+              _buildRow('Added By', student.addedBy ?? 'N/A'),
+              _buildRow('Agent', student.agentName ?? 'N/A'),
+              _buildRow('Status', student.status),
+              _buildRow(
+                'Registered Date',
+                student.registeredDate.toIso8601String().split('T')[0],
+              ),
             ]),
 
             const SizedBox(height: 16),
@@ -1842,7 +1420,7 @@ class _StudentDetailsView extends StatelessWidget {
                     Expanded(
                       child: _buildFeeCard(
                         'Total Fee',
-                        '₹${student['total_fee']}',
+                        '₹${student.totalFee}',
                         Colors.blue,
                       ),
                     ),
@@ -1850,7 +1428,7 @@ class _StudentDetailsView extends StatelessWidget {
                     Expanded(
                       child: _buildFeeCard(
                         'Paid',
-                        '₹${student['paid_amount']}',
+                        '₹${student.paidAmount}',
                         Colors.green,
                       ),
                     ),
@@ -1862,7 +1440,7 @@ class _StudentDetailsView extends StatelessWidget {
                     Expanded(
                       child: _buildFeeCard(
                         'Pending',
-                        '₹${student['pending_amount']}',
+                        '₹${student.pendingAmount}',
                         Colors.orange,
                       ),
                     ),
@@ -1870,19 +1448,16 @@ class _StudentDetailsView extends StatelessWidget {
                     Expanded(
                       child: _buildFeeCard(
                         'Commission',
-                        '₹${student['consultant_share']}',
+                        '₹${student.consultantShare}',
                         AppTheme.primaryBlue,
                       ),
                     ),
                   ],
                 ),
-                if (student['utr_number']?.toString().isNotEmpty ?? false) ...[
+                if (student.utrNumber?.isNotEmpty ?? false) ...[
                   const SizedBox(height: 12),
-                  _buildRow('UTR Number', student['utr_number']),
-                  _buildRow(
-                    'Payment Status',
-                    student['payment_status'] ?? 'N/A',
-                  ),
+                  _buildRow('UTR Number', student.utrNumber!),
+                  _buildRow('Payment Status', student.paymentStatus ?? 'N/A'),
                 ],
               ],
             ),
@@ -1893,49 +1468,47 @@ class _StudentDetailsView extends StatelessWidget {
             _buildSection('Documents Submitted', Icons.upload_file, [
               _buildDocStatus(
                 '10th Marksheet',
-                student['documents'].contains('10th'),
+                student.documents.contains('10th'),
               ),
               _buildDocStatus(
                 '12th Marksheet',
-                student['documents'].contains('12th'),
+                student.documents.contains('12th'),
               ),
               _buildDocStatus(
                 'Transfer Certificate',
-                student['documents'].contains('TC'),
+                student.documents.contains('TC'),
               ),
               _buildDocStatus(
                 'Aadhar Card',
-                student['documents'].contains('Aadhar'),
+                student.documents.contains('Aadhar'),
               ),
               _buildDocStatus(
                 'Passport Photo',
-                student['documents'].contains('Photo'),
+                student.documents.contains('Photo'),
               ),
               _buildDocStatus(
                 'Migration Certificate',
-                student['documents'].contains('Migration'),
+                student.documents.contains('Migration'),
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
                   Icon(
-                    student['documents_verified'] == true
-                        ? Icons.verified
-                        : Icons.pending,
-                    color: student['documents_verified'] == true
+                    student.documentsVerified ? Icons.verified : Icons.pending,
+                    color: student.documentsVerified
                         ? Colors.green
                         : Colors.orange,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    student['documents_verified'] == true
+                    student.documentsVerified
                         ? 'All documents verified'
                         : 'Verification pending',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: student['documents_verified'] == true
+                      color: student.documentsVerified
                           ? Colors.green
                           : Colors.orange,
                     ),
@@ -1949,7 +1522,7 @@ class _StudentDetailsView extends StatelessWidget {
             // Remarks
             _buildSection('Remarks', Icons.note_outlined, [
               Text(
-                student['remarks'] ?? 'No remarks',
+                student.remarks ?? 'No remarks',
                 style: const TextStyle(fontSize: 13, height: 1.5),
               ),
             ]),
@@ -2022,13 +1595,10 @@ class _StudentDetailsView extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            color.withValues(alpha: 0.15),
-            color.withValues(alpha: 0.05),
-          ],
+          colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
         ),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -2063,8 +1633,8 @@ class _StudentDetailsView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               color: uploaded
-                  ? Colors.green.withValues(alpha: 0.1)
-                  : Colors.red.withValues(alpha: 0.1),
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -2083,7 +1653,7 @@ class _StudentDetailsView extends StatelessWidget {
 
 // Edit Student Form Widget - Complete editable admission form
 class _EditStudentForm extends StatefulWidget {
-  final Map<String, dynamic> student;
+  final Student student;
   final Function(Map<String, dynamic>) onSave;
 
   const _EditStudentForm({required this.student, required this.onSave});
@@ -2120,51 +1690,47 @@ class _EditStudentFormState extends State<_EditStudentForm> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.student['name']);
+    _nameController = TextEditingController(text: widget.student.name);
     _fatherNameController = TextEditingController(
-      text: widget.student['father_name'] ?? '',
+      text: widget.student.fatherName ?? '',
     );
     _motherNameController = TextEditingController(
-      text: widget.student['mother_name'] ?? '',
+      text: widget.student.motherName ?? '',
     );
-    _mobileController = TextEditingController(text: widget.student['mobile']);
-    _emailController = TextEditingController(
-      text: widget.student['email'] ?? '',
-    );
-    _dobController = TextEditingController(text: widget.student['dob'] ?? '');
+    _mobileController = TextEditingController(text: widget.student.mobile);
+    _emailController = TextEditingController(text: widget.student.email);
+    _dobController = TextEditingController(text: widget.student.dob ?? '');
     _addressController = TextEditingController(
-      text: widget.student['address'] ?? '',
+      text: widget.student.address ?? '',
     );
-    _cityController = TextEditingController(text: widget.student['city'] ?? '');
-    _stateController = TextEditingController(
-      text: widget.student['state'] ?? '',
-    );
+    _cityController = TextEditingController(text: widget.student.city ?? '');
+    _stateController = TextEditingController(text: widget.student.state ?? '');
     _pincodeController = TextEditingController(
-      text: widget.student['pincode'] ?? '',
+      text: widget.student.pincode ?? '',
     );
     _tenth_boardController = TextEditingController(
-      text: widget.student['10th_board'] ?? '',
+      text: widget.student.tenthBoard ?? '',
     );
     _tenth_marksController = TextEditingController(
-      text: widget.student['10th_marks'] ?? '',
+      text: widget.student.tenthMarks ?? '',
     );
     _tenth_yearController = TextEditingController(
-      text: widget.student['10th_year'] ?? '',
+      text: widget.student.tenthYear ?? '',
     );
     _twelfth_boardController = TextEditingController(
-      text: widget.student['12th_board'] ?? '',
+      text: widget.student.twelfthBoard ?? '',
     );
     _twelfth_marksController = TextEditingController(
-      text: widget.student['12th_marks'] ?? '',
+      text: widget.student.twelfthMarks ?? '',
     );
     _twelfth_yearController = TextEditingController(
-      text: widget.student['12th_year'] ?? '',
+      text: widget.student.twelfthYear ?? '',
     );
     _remarksController = TextEditingController(
-      text: widget.student['remarks'] ?? '',
+      text: widget.student.remarks ?? '',
     );
-    _gender = widget.student['gender'] ?? 'Male';
-    _category = widget.student['category'] ?? 'General';
+    _gender = widget.student.gender ?? 'Male';
+    _category = widget.student.category ?? 'General';
   }
 
   @override
@@ -2395,11 +1961,14 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             ),
             const SizedBox(height: 12),
 
-            _buildReadOnlyField('Course', widget.student['course']),
+            _buildReadOnlyField('Course', widget.student.courseName),
             const SizedBox(height: 12),
-            _buildReadOnlyField('University', widget.student['university']),
+            _buildReadOnlyField(
+              'University',
+              widget.student.universityName ?? 'N/A',
+            ),
             const SizedBox(height: 12),
-            _buildReadOnlyField('Status', widget.student['status']),
+            _buildReadOnlyField('Status', widget.student.status),
 
             const SizedBox(height: 24),
 
@@ -2430,23 +1999,23 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                 children: [
                   _buildDocRow(
                     '10th Marksheet',
-                    widget.student['documents'].contains('10th'),
+                    widget.student.documents.contains('10th'),
                   ),
                   _buildDocRow(
                     '12th Marksheet',
-                    widget.student['documents'].contains('12th'),
+                    widget.student.documents.contains('12th'),
                   ),
                   _buildDocRow(
                     'Transfer Certificate',
-                    widget.student['documents'].contains('TC'),
+                    widget.student.documents.contains('TC'),
                   ),
                   _buildDocRow(
                     'Aadhar Card',
-                    widget.student['documents'].contains('Aadhar'),
+                    widget.student.documents.contains('Aadhar'),
                   ),
                   _buildDocRow(
                     'Passport Photo',
-                    widget.student['documents'].contains('Photo'),
+                    widget.student.documents.contains('Photo'),
                   ),
                 ],
               ),

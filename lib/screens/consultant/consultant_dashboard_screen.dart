@@ -6,6 +6,10 @@ import 'package:educonnect/screens/consultant/students/student_management_screen
 import 'package:educonnect/screens/consultant/agents/agent_management_screen.dart';
 import 'package:educonnect/screens/consultant/fee_payment/fee_payment_management_screen.dart';
 import 'package:educonnect/screens/auth/login_screen.dart';
+import '../../services/student_service.dart';
+import '../../services/agent_service.dart';
+import '../../services/university_service.dart';
+import '../../services/course_service.dart';
 
 class ConsultantDashboardScreen extends StatefulWidget {
   const ConsultantDashboardScreen({super.key});
@@ -18,15 +22,65 @@ class ConsultantDashboardScreen extends StatefulWidget {
 class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
   int _selectedIndex = 0;
 
-  // Mock data
-  final Map<String, dynamic> _dashboardStats = {
-    'universities': 102,
-    'courses': 540,
-    'students': 112,
-    'agents': 15,
-    'earnings': 127000,
-    'pending ': 7,
+  bool _isLoading = true;
+
+  // Real data stats
+  Map<String, dynamic> _dashboardStats = {
+    'universities': 0,
+    'courses': 0,
+    'students': 0,
+    'agents': 0,
+    'earnings': 0,
+    'pending ': 0,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final students = await StudentService.getStudents();
+      final agents = await AgentService.getAgents();
+      final universities = await UniversityService.getUniversities();
+      final courses = await CourseService.getCourses();
+
+      // Calculate logic if needed, e.g. active students
+      int activeStudents = students
+          .where(
+            (s) =>
+                s['status'] == 'Admission Approved' ||
+                s['status'] == 'Confirmed',
+          )
+          .length;
+
+      // Calculate earnings from agents if available, or just mock for now as it's complex
+      // double totalEarnings = agents.fold(0, (sum, agent) => sum + (agent['total_earnings'] ?? 0));
+
+      if (mounted) {
+        setState(() {
+          _dashboardStats = {
+            'universities': universities.length,
+            'courses': courses.length,
+            'students': students.length, // Total students
+            'agents': agents.length,
+            'earnings':
+                0, // Placeholder as calculation is complex without backend endpoint
+            'pending ': 0,
+          };
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        // Fail silently or show snackbar?
+        print('Error loading dashboard stats: $e');
+      }
+    }
+  }
 
   final List<Map<String, dynamic>> _notificationFeed = [
     {
@@ -173,7 +227,11 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppTheme.primaryBlue, AppTheme.darkBlue, Color(0xFF0A1628)],
+                  colors: [
+                    AppTheme.primaryBlue,
+                    AppTheme.darkBlue,
+                    Color(0xFF0A1628),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -211,10 +269,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                   // Name with emoji
                   const Row(
                     children: [
-                      Text(
-                        '👋',
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      Text('👋', style: TextStyle(fontSize: 20)),
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -232,7 +287,10 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                   const SizedBox(height: 6),
                   // ID badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -241,7 +299,11 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.badge_outlined, color: Colors.white, size: 14),
+                        const Icon(
+                          Icons.badge_outlined,
+                          color: Colors.white,
+                          size: 14,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'ID: CONS2001',
@@ -258,162 +320,231 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               ),
             ),
 
-          // Menu items
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
-                  child: Text(
-                    'MAIN MENU',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.mediumGray,
-                      letterSpacing: 1.2,
+            // Menu items
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Text(
+                      'MAIN MENU',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.mediumGray,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                   ),
-                ),
-                _buildModernDrawerItem(Icons.dashboard_rounded, 'Dashboard', 0, '🏠'),
-                ListTile(
-                  leading: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const Icon(
-                        Icons.notifications_outlined,
-                        color: AppTheme.primaryBlue,
-                      ),
-                      if (_unreadNotificationCount > 0)
-                        Positioned(
-                          right: -6,
-                          top: -6,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              _unreadNotificationCount.toString(),
-                              style: const TextStyle(
-                                fontSize: 9,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                  _buildModernDrawerItem(
+                    Icons.dashboard_rounded,
+                    'Dashboard',
+                    0,
+                    '🏠',
+                  ),
+                  ListTile(
+                    leading: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          color: AppTheme.primaryBlue,
+                        ),
+                        if (_unreadNotificationCount > 0)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                _unreadNotificationCount.toString(),
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                  title: const Text(
-                    'Notifications',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await Navigator.pushNamed(
-                      context,
-                      '/consultant-notifications',
-                    );
-                    setState(() {
-                      for (final notification in _notificationFeed) {
-                        notification['isRead'] = true;
-                      }
-                    });
-                  },
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-                _buildModernDrawerItem(Icons.person_rounded, 'My Profile', 1, '👤'),
-                _buildModernDrawerItem(Icons.school_rounded, 'Universities & Courses', 2, '🎓'),
-                _buildModernDrawerItem(Icons.people_rounded, 'Student Management', 3, '👥'),
-                _buildModernDrawerItem(Icons.group_rounded, 'Agent Management', 4, '🤝'),
-                _buildModernDrawerItem(Icons.attach_money_rounded, 'Fee & Payments', 5, '💳'),
-                _buildModernDrawerItem(Icons.bar_chart_rounded, 'Reports & Analytics', 6, '📊'),
-                _buildModernDrawerItem(Icons.phone_in_talk_rounded, 'Lead Management', 7, '📞'),
-                _buildModernDrawerItem(Icons.campaign_rounded, 'Marketing & Posters', 8, '📢'),
-                _buildModernDrawerItem(Icons.account_balance_wallet_rounded, 'Commission', 9, '💰'),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
-                  child: Text(
-                    'SUPPORT',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.mediumGray,
-                      letterSpacing: 1.2,
+                      ],
+                    ),
+                    title: const Text(
+                      'Notifications',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await Navigator.pushNamed(
+                        context,
+                        '/consultant-notifications',
+                      );
+                      setState(() {
+                        for (final notification in _notificationFeed) {
+                          notification['isRead'] = true;
+                        }
+                      });
+                    },
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.grey,
                     ),
                   ),
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.help_outline,
-                    color: AppTheme.primaryBlue,
+                  _buildModernDrawerItem(
+                    Icons.person_rounded,
+                    'My Profile',
+                    1,
+                    '👤',
                   ),
-                  title: const Text(
-                    'Support & Help',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  _buildModernDrawerItem(
+                    Icons.school_rounded,
+                    'Universities & Courses',
+                    2,
+                    '🎓',
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/consultant-support');
-                  },
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Colors.grey,
+                  _buildModernDrawerItem(
+                    Icons.people_rounded,
+                    'Student Management',
+                    3,
+                    '👥',
                   ),
-                ),
-              ],
+                  _buildModernDrawerItem(
+                    Icons.group_rounded,
+                    'Agent Management',
+                    4,
+                    '🤝',
+                  ),
+                  _buildModernDrawerItem(
+                    Icons.attach_money_rounded,
+                    'Fee & Payments',
+                    5,
+                    '💳',
+                  ),
+                  _buildModernDrawerItem(
+                    Icons.bar_chart_rounded,
+                    'Reports & Analytics',
+                    6,
+                    '📊',
+                  ),
+                  _buildModernDrawerItem(
+                    Icons.phone_in_talk_rounded,
+                    'Lead Management',
+                    7,
+                    '📞',
+                  ),
+                  _buildModernDrawerItem(
+                    Icons.campaign_rounded,
+                    'Marketing & Posters',
+                    8,
+                    '📢',
+                  ),
+                  _buildModernDrawerItem(
+                    Icons.account_balance_wallet_rounded,
+                    'Commission',
+                    9,
+                    '💰',
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Text(
+                      'SUPPORT',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.mediumGray,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.help_outline,
+                      color: AppTheme.primaryBlue,
+                    ),
+                    title: const Text(
+                      'Support & Help',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/consultant-support');
+                    },
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // Logout section
-          Container(
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.red.shade50, Colors.red.shade100],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red.shade200),
-            ),
-            child: ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade100,
-                  borderRadius: BorderRadius.circular(8),
+            // Logout section
+            Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.red.shade50, Colors.red.shade100],
                 ),
-                child: const Icon(Icons.logout_rounded, color: Colors.red, size: 20),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.red.shade200),
               ),
-              title: const Text(
-                'Logout',
-                style: TextStyle(
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                ),
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: const Text(
+                  'Sign out from portal',
+                  style: TextStyle(color: Colors.red, fontSize: 11),
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
                   color: Colors.red,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  size: 14,
                 ),
+                onTap: _handleLogout,
               ),
-              subtitle: const Text(
-                'Sign out from portal',
-                style: TextStyle(color: Colors.red, fontSize: 11),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.red, size: 14),
-              onTap: _handleLogout,
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildModernDrawerItem(IconData icon, String title, int index, String emoji) {
+  Widget _buildModernDrawerItem(
+    IconData icon,
+    String title,
+    int index,
+    String emoji,
+  ) {
     final isSelected = _selectedIndex == index;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
@@ -428,7 +559,10 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
             : null,
         borderRadius: BorderRadius.circular(12),
         border: isSelected
-            ? Border.all(color: AppTheme.primaryBlue.withOpacity(0.3), width: 1.5)
+            ? Border.all(
+                color: AppTheme.primaryBlue.withOpacity(0.3),
+                width: 1.5,
+              )
             : null,
       ),
       child: ListTile(
@@ -646,7 +780,9 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
             children: [
               _buildModernStatCard(
                 title: 'Universities',
-                value: '${_dashboardStats['universities']}',
+                value: _isLoading
+                    ? '...'
+                    : '${_dashboardStats['universities']}',
                 subtitle: 'Total',
                 color: const Color(0xFF1E3A8A),
                 gradientColor: const Color(0xFF3B82F6),
@@ -654,7 +790,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               ),
               _buildModernStatCard(
                 title: 'Courses',
-                value: '${_dashboardStats['courses']}',
+                value: _isLoading ? '...' : '${_dashboardStats['courses']}',
                 subtitle: 'Available',
                 color: const Color(0xFF6B21A8),
                 gradientColor: const Color(0xFF9333EA),
@@ -662,7 +798,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               ),
               _buildModernStatCard(
                 title: 'Students',
-                value: '${_dashboardStats['students']}',
+                value: _isLoading ? '...' : '${_dashboardStats['students']}',
                 subtitle: 'Active',
                 color: const Color(0xFF059669),
                 gradientColor: const Color(0xFF10B981),
@@ -670,7 +806,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               ),
               _buildModernStatCard(
                 title: 'Agents',
-                value: '${_dashboardStats['agents']}',
+                value: _isLoading ? '...' : '${_dashboardStats['agents']}',
                 subtitle: 'Working',
                 color: const Color(0xFFD97706),
                 gradientColor: const Color(0xFFF59E0B),
@@ -776,8 +912,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               .take(4)
               .map(
                 (notification) => _buildNotificationPreviewCard(notification),
-              )
-              ,
+              ),
 
           const SizedBox(height: 8),
         ],

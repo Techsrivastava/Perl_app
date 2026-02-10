@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/widgets/app_header.dart';
+import '../../services/fee_template_service.dart';
 
 class OneTimeFeeTemplateScreen extends StatefulWidget {
   const OneTimeFeeTemplateScreen({super.key});
@@ -12,51 +13,73 @@ class OneTimeFeeTemplateScreen extends StatefulWidget {
 
 class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
   List<Map<String, dynamic>> _feeTemplates = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadDefaultTemplates();
+    _loadTemplates();
   }
 
-  void _loadDefaultTemplates() {
-    setState(() {
-      _feeTemplates = [
-        {
-          'fee_id': 1,
-          'fee_name': 'Registration Fee',
-          'fee_type': 'One-Time',
-          'amount': 2000.0,
-          'mandatory': true,
-          'applicable_stage': 'Admission',
-          'description': 'Payable during admission process',
-          'document_required': false,
-          'status': 'Active',
-        },
-        {
-          'fee_id': 2,
-          'fee_name': 'Exam Fee',
-          'fee_type': 'Annual',
-          'amount': 5000.0,
-          'mandatory': true,
-          'applicable_stage': 'Exam',
-          'description': 'Annual examination fee',
-          'document_required': false,
-          'status': 'Active',
-        },
-        {
-          'fee_id': 3,
-          'fee_name': 'Hostel Fee',
-          'fee_type': 'Annual',
-          'amount': 12000.0,
-          'mandatory': false,
-          'applicable_stage': 'Others',
-          'description': 'Optional hostel accommodation',
-          'document_required': false,
-          'status': 'Active',
-        },
-      ];
-    });
+  Future<void> _loadTemplates() async {
+    setState(() => _isLoading = true);
+    try {
+      var templates = await FeeTemplateService.getTemplates();
+      if (templates.isEmpty) {
+        // Seed defaults if empty
+        final defaults = [
+          {
+            'id': '1',
+            'fee_name': 'Registration Fee',
+            'fee_type': 'One-Time',
+            'amount': 2000.0,
+            'mandatory': true,
+            'applicable_stage': 'Admission',
+            'description': 'Payable during admission process',
+            'document_required': false,
+            'status': 'Active',
+          },
+          {
+            'id': '2',
+            'fee_name': 'Exam Fee',
+            'fee_type': 'Annual',
+            'amount': 5000.0,
+            'mandatory': true,
+            'applicable_stage': 'Exam',
+            'description': 'Annual examination fee',
+            'document_required': false,
+            'status': 'Active',
+          },
+          {
+            'id': '3',
+            'fee_name': 'Hostel Fee',
+            'fee_type': 'Annual',
+            'amount': 12000.0,
+            'mandatory': false,
+            'applicable_stage': 'Others',
+            'description': 'Optional hostel accommodation',
+            'document_required': false,
+            'status': 'Active',
+          },
+        ];
+        for (var t in defaults) {
+          await FeeTemplateService.saveTemplate(t);
+        }
+        templates = defaults;
+      }
+
+      if (mounted) {
+        setState(() {
+          _feeTemplates = templates;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showSnackBar('Error loading templates: $e', Colors.red);
+      }
+    }
   }
 
   @override
@@ -76,23 +99,10 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
       appBar: AppHeader(
         title: 'One-Time Fee Template',
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ElevatedButton.icon(
-              onPressed: _saveTemplate,
-              icon: const Icon(Icons.save, size: 18, color: Colors.white),
-              label: const Text(
-                'Save',
-                style: TextStyle(color: Colors.white, fontSize: 13),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.success,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-              ),
-            ),
+          // Removed manual save button as we save on action
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loadTemplates,
           ),
         ],
       ),
@@ -678,28 +688,32 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                       Expanded(
                         flex: 2,
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              setState(() {
-                                _feeTemplates.add({
-                                  'fee_id': _feeTemplates.length + 1,
-                                  'fee_name': nameController.text,
-                                  'fee_type': selectedType,
-                                  'amount':
-                                      double.tryParse(amountController.text) ??
-                                      0.0,
-                                  'mandatory': isMandatory,
-                                  'applicable_stage': selectedStage,
-                                  'description': descriptionController.text,
-                                  'document_required': docRequired,
-                                  'status': isActive ? 'Active' : 'Inactive',
-                                });
-                              });
-                              Navigator.pop(context);
-                              _showSnackBar(
-                                '✅ Fee added successfully!',
-                                AppTheme.success,
-                              );
+                              final newFee = {
+                                'id': DateTime.now().millisecondsSinceEpoch
+                                    .toString(),
+                                'fee_name': nameController.text,
+                                'fee_type': selectedType,
+                                'amount':
+                                    double.tryParse(amountController.text) ??
+                                    0.0,
+                                'mandatory': isMandatory,
+                                'applicable_stage': selectedStage,
+                                'description': descriptionController.text,
+                                'document_required': docRequired,
+                                'status': isActive ? 'Active' : 'Inactive',
+                              };
+
+                              await FeeTemplateService.saveTemplate(newFee);
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                _loadTemplates();
+                                _showSnackBar(
+                                  '✅ Fee added successfully!',
+                                  AppTheme.success,
+                                );
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -981,28 +995,32 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
                       Expanded(
                         flex: 2,
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              setState(() {
-                                _feeTemplates[index] = {
-                                  'fee_id': fee['fee_id'],
-                                  'fee_name': nameController.text,
-                                  'fee_type': selectedType,
-                                  'amount':
-                                      double.tryParse(amountController.text) ??
-                                      0.0,
-                                  'mandatory': isMandatory,
-                                  'applicable_stage': selectedStage,
-                                  'description': descriptionController.text,
-                                  'document_required': docRequired,
-                                  'status': isActive ? 'Active' : 'Inactive',
-                                };
-                              });
-                              Navigator.pop(context);
-                              _showSnackBar(
-                                '✅ Fee updated successfully!',
-                                Colors.orange,
-                              );
+                              final updatedFee = {
+                                'id': fee['id'], // Preserve ID
+                                'fee_name': nameController.text,
+                                'fee_type': selectedType,
+                                'amount':
+                                    double.tryParse(amountController.text) ??
+                                    0.0,
+                                'mandatory': isMandatory,
+                                'applicable_stage': selectedStage,
+                                'description': descriptionController.text,
+                                'document_required': docRequired,
+                                'status': isActive ? 'Active' : 'Inactive',
+                              };
+
+                              await FeeTemplateService.saveTemplate(updatedFee);
+
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                _loadTemplates();
+                                _showSnackBar(
+                                  '✅ Fee updated successfully!',
+                                  Colors.orange,
+                                );
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -1063,12 +1081,15 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
     );
   }
 
-  void _toggleStatus(int index) {
-    setState(() {
-      _feeTemplates[index]['status'] =
-          _feeTemplates[index]['status'] == 'Active' ? 'Inactive' : 'Active';
-    });
-    _showSnackBar('Status updated', Colors.blue);
+  Future<void> _toggleStatus(int index) async {
+    final fee = _feeTemplates[index];
+    final newStatus = fee['status'] == 'Active' ? 'Inactive' : 'Active';
+    final updatedFee = Map<String, dynamic>.from(fee);
+    updatedFee['status'] = newStatus;
+
+    await FeeTemplateService.saveTemplate(updatedFee);
+    _loadTemplates();
+    _showSnackBar('Status updated to $newStatus', Colors.blue);
   }
 
   void _deleteFee(int index) {
@@ -1083,10 +1104,15 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() => _feeTemplates.removeAt(index));
-              Navigator.pop(context);
-              _showSnackBar('Fee deleted', AppTheme.error);
+            onPressed: () async {
+              await FeeTemplateService.deleteTemplate(
+                _feeTemplates[index]['id'].toString(),
+              );
+              if (context.mounted) {
+                Navigator.pop(context);
+                _loadTemplates();
+                _showSnackBar('Fee deleted', AppTheme.error);
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
@@ -1094,10 +1120,6 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
         ],
       ),
     );
-  }
-
-  void _saveTemplate() {
-    _showSnackBar('✅ Template saved successfully!', AppTheme.success);
   }
 
   void _showSnackBar(String message, Color color) {

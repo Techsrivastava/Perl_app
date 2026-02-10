@@ -138,7 +138,8 @@ class FeeDetails {
   // SYSTEM AUTO-CALCULATIONS
   double? actualProfit; // actual_fee - university_fee
   double? agentTotalPayout; // agent_commission + agent_expenses_total
-  double? finalProfit; // actual_profit - agent_commission - agent_expenses_total - consultancy_expenses_total
+  double?
+  finalProfit; // actual_profit - agent_commission - agent_expenses_total - consultancy_expenses_total
 
   // UNIVERSITY PAYMENT MODE
   String? universityPaymentMode; // "Share Deduct" | "Full Fee"
@@ -182,7 +183,9 @@ class FeeDetails {
       return;
     }
 
-    if (agentShareType == 'percent' && actualProfit != null && agentShareValue != null) {
+    if (agentShareType == 'percent' &&
+        actualProfit != null &&
+        agentShareValue != null) {
       agentCommission = actualProfit! * (agentShareValue! / 100);
     } else if (agentShareType == 'flat' && agentShareValue != null) {
       agentCommission = agentShareValue!;
@@ -198,10 +201,11 @@ class FeeDetails {
 
   // Calculate final consultancy net profit
   void calculateFinalProfit() {
-    finalProfit = (actualProfit ?? 0) - 
-                  (agentCommission ?? 0) - 
-                  (agentExpensesTotal ?? 0) - 
-                  (consultancyExpensesTotal ?? 0);
+    finalProfit =
+        (actualProfit ?? 0) -
+        (agentCommission ?? 0) -
+        (agentExpensesTotal ?? 0) -
+        (consultancyExpensesTotal ?? 0);
   }
 
   // Calculate amount to university based on payment mode
@@ -217,8 +221,14 @@ class FeeDetails {
 
   // Calculate all totals
   void calculateExpenseTotals() {
-    agentExpensesTotal = agentExpenses?.fold<double>(0, (sum, e) => sum + (e.amount ?? 0)) ?? 0;
-    consultancyExpensesTotal = consultancyExpenses?.fold<double>(0, (sum, e) => sum + (e.amount ?? 0)) ?? 0;
+    agentExpensesTotal =
+        agentExpenses?.fold<double>(0, (sum, e) => sum + (e.amount ?? 0)) ?? 0;
+    consultancyExpensesTotal =
+        consultancyExpenses?.fold<double>(
+          0,
+          (sum, e) => sum + (e.amount ?? 0),
+        ) ??
+        0;
   }
 
   // Calculate all financial values
@@ -319,6 +329,8 @@ class Declarations {
 
 class AdmissionForm {
   String? admissionId;
+  String? studentId; // Backend ID for student
+  String? agentId; // Backend ID for agent
   String? status; // draft, submitted, approved, rejected, processing
   StudentDetails? studentDetails;
   AcademicDetails? academicDetails;

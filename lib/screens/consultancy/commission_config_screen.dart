@@ -9,19 +9,51 @@ import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/commission_badge.dart';
 import 'package:educonnect/widgets/status_badge.dart';
 import 'package:educonnect/models/consultancy_model.dart';
-import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/services/commission_service.dart';
 
-class CommissionConfigScreen extends StatelessWidget {
+class CommissionConfigScreen extends StatefulWidget {
   final Consultancy consultancy;
 
   const CommissionConfigScreen({super.key, required this.consultancy});
 
   @override
+  State<CommissionConfigScreen> createState() => _CommissionConfigScreenState();
+}
+
+class _CommissionConfigScreenState extends State<CommissionConfigScreen> {
+  List<CommissionTransaction> _transactions = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactions();
+  }
+
+  Future<void> _loadTransactions() async {
+    try {
+      final transactions = await CommissionService.getTransactions();
+      if (mounted) {
+        setState(() {
+          _transactions = List<CommissionTransaction>.from(
+            transactions.map((t) => CommissionTransaction.fromJson(t)),
+          );
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        debugPrint('Error loading transactions: $e');
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final mockData = MockDataService();
-    final transactions = mockData.commissionTransactions
-        .where((t) => t.consultancyId == consultancy.id)
-        .toList();
+    // transactions used below
 
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
@@ -58,7 +90,7 @@ class CommissionConfigScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              consultancy.name,
+                              widget.consultancy.name,
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -69,7 +101,7 @@ class CommissionConfigScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              consultancy.email,
+                              widget.consultancy.email,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: AppTheme.mediumGray,
@@ -80,17 +112,17 @@ class CommissionConfigScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      StatusBadge(status: consultancy.status),
+                      StatusBadge(status: widget.consultancy.status),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     children: [
-                      _buildInfoChip(Icons.phone, consultancy.phone),
+                      _buildInfoChip(Icons.phone, widget.consultancy.phone),
                       _buildInfoChip(
                         Icons.people,
-                        '${consultancy.studentsCount} students',
+                        '${widget.consultancy.studentsCount} students',
                       ),
                     ],
                   ),
@@ -110,7 +142,7 @@ class CommissionConfigScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '\$${NumberFormat('#,##0.00').format(consultancy.totalCommission)}',
+                            '\$${NumberFormat('#,##0.00').format(widget.consultancy.totalCommission)}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -120,8 +152,8 @@ class CommissionConfigScreen extends StatelessWidget {
                         ],
                       ),
                       CommissionBadge(
-                        type: consultancy.commissionType,
-                        value: consultancy.commissionValue,
+                        type: widget.consultancy.commissionType,
+                        value: widget.consultancy.commissionValue,
                       ),
                     ],
                   ),
@@ -137,16 +169,16 @@ class CommissionConfigScreen extends StatelessWidget {
               children: [
                 _buildInfoRow(
                   'Commission Type',
-                  _getCommissionTypeString(consultancy.commissionType),
+                  _getCommissionTypeString(widget.consultancy.commissionType),
                 ),
                 _buildInfoRow('Commission Rate', _getCommissionRateString()),
                 _buildInfoRow(
                   'Students Enrolled',
-                  consultancy.studentsCount.toString(),
+                  widget.consultancy.studentsCount.toString(),
                 ),
                 _buildInfoRow(
                   'Total Commission',
-                  '\$${NumberFormat('#,##0.00').format(consultancy.totalCommission)}',
+                  '\$${NumberFormat('#,##0.00').format(widget.consultancy.totalCommission)}',
                 ),
               ],
             ),
@@ -155,7 +187,14 @@ class CommissionConfigScreen extends StatelessWidget {
             _buildInfoSection(
               title: 'Commission Transactions',
               children: [
-                if (transactions.isEmpty)
+                if (_isLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                else if (_transactions.isEmpty)
                   const Text(
                     'No transactions yet',
                     style: TextStyle(
@@ -165,7 +204,7 @@ class CommissionConfigScreen extends StatelessWidget {
                     ),
                   )
                 else
-                  ...transactions.map(_buildTransactionCard),
+                  ..._transactions.map(_buildTransactionCard),
               ],
             ),
 
@@ -183,8 +222,9 @@ class CommissionConfigScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditCommissionScreen(consultancy: consultancy),
+                          builder: (context) => EditCommissionScreen(
+                            consultancy: widget.consultancy,
+                          ),
                         ),
                       );
                     },
@@ -202,7 +242,7 @@ class CommissionConfigScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ReportsScreen(consultancy: consultancy),
+                              ReportsScreen(consultancy: widget.consultancy),
                         ),
                       );
                     },
@@ -385,13 +425,13 @@ class CommissionConfigScreen extends StatelessWidget {
   }
 
   String _getCommissionRateString() {
-    switch (consultancy.commissionType) {
+    switch (widget.consultancy.commissionType) {
       case CommissionType.percentage:
-        return '${consultancy.commissionValue.toStringAsFixed(1)}% of course fees';
+        return '${widget.consultancy.commissionValue.toStringAsFixed(1)}% of course fees';
       case CommissionType.flat:
-        return '\$${consultancy.commissionValue.toStringAsFixed(0)} per student';
+        return '\$${widget.consultancy.commissionValue.toStringAsFixed(0)} per student';
       case CommissionType.oneTime:
-        return '\$${consultancy.commissionValue.toStringAsFixed(0)} one-time payment';
+        return '\$${widget.consultancy.commissionValue.toStringAsFixed(0)} one-time payment';
     }
   }
 }

@@ -4,7 +4,8 @@ import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/widgets/app_header.dart';
 import 'package:educonnect/widgets/commission_badge.dart';
 import 'package:educonnect/widgets/status_badge.dart';
-import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/models/consultancy_model.dart';
+import 'package:educonnect/services/consultancy_service.dart';
 import 'package:educonnect/screens/consultancy/commission_config_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -18,32 +19,72 @@ class ConsultancyScreen extends StatefulWidget {
 }
 
 class _ConsultancyScreenState extends State<ConsultancyScreen> {
-  final mockData = MockDataService();
+  // final mockData = MockDataService(); // Removed
+  List<Consultancy> _consultancies = [];
+  List<Consultancy> _filteredConsultancies = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
   String _searchQuery = '';
   String _selectedStatus = 'All';
 
   @override
-  Widget build(BuildContext context) {
-    final consultancies = mockData.consultancies;
-    final filteredConsultancies = consultancies.where((consultancy) {
-      final matchesSearch =
-          consultancy.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          consultancy.email.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesStatus =
-          _selectedStatus == 'All' || consultancy.status == _selectedStatus;
-      return matchesSearch && matchesStatus;
-    }).toList();
+  void initState() {
+    super.initState();
+    _loadConsultancies();
+  }
 
-    // Calculate statistics
-    final totalConsultancies = consultancies.length;
-    final activeConsultancies = consultancies
+  Future<void> _loadConsultancies() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final consultancies = await ConsultancyService.getConsultancies();
+      setState(() {
+        _consultancies = consultancies;
+        _filterConsultancies(); // Initial filter
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _filterConsultancies() {
+    setState(() {
+      _filteredConsultancies = _consultancies.where((consultancy) {
+        final matchesSearch =
+            consultancy.name.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            ) ||
+            consultancy.email.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+        final matchesStatus =
+            _selectedStatus == 'All' || consultancy.status == _selectedStatus;
+        return matchesSearch && matchesStatus;
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate statistics (on _consultancies or _filteredConsultancies? Usually full list for stats)
+    final totalConsultancies = _consultancies.length;
+    final activeConsultancies = _consultancies
         .where((c) => c.status == AppConstants.statusActive)
         .length;
-    final totalStudents = consultancies.fold(
+    final totalStudents = _consultancies.fold(
       0,
       (sum, c) => sum + c.studentsCount,
     );
-    final totalCommission = consultancies.fold(
+    final totalCommission = _consultancies.fold(
       0.0,
       (sum, c) => sum + c.totalCommission,
     );
@@ -140,6 +181,7 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
+                      _filterConsultancies();
                     });
                   },
                 ),
@@ -176,6 +218,7 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
                         onSelected: (value) {
                           setState(() {
                             _selectedStatus = value!;
+                            _filterConsultancies();
                           });
                         },
                       ),
@@ -188,7 +231,27 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
 
           // Consultancies List
           Expanded(
-            child: filteredConsultancies.isEmpty
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _errorMessage != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Error: $_errorMessage',
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _loadConsultancies,
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  )
+                : _filteredConsultancies.isEmpty
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -209,15 +272,18 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(
-                      AppConstants.defaultPadding / 2,
+                : RefreshIndicator(
+                    onRefresh: _loadConsultancies,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(
+                        AppConstants.defaultPadding / 2,
+                      ),
+                      itemCount: _filteredConsultancies.length,
+                      itemBuilder: (context, index) {
+                        final consultancy = _filteredConsultancies[index];
+                        return _buildConsultancyCard(consultancy);
+                      },
                     ),
-                    itemCount: filteredConsultancies.length,
-                    itemBuilder: (context, index) {
-                      final consultancy = filteredConsultancies[index];
-                      return _buildConsultancyCard(consultancy);
-                    },
                   ),
           ),
         ],

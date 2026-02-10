@@ -4,10 +4,11 @@ import 'auth_service.dart';
 /// Student Service
 /// Handles all student-related API calls
 class StudentService {
-  /// Get all students
+  /// Get all students (via admissions)
   static Future<List<dynamic>> getStudents() async {
     final token = await AuthService.getToken();
-    final response = await ApiService.get('/students', token: token);
+    // Using /admissions because it contains the student status, course info, etc.
+    final response = await ApiService.get('/admissions', token: token);
 
     if (response['success'] == true) {
       return response['data'] as List<dynamic>;

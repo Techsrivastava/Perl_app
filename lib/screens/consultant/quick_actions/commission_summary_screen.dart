@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/services/commission_service.dart';
 
 class CommissionSummaryScreen extends StatefulWidget {
   const CommissionSummaryScreen({super.key});
@@ -15,52 +16,43 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
 
-  final List<Map<String, dynamic>> _commissions = [
-    {
-      'university': 'Dehradun Business School',
-      'course': 'MBA Marketing',
-      'student': 'Rahul Sharma',
-      'courseFee': 250000,
-      'shareType': '10%',
-      'earned': 25000,
-      'status': 'Paid',
-      'date': DateTime(2025, 1, 15),
-      'agent': 'Aditi Verma',
-    },
-    {
-      'university': 'Tech University',
-      'course': 'B.Tech CSE',
-      'student': 'Priya Singh',
-      'courseFee': 350000,
-      'shareType': '8%',
-      'earned': 28000,
-      'status': 'Pending',
-      'date': DateTime(2025, 1, 10),
-      'agent': 'Mohit Sharma',
-    },
-    {
-      'university': 'Global Commerce College',
-      'course': 'BBA Finance',
-      'student': 'Neha Kapoor',
-      'courseFee': 180000,
-      'shareType': '12%',
-      'earned': 21600,
-      'status': 'Paid',
-      'date': DateTime(2024, 12, 28),
-      'agent': 'Aditi Verma',
-    },
-    {
-      'university': 'Modern Medical Institute',
-      'course': 'BPT',
-      'student': 'Sahil Khan',
-      'courseFee': 420000,
-      'shareType': '9%',
-      'earned': 37800,
-      'status': 'In Review',
-      'date': DateTime(2025, 2, 3),
-      'agent': 'Mohit Sharma',
-    },
-  ];
+  List<Map<String, dynamic>> _commissions = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCommissions();
+  }
+
+  Future<void> _loadCommissions() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final transactions = await CommissionService.getTransactions();
+      if (mounted) {
+        setState(() {
+          // Ensure types are correct for the UI
+          _commissions = transactions
+              .map((t) => t as Map<String, dynamic>)
+              .toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          // Fallback to empty or keep loading false
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -424,9 +416,9 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        ...sortedAgents
-            .map((entry) => _buildAgentDetailCard(entry.key, entry.value))
-            ,
+        ...sortedAgents.map(
+          (entry) => _buildAgentDetailCard(entry.key, entry.value),
+        ),
       ],
     );
   }

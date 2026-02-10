@@ -106,7 +106,6 @@ class _NavItemState extends State<_NavItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<Color?> _colorAnimation;
 
   @override
   void initState() {
@@ -118,16 +117,6 @@ class _NavItemState extends State<_NavItem>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _colorAnimation =
-        ColorTween(
-          begin: AppTheme.mediumGray,
-          end: AppTheme.primaryBlue,
-        ).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeInOut,
-          ),
-        );
   }
 
   @override

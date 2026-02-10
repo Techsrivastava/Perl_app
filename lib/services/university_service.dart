@@ -1,9 +1,22 @@
 import 'api_service.dart';
 import 'auth_service.dart';
+import '../models/university_model.dart';
 
 /// University Service
 /// Handles all university-related API calls
 class UniversityService {
+  /// Get current user's university profile
+  static Future<University> getMyUniversity() async {
+    final token = await AuthService.getToken();
+    final response = await ApiService.get('/universities/me', token: token);
+
+    if (response['success'] == true) {
+      return University.fromJson(response['data']);
+    }
+
+    throw Exception(response['message'] ?? 'Failed to load university profile');
+  }
+
   /// Get all universities
   static Future<List<dynamic>> getUniversities() async {
     final token = await AuthService.getToken();

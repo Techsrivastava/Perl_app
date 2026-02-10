@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
 
@@ -64,7 +65,7 @@ class AuthService {
       }
     } catch (e) {
       // Ignore backend errors on logout
-      print('Logout error: $e');
+      debugPrint('Logout error: $e');
     } finally {
       // Always clear local data
       await _clearAuthData();
@@ -86,7 +87,7 @@ class AuthService {
 
       return null;
     } catch (e) {
-      print('Get current user error: $e');
+      debugPrint('Get current user error: $e');
       return null;
     }
   }
@@ -116,7 +117,7 @@ class AuthService {
           {}, // Placeholder - implement JSON parsing
         );
       } catch (e) {
-        print('Parse user data error: $e');
+        debugPrint('Parse user data error: $e');
         return null;
       }
     }
@@ -161,7 +162,7 @@ class AuthService {
 
       return true;
     } catch (e) {
-      print('Update password error: $e');
+      debugPrint('Update password error: $e');
       return false;
     }
   }

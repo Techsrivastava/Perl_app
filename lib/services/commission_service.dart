@@ -171,4 +171,23 @@ class CommissionService {
       response['message'] ?? 'Failed to update default commission',
     );
   }
+
+  /// Get commission transactions (summaries)
+  static Future<List<dynamic>> getTransactions({String? agentId}) async {
+    final token = await AuthService.getToken();
+    String url = '/commission-rules/transactions';
+    if (agentId != null) {
+      url += '?agentId=$agentId';
+    }
+
+    final response = await ApiService.get(url, token: token);
+
+    if (response['success'] == true) {
+      return response['data'] as List<dynamic>;
+    }
+
+    // Return empty list if no transactions found or error (optional, depending on UI needs)
+    // For now, throw to let UI handle error
+    throw Exception(response['message'] ?? 'Failed to load transactions');
+  }
 }

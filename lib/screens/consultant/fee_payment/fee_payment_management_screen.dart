@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../config/theme.dart';
+import 'package:educonnect/services/admission_service.dart';
+import 'package:educonnect/services/fee_service.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 // File: fee_payment_management_screen.dart - Complete Implementation
 // 5-Tab Fee & Payment Management Module for Consultants
@@ -15,84 +19,192 @@ class FeePaymentManagementScreen extends StatefulWidget {
 class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isLoading = false;
+  List<dynamic> _admissions = [];
+  Map<String, List<dynamic>> _paymentsByAdmission = {};
 
-  // Sample data
-  final List<Map<String, dynamic>> _feeRecords = [
-    {
-      'student_id': 'STD5001',
-      'student_name': 'Rahul Kumar',
-      'university': 'Sunrise University',
-      'course': 'BPT',
-      'total_fee': 50000,
-      'amount_paid': 50000,
-      'pending_amount': 0,
-      'status': 'Verified',
-      'payment_date': '10 Jun 2025',
-      'payment_mode': 'UPI',
-      'utr': 'UPI2025XYZ123',
-      'agent': 'Rahul Sharma',
-      'consultant_share_percent': 15,
-      'consultant_share_amount': 7500,
-      'university_share': 42500,
-    },
-    {
-      'student_id': 'STD5002',
-      'student_name': 'Priya Sharma',
-      'university': 'MIT University',
-      'course': 'BCA',
-      'total_fee': 150000,
-      'amount_paid': 75000,
-      'pending_amount': 75000,
-      'status': 'Partially Paid',
-      'payment_date': '12 Jun 2025',
-      'payment_mode': 'Bank Transfer',
-      'utr': 'BANK2025ABC456',
-      'agent': 'Self',
-      'consultant_share_percent': 15,
-      'consultant_share_amount': 11250,
-      'university_share': 63750,
-    },
-    {
-      'student_id': 'STD5003',
-      'student_name': 'Amit Verma',
-      'university': 'Sunrise University',
-      'course': 'MBA',
-      'total_fee': 120000,
-      'amount_paid': 60000,
-      'pending_amount': 60000,
-      'status': 'Pending',
-      'payment_date': '15 Jun 2025',
-      'payment_mode': 'UPI',
-      'utr': 'UPI2025DEF789',
-      'agent': 'Priya Singh',
-      'consultant_share_percent': 15,
-      'consultant_share_amount': 9000,
-      'university_share': 51000,
-    },
-    {
-      'student_id': 'STD5004',
-      'student_name': 'Sneha Patel',
-      'university': 'DU University',
-      'course': 'B.Sc Data Science',
-      'total_fee': 65000,
-      'amount_paid': 30000,
-      'pending_amount': 35000,
-      'status': 'Reverted',
-      'payment_date': '18 Jun 2025',
-      'payment_mode': 'Cash',
-      'utr': 'CASH2025GHI012',
-      'agent': 'Rajesh Kumar',
-      'consultant_share_percent': 15,
-      'consultant_share_amount': 4500,
-      'university_share': 25500,
-    },
-  ];
+  // Form Controllers
+  final _amountController = TextEditingController();
+  final _utrController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _remarksController = TextEditingController();
+
+  String? _selectedAdmissionId;
+  String? _selectedPaymentMode;
+  DateTime? _selectedDate;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    _fetchData();
   }
+
+  Future<void> _fetchData() async {
+    setState(() => _isLoading = true);
+    try {
+      final futures = await Future.wait([
+        AdmissionService.getAdmissions(),
+        FeeService.getPayments(),
+      ]);
+
+      final admissions = futures[0] as List<dynamic>;
+      final payments = futures[1] as List<dynamic>;
+
+      final Map<String, List<dynamic>> paymentsMap = {};
+      for (var p in payments) {
+        // p['admission'] is an object populated by backend now
+        final adId = p['admission']?['_id'] ?? p['admission'];
+        // If populated, it is object. If not, it is ID string.
+        // Backend payment controller populates admission.
+        // But admission._id is the ID.
+
+        if (adId is String) {
+          // Handle both cases just in case
+          if (!paymentsMap.containsKey(adId)) paymentsMap[adId] = [];
+          paymentsMap[adId]!.add(p);
+        } else if (adId != null) {
+          // It's likely an object but we need the ID string?
+          // Wait, typical mongo population:
+          // admission: { _id: "...", ... }
+          // So p['admission']['_id'] is the ID.
+          // We need to match it with admission list IDs.
+          final idStr = p['admission']['_id'];
+          if (!paymentsMap.containsKey(idStr)) paymentsMap[idStr] = [];
+          paymentsMap[idStr]!.add(p);
+        }
+      }
+
+      setState(() {
+        _admissions = admissions;
+        _paymentsByAdmission = paymentsMap;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading data: $e')));
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  // Helper to extract fee details from admission/course
+  Map<String, dynamic> _getFinancials(dynamic admission) {
+    final course = admission['course'];
+    final double totalFee = (course?['displayFee'] ?? 0).toDouble();
+    final String admissionId = admission['_id'];
+    final payments = _paymentsByAdmission[admissionId] ?? [];
+
+    final double paid = payments
+        .where(
+          (p) => p['status'] == 'SUCCESS' || p['status'] == 'Verified',
+        ) // 'Verified' used in mock, 'SUCCESS' in API
+        .fold(0.0, (sum, p) => sum + (p['amount'] ?? 0));
+
+    final double pending = totalFee - paid;
+
+    // Commission Logic (simplified)
+    // Real logic should use CommissionLedger, but for now we estimate
+    // or if Admission has commission info (it doesn't usually).
+    // We'll use a standard % for display if not available.
+    final double fee = (course?['actualFee'] ?? 0).toDouble();
+    final double profit = (course?['displayFee'] ?? 0) - fee;
+    // Assume consultant gets 60% of profit if not specified
+    final double commission = profit * 0.6;
+
+    final double universityShare = paid - commission; // Rough estimate
+
+    return {
+      'total': totalFee,
+      'paid': paid,
+      'pending': pending,
+      'commission': commission,
+      'university': universityShare,
+    };
+  }
+
+  // Getters for UI compatibility
+  List<Map<String, dynamic>> get _feeRecords {
+    return _admissions.map((admission) {
+      final financials = _getFinancials(admission);
+      final admissionId = admission['_id'];
+      final payments = _paymentsByAdmission[admissionId] ?? [];
+
+      final latestPayment = payments.isNotEmpty ? payments.first : null;
+
+      return {
+        'student_id': admission['student']?['_id'] ?? 'N/A',
+        'student_name': admission['student']?['name'] ?? 'N/A',
+        'university':
+            admission['university']?['name'] ??
+            (admission['course']?['university'] ?? 'N/A'),
+        'course': admission['course']?['name'] ?? 'N/A',
+        'total_fee': financials['total'],
+        'amount_paid': financials['paid'],
+        'pending_amount': financials['pending'],
+        'status': financials['pending'] <= 0
+            ? 'Verified'
+            : (financials['paid'] > 0 ? 'Partially Paid' : 'Pending'),
+        'payment_date': latestPayment != null
+            ? DateFormat(
+                'dd MMM yyyy',
+              ).format(DateTime.parse(latestPayment['createdAt']))
+            : 'N/A',
+        'payment_mode': latestPayment?['paymentMethod'] ?? 'N/A',
+        'utr': latestPayment?['transactionId'] ?? 'N/A',
+        'agent': admission['agent']?['name'] ?? 'Self',
+        'consultant_share_percent': 60,
+        'consultant_share_amount': financials['commission'],
+        'university_share': financials['university'],
+        '_raw_admission': admission,
+        '_id': admissionId,
+      };
+    }).toList();
+  }
+
+  Future<void> _verifyPayment(
+    String paymentId,
+    String status, [
+    String? reason,
+  ]) async {
+    setState(() => _isLoading = true);
+    try {
+      await FeeService.confirmPayment(
+        paymentId,
+        status: status,
+      ); // Backend uses confirmPayment
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Payment $status successfully'),
+          backgroundColor: status == 'SUCCESS' ? Colors.green : Colors.red,
+        ),
+      );
+      _fetchData(); // Refresh list
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // Calculate totals
+  double get _totalCollected =>
+      _admissions.fold(0, (sum, a) => sum + _getFinancials(a)['paid']);
+  double get _totalPending =>
+      _admissions.fold(0, (sum, a) => sum + _getFinancials(a)['pending']);
+  double get _myCommission => _admissions.fold(
+    0,
+    (sum, a) => sum + _getFinancials(a)['commission'],
+  ); // rough estimate
+  double get _universityShare =>
+      _admissions.fold(0, (sum, a) => sum + _getFinancials(a)['university']);
 
   Widget _buildFormSection({
     required String title,
@@ -129,21 +241,68 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _amountController.dispose();
+    _utrController.dispose();
+    _dateController.dispose();
+    _remarksController.dispose();
     super.dispose();
   }
 
+  Future<void> _submitPayment() async {
+    if (_selectedAdmissionId == null ||
+        _amountController.text.isEmpty ||
+        _selectedPaymentMode == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await FeeService.initiatePayment(
+        admissionId: _selectedAdmissionId!,
+        amount: double.tryParse(_amountController.text) ?? 0,
+        mode: _selectedPaymentMode,
+        transactionId: _utrController.text,
+        remarks: _remarksController.text,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment submitted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Clear form
+      _amountController.clear();
+      _utrController.clear();
+      _dateController.clear();
+      _remarksController.clear();
+      setState(() {
+        _selectedAdmissionId = null;
+        _selectedPaymentMode = null;
+        _selectedDate = null;
+      });
+
+      // Refresh data
+      _fetchData();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   // Calculate totals
-  double get _totalCollected => _feeRecords
-      .where((r) => r['status'] == 'Verified')
-      .fold(0, (sum, r) => sum + r['amount_paid']);
-  double get _totalPending =>
-      _feeRecords.fold(0, (sum, r) => sum + r['pending_amount']);
-  double get _myCommission => _feeRecords
-      .where((r) => r['status'] == 'Verified')
-      .fold(0, (sum, r) => sum + r['consultant_share_amount']);
-  double get _universityShare => _feeRecords
-      .where((r) => r['status'] == 'Verified')
-      .fold(0, (sum, r) => sum + r['university_share']);
 
   @override
   Widget build(BuildContext context) {
@@ -316,9 +475,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
           ),
 
           // Compact Fee Records List
-          ..._feeRecords
-              .map((record) => _buildCompactFeeRecordCard(record))
-              ,
+          ..._feeRecords.map((record) => _buildCompactFeeRecordCard(record)),
         ],
       ),
     );
@@ -636,6 +793,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
             title: 'Student & Payment Details',
             children: [
               DropdownButtonFormField<String>(
+                value: _selectedAdmissionId,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.person_outline),
                   hintText: 'Select Student *',
@@ -645,23 +803,26 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                   filled: true,
                   fillColor: Colors.grey[50],
                 ),
-                items: _feeRecords
+                items: _admissions
                     .map(
                       (r) => DropdownMenuItem<String>(
-                        value: r['student_id'] as String,
+                        value: r['_id'] as String,
                         child: Text(
-                          '${r['student_name']} (${r['student_id']})',
+                          '${r['student']?['name'] ?? 'Unknown'} (${r['course']?['name'] ?? 'Unknown'})',
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     )
                     .toList(),
-                onChanged: (value) {},
+                onChanged: (value) =>
+                    setState(() => _selectedAdmissionId = value),
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _amountController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.currency_rupee, size: 18),
                         labelText: 'Amount Paid *',
@@ -677,6 +838,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField<String>(
+                      value: _selectedPaymentMode,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.payments_outlined,
@@ -697,7 +859,8 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                             ),
                           )
                           .toList(),
-                      onChanged: (value) {},
+                      onChanged: (value) =>
+                          setState(() => _selectedPaymentMode = value),
                     ),
                   ),
                 ],
@@ -707,6 +870,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _utrController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.receipt_long, size: 18),
                         labelText: 'UTR / Transaction #',
@@ -721,6 +885,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
+                      controller: _dateController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.calendar_today, size: 18),
                         labelText: 'Payment Date',
@@ -732,12 +897,20 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                       ),
                       readOnly: true,
                       onTap: () async {
-                        await showDatePicker(
+                        final picked = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(2020),
                           lastDate: DateTime.now(),
                         );
+                        if (picked != null) {
+                          setState(() {
+                            _selectedDate = picked;
+                            _dateController.text = DateFormat(
+                              'dd MMM yyyy',
+                            ).format(picked);
+                          });
+                        }
                       },
                     ),
                   ),
@@ -796,6 +969,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
               ),
               const SizedBox(height: 10),
               TextField(
+                controller: _remarksController,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.notes_outlined, size: 18),
                   labelText: 'Remarks (Optional)',
@@ -833,16 +1007,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
               const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Payment receipt submitted for verification',
-                        ),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  },
+                  onPressed: _isLoading ? null : _submitPayment,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -850,7 +1015,16 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text('Submit for Verification'),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Submit for Verification'),
                 ),
               ),
             ],
@@ -1073,41 +1247,14 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                                 Expanded(
                                   child: OutlinedButton.icon(
                                     onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('Payment Proof'),
-                                          content: Container(
-                                            height: 300,
-                                            width: double.maxFinite,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: const Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.image,
-                                                    size: 64,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Text('Receipt Image/PDF'),
-                                                ],
-                                              ),
-                                            ),
+                                      // Proof viewing logic (placeholder for now as no file URL)
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'No proof document available',
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Close'),
-                                            ),
-                                          ],
                                         ),
                                       );
                                     },
@@ -1130,46 +1277,10 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                                 Expanded(
                                   child: OutlinedButton.icon(
                                     onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('Reject Payment'),
-                                          content: const TextField(
-                                            decoration: InputDecoration(
-                                              labelText: 'Rejection Reason',
-                                              hintText:
-                                                  'Enter reason for rejection',
-                                            ),
-                                            maxLines: 3,
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Cancel'),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      'Payment rejected',
-                                                    ),
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                              ),
-                                              child: const Text('Reject'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                      _verifyPayment(
+                                        record['_id'],
+                                        'FAILED',
+                                      ); // or REJECTED
                                     },
                                     icon: const Icon(Icons.close, size: 16),
                                     label: const Text('Reject'),
@@ -1188,16 +1299,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: () {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Payment approved successfully',
-                                          ),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
+                                      _verifyPayment(record['_id'], 'SUCCESS');
                                     },
                                     icon: const Icon(Icons.check, size: 16),
                                     label: const Text('Approve'),

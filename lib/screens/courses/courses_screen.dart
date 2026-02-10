@@ -5,11 +5,12 @@ import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/widgets/app_header.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/status_badge.dart';
-import 'package:educonnect/services/mock_data_service.dart';
+
 import 'package:educonnect/models/course_model.dart';
 import 'package:educonnect/screens/courses/comprehensive_add_course_screen.dart';
 import 'package:educonnect/screens/courses/course_details_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:educonnect/services/course_service.dart';
 
 class CoursesScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -19,9 +20,11 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
-  final mockData = MockDataService();
-  late List<Course> _allCourses;
+  List<Course> _allCourses = [];
+
   List<Course> _filteredCourses = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   String _searchQuery = '';
   String _selectedDepartment = 'All';
@@ -32,8 +35,33 @@ class _CoursesScreenState extends State<CoursesScreen> {
   @override
   void initState() {
     super.initState();
-    _allCourses = mockData.courses;
-    _filterCourses();
+    _loadCourses();
+  }
+
+  Future<void> _loadCourses() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final coursesData = await CourseService.getCourses();
+      final courses = coursesData.map((json) => Course.fromJson(json)).toList();
+
+      if (!mounted) return;
+
+      setState(() {
+        _allCourses = courses;
+        _isLoading = false;
+        _filterCourses(); // Initial filter apply
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -78,17 +106,36 @@ class _CoursesScreenState extends State<CoursesScreen> {
             _buildHeaderSection(),
             const SizedBox(height: 12),
             Expanded(
-              child: _filteredCourses.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppConstants.defaultPadding / 1.5,
-                        vertical: 6,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: $_errorMessage'),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: _loadCourses,
+                            child: const Text('Retry'),
+                          ),
+                        ],
                       ),
-                      itemCount: _filteredCourses.length,
-                      itemBuilder: (context, index) {
-                        return _buildCourseCard(_filteredCourses[index]);
-                      },
+                    )
+                  : _filteredCourses.isEmpty
+                  ? _buildEmptyState()
+                  : RefreshIndicator(
+                      onRefresh: _loadCourses,
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppConstants.defaultPadding / 1.5,
+                          vertical: 6,
+                        ),
+                        itemCount: _filteredCourses.length,
+                        itemBuilder: (context, index) {
+                          return _buildCourseCard(_filteredCourses[index]);
+                        },
+                      ),
                     ),
             ),
           ],

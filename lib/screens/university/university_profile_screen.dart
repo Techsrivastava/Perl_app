@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/models/university_model.dart';
 import 'package:educonnect/screens/university/edit_university_screen.dart';
+import 'package:educonnect/services/university_service.dart';
 
 class UniversityProfileScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -53,40 +54,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         _errorMessage = null;
       });
 
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      if (!mounted) return;
-
-      final university = University(
-        id: '1',
-        name: 'Sample University',
-        abbreviation: 'SU',
-        establishedYear: 2000,
-        type: 'Private',
-        facilities: const [
-          'Library',
-          'Sports',
-          'Cafeteria',
-          'Computer Lab',
-          'Auditorium',
-        ],
-        documents: const [
-          'Prospectus.pdf',
-          'Fee_Structure.pdf',
-          'Brochure.pdf',
-        ],
-        description:
-            'A leading educational institution committed to excellence in education and research. We provide world-class facilities and experienced faculty to nurture future leaders.',
-        contactEmail: 'info@sampleuniv.edu',
-        contactPhone: '+1234567890',
-        address: '123 University Ave, City, Country',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        bankName: 'Sample Bank',
-        accountNumber: '1234567890',
-        ifscCode: 'SBIN0001234',
-        branch: 'Main Branch',
-      );
+      final university = await UniversityService.getMyUniversity();
 
       if (!mounted) return;
 
@@ -104,7 +72,8 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
 
       setState(() {
         _isLoading = false;
-        _errorMessage = 'Failed to load data: ${e.toString()}';
+        _errorMessage =
+            'Failed to load data. Please ensure you are logged in as a University.';
       });
 
       if (mounted) {
@@ -373,15 +342,15 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            university.abbreviation,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppTheme.white.withOpacity(0.95),
+                            const SizedBox(height: 4),
+                            Text(
+                              university.abbreviation,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppTheme.white.withOpacity(0.95),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
                         ],
                       ),
                     ),
@@ -400,7 +369,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               child: _buildQuickInfoCard(
                 icon: Icons.calendar_today,
                 label: 'Established',
-                value: university.establishedYear.toString() ?? 'N/A',
+                value: university.establishedYear.toString(),
                 color: Colors.blue,
               ),
             ),
@@ -409,7 +378,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
               child: _buildQuickInfoCard(
                 icon: Icons.category,
                 label: 'Type',
-                value: university.type ?? 'N/A',
+                value: university.type,
                 color: Colors.green,
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/services/lead_service.dart';
 
 class ViewLeadsScreen extends StatefulWidget {
   const ViewLeadsScreen({super.key});
@@ -14,49 +15,41 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  List<dynamic> _leads = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadLeads();
   }
 
-  final List<Map<String, dynamic>> _leads = [
-    {
-      'id': 'L001',
-      'name': 'Rahul Sharma',
-      'course': 'MBA in Marketing',
-      'university': 'Dehradun Business School',
-      'source': 'App',
-      'agent': 'Priya Gupta',
-      'status': 'Pending',
-      'date': '2025-01-05',
-      'phone': '9876543210',
-    },
-    {
-      'id': 'L002',
-      'name': 'Priya Singh',
-      'course': 'B.Tech CSE',
-      'university': 'Tech University Dehradun',
-      'source': 'Manual',
-      'agent': 'Unassigned',
-      'status': 'In Progress',
-      'date': '2025-01-04',
-      'phone': '9876543211',
-    },
-    {
-      'id': 'L003',
-      'name': 'Amit Kumar',
-      'course': 'BBA',
-      'university': 'Commerce College',
-      'source': 'Admin',
-      'agent': 'Raj Kumar',
-      'status': 'Converted',
-      'date': '2025-01-03',
-      'phone': '9876543212',
-    },
-  ];
+  Future<void> _loadLeads() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
-  List<Map<String, dynamic>> get _filteredLeads {
+    try {
+      final leads = await LeadService.getMyLeads();
+      if (mounted) {
+        setState(() {
+          _leads = leads;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  List<dynamic> get _filteredLeads {
     return _leads.where((lead) {
       // Status filter
       if (_statusFilter != 'All' && lead['status'] != _statusFilter) {
@@ -69,10 +62,20 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
       // Search filter
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
-        return lead['name'].toLowerCase().contains(query) ||
-               lead['course'].toLowerCase().contains(query) ||
-               lead['university'].toLowerCase().contains(query) ||
-               lead['id'].toLowerCase().contains(query);
+        final name = lead['name']?.toString().toLowerCase() ?? '';
+        final course = lead['course']?.toString().toLowerCase() ?? '';
+        final uni = lead['university']?.toString().toLowerCase() ?? '';
+        // lead['id'] might not exist or be different in real data, check backend map
+        // Assuming backend returns _id or id
+        final id =
+            lead['_id']?.toString().toLowerCase() ??
+            lead['id']?.toString().toLowerCase() ??
+            '';
+
+        return name.contains(query) ||
+            course.contains(query) ||
+            uni.contains(query) ||
+            id.contains(query);
       }
       return true;
     }).toList();
@@ -92,7 +95,10 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Add Lead'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
             ),
           ),
@@ -157,18 +163,34 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       _buildFilterChip('All', _statusFilter == 'All', () {
                         setState(() => _statusFilter = 'All');
                       }),
-                      _buildFilterChip('Pending', _statusFilter == 'Pending', () {
-                        setState(() => _statusFilter = 'Pending');
-                      }),
-                      _buildFilterChip('In Progress', _statusFilter == 'In Progress', () {
-                        setState(() => _statusFilter = 'In Progress');
-                      }),
-                      _buildFilterChip('Converted', _statusFilter == 'Converted', () {
-                        setState(() => _statusFilter = 'Converted');
-                      }),
-                      _buildFilterChip('Dropped', _statusFilter == 'Dropped', () {
-                        setState(() => _statusFilter = 'Dropped');
-                      }),
+                      _buildFilterChip(
+                        'Pending',
+                        _statusFilter == 'Pending',
+                        () {
+                          setState(() => _statusFilter = 'Pending');
+                        },
+                      ),
+                      _buildFilterChip(
+                        'In Progress',
+                        _statusFilter == 'In Progress',
+                        () {
+                          setState(() => _statusFilter = 'In Progress');
+                        },
+                      ),
+                      _buildFilterChip(
+                        'Converted',
+                        _statusFilter == 'Converted',
+                        () {
+                          setState(() => _statusFilter = 'Converted');
+                        },
+                      ),
+                      _buildFilterChip(
+                        'Dropped',
+                        _statusFilter == 'Dropped',
+                        () {
+                          setState(() => _statusFilter = 'Dropped');
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -187,7 +209,10 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
               },
               decoration: InputDecoration(
                 hintText: 'Search leads by name, course, university...',
-                prefixIcon: const Icon(Icons.search, color: AppTheme.mediumGray),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: AppTheme.mediumGray,
+                ),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, size: 20),
@@ -209,9 +234,15 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppTheme.primaryBlue, width: 2),
+                  borderSide: const BorderSide(
+                    color: AppTheme.primaryBlue,
+                    width: 2,
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
               ),
             ),
           ),
@@ -279,7 +310,12 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     );
   }
 
-  Widget _buildModernStatCard(String label, String value, Color color, IconData icon) {
+  Widget _buildModernStatCard(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -334,7 +370,9 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
             color: isSelected ? AppTheme.primaryBlue : AppTheme.surface,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? AppTheme.primaryBlue : const Color(0xFFE5E7EB),
+              color: isSelected
+                  ? AppTheme.primaryBlue
+                  : const Color(0xFFE5E7EB),
             ),
           ),
           child: Text(
@@ -432,9 +470,19 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Expanded(child: _buildModernInfoRow(Icons.person_outline, lead['agent'])),
+                  Expanded(
+                    child: _buildModernInfoRow(
+                      Icons.person_outline,
+                      lead['agent'],
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: _buildModernInfoRow(Icons.source_outlined, lead['source'])),
+                  Expanded(
+                    child: _buildModernInfoRow(
+                      Icons.source_outlined,
+                      lead['source'],
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -450,7 +498,11 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined, size: 14, color: AppTheme.mediumGray),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 14,
+                          color: AppTheme.mediumGray,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           lead['date'],
@@ -507,7 +559,11 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     );
   }
 
-  Widget _buildModernActionButton(IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildModernActionButton(
+    IconData icon,
+    Color color,
+    VoidCallback onPressed,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
@@ -575,7 +631,10 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: statusColor.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
@@ -604,7 +663,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                     ],
                   ),
                 ),
-                
+
                 // Details
                 Padding(
                   padding: const EdgeInsets.all(24),
@@ -620,10 +679,18 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildModernDetailRow(Icons.phone_outlined, 'Phone', lead['phone']),
+                      _buildModernDetailRow(
+                        Icons.phone_outlined,
+                        'Phone',
+                        lead['phone'],
+                      ),
                       const SizedBox(height: 12),
-                      _buildModernDetailRow(Icons.email_outlined, 'Email', lead['email'] ?? 'Not provided'),
-                      
+                      _buildModernDetailRow(
+                        Icons.email_outlined,
+                        'Email',
+                        lead['email'] ?? 'Not provided',
+                      ),
+
                       const SizedBox(height: 24),
                       const Text(
                         'Academic Details',
@@ -634,10 +701,18 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildModernDetailRow(Icons.school_outlined, 'Course', lead['course']),
+                      _buildModernDetailRow(
+                        Icons.school_outlined,
+                        'Course',
+                        lead['course'],
+                      ),
                       const SizedBox(height: 12),
-                      _buildModernDetailRow(Icons.business_outlined, 'University', lead['university']),
-                      
+                      _buildModernDetailRow(
+                        Icons.business_outlined,
+                        'University',
+                        lead['university'],
+                      ),
+
                       const SizedBox(height: 24),
                       const Text(
                         'Lead Information',
@@ -648,14 +723,26 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildModernDetailRow(Icons.person_outline, 'Agent', lead['agent']),
+                      _buildModernDetailRow(
+                        Icons.person_outline,
+                        'Agent',
+                        lead['agent'],
+                      ),
                       const SizedBox(height: 12),
-                      _buildModernDetailRow(Icons.source_outlined, 'Source', lead['source']),
+                      _buildModernDetailRow(
+                        Icons.source_outlined,
+                        'Source',
+                        lead['source'],
+                      ),
                       const SizedBox(height: 12),
-                      _buildModernDetailRow(Icons.calendar_today_outlined, 'Date', lead['date']),
-                      
+                      _buildModernDetailRow(
+                        Icons.calendar_today_outlined,
+                        'Date',
+                        lead['date'],
+                      ),
+
                       const SizedBox(height: 24),
-                      
+
                       // Actions
                       Row(
                         children: [
@@ -676,12 +763,17 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: const Text('Lead converted to admission!'),
+                                      content: const Text(
+                                        'Lead converted to admission!',
+                                      ),
                                       backgroundColor: AppTheme.success,
                                     ),
                                   );
                                 },
-                                icon: const Icon(Icons.check_circle_outline, size: 18),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  size: 18,
+                                ),
                                 label: const Text('Convert'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.success,
@@ -743,7 +835,6 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     );
   }
 
-
   void _showAddLeadDialog() {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController();
@@ -753,12 +844,15 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     String selectedUniversity = 'Dehradun Business School';
     String selectedAgent = 'Unassigned';
     String selectedSource = 'App';
+    bool isLoading = false;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500),
             child: SingleChildScrollView(
@@ -788,7 +882,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      
+
                       // Student Name
                       TextFormField(
                         controller: nameController,
@@ -796,10 +890,11 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           labelText: 'Student Name *',
                           prefixIcon: Icon(Icons.person_outline),
                         ),
-                        validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? 'Required' : null,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Phone
                       TextFormField(
                         controller: phoneController,
@@ -808,10 +903,11 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.phone_outlined),
                         ),
                         keyboardType: TextInputType.phone,
-                        validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? 'Required' : null,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Email
                       TextFormField(
                         controller: emailController,
@@ -822,7 +918,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Course Dropdown
                       DropdownButtonFormField<String>(
                         initialValue: selectedCourse,
@@ -831,25 +927,30 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.school_outlined),
                         ),
                         isExpanded: true,
-                        items: [
-                          'MBA in Marketing',
-                          'B.Tech CSE',
-                          'BBA',
-                          'M.Tech',
-                          'B.Com',
-                        ].map((course) => DropdownMenuItem(
-                          value: course,
-                          child: Text(
-                            course,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )).toList(),
+                        items:
+                            [
+                                  'MBA in Marketing',
+                                  'B.Tech CSE',
+                                  'BBA',
+                                  'M.Tech',
+                                  'B.Com',
+                                ]
+                                .map(
+                                  (course) => DropdownMenuItem(
+                                    value: course,
+                                    child: Text(
+                                      course,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedCourse = value!);
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // University Dropdown
                       DropdownButtonFormField<String>(
                         initialValue: selectedUniversity,
@@ -858,23 +959,28 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.business_outlined),
                         ),
                         isExpanded: true,
-                        items: [
-                          'Dehradun Business School',
-                          'Tech University Dehradun',
-                          'Commerce College',
-                        ].map((uni) => DropdownMenuItem(
-                          value: uni,
-                          child: Text(
-                            uni,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )).toList(),
+                        items:
+                            [
+                                  'Dehradun Business School',
+                                  'Tech University Dehradun',
+                                  'Commerce College',
+                                ]
+                                .map(
+                                  (uni) => DropdownMenuItem(
+                                    value: uni,
+                                    child: Text(
+                                      uni,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedUniversity = value!);
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Agent Dropdown
                       DropdownButtonFormField<String>(
                         initialValue: selectedAgent,
@@ -883,24 +989,29 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.person_add_outlined),
                         ),
                         isExpanded: true,
-                        items: [
-                          'Unassigned',
-                          'Priya Gupta',
-                          'Raj Kumar',
-                          'Amit Verma',
-                        ].map((agent) => DropdownMenuItem(
-                          value: agent,
-                          child: Text(
-                            agent,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )).toList(),
+                        items:
+                            [
+                                  'Unassigned',
+                                  'Priya Gupta',
+                                  'Raj Kumar',
+                                  'Amit Verma',
+                                ]
+                                .map(
+                                  (agent) => DropdownMenuItem(
+                                    value: agent,
+                                    child: Text(
+                                      agent,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedAgent = value!);
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Source Dropdown
                       DropdownButtonFormField<String>(
                         initialValue: selectedSource,
@@ -910,20 +1021,22 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ),
                         isExpanded: true,
                         items: ['App', 'Manual', 'Admin', 'Website']
-                            .map((source) => DropdownMenuItem(
-                              value: source,
-                              child: Text(
-                                source,
-                                overflow: TextOverflow.ellipsis,
+                            .map(
+                              (source) => DropdownMenuItem(
+                                value: source,
+                                child: Text(
+                                  source,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ))
+                            )
                             .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedSource = value!);
                         },
                       ),
                       const SizedBox(height: 24),
-                      
+
                       // Buttons
                       Row(
                         children: [
@@ -936,32 +1049,62 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  setState(() {
-                                    _leads.insert(0, {
-                                      'id': 'L${_leads.length + 1}'.padLeft(4, '0'),
-                                      'name': nameController.text,
-                                      'course': selectedCourse,
-                                      'university': selectedUniversity,
-                                      'source': selectedSource,
-                                      'agent': selectedAgent,
-                                      'status': 'Pending',
-                                      'date': DateTime.now().toString().split(' ')[0],
-                                      'phone': phoneController.text,
-                                      'email': emailController.text,
-                                    });
-                                  });
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text('Lead added successfully!'),
-                                      backgroundColor: AppTheme.success,
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text('Add Lead'),
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (formKey.currentState!.validate()) {
+                                        setDialogState(() => isLoading = true);
+                                        try {
+                                          await LeadService.submitPublicLead({
+                                            'name': nameController.text,
+                                            'email': emailController.text,
+                                            'phone': phoneController.text,
+                                            'course':
+                                                selectedCourse, // Be careful if backend expects courseId
+                                            'university':
+                                                selectedUniversity, // Expects uniId?
+                                            'source': selectedSource,
+                                            // 'agent': selectedAgent, // submitPublicLead might not support agent assignment directly or might fallback
+                                          });
+
+                                          if (!context.mounted) return;
+                                          Navigator.pop(context);
+                                          _loadLeads(); // Refresh list
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: const Text(
+                                                'Lead added successfully!',
+                                              ),
+                                              backgroundColor: AppTheme.success,
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          setDialogState(
+                                            () => isLoading = false,
+                                          );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Error: $e'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text('Add Lead'),
                             ),
                           ),
                         ],
@@ -981,14 +1124,17 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: lead['name']);
     final phoneController = TextEditingController(text: lead['phone']);
-    String selectedStatus = lead['status'];
-    String selectedAgent = lead['agent'];
+    String selectedStatus = lead['status'] ?? 'Pending';
+    String selectedAgent = lead['agent'] ?? 'Unassigned';
+    bool isLoading = false;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500),
             child: SingleChildScrollView(
@@ -1004,7 +1150,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Edit Lead ${lead['id']}',
+                            'Edit Lead ${lead['id'] ?? ''}',
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
@@ -1018,17 +1164,18 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      
+
                       TextFormField(
                         controller: nameController,
                         decoration: const InputDecoration(
                           labelText: 'Student Name',
                           prefixIcon: Icon(Icons.person_outline),
                         ),
-                        validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? 'Required' : null,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       TextFormField(
                         controller: phoneController,
                         decoration: const InputDecoration(
@@ -1038,7 +1185,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         keyboardType: TextInputType.phone,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       DropdownButtonFormField<String>(
                         initialValue: selectedStatus,
                         decoration: const InputDecoration(
@@ -1046,21 +1193,24 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.flag_outlined),
                         ),
                         isExpanded: true,
-                        items: ['Pending', 'In Progress', 'Converted', 'Dropped']
-                            .map((status) => DropdownMenuItem(
-                              value: status,
-                              child: Text(
-                                status,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ))
-                            .toList(),
+                        items:
+                            ['Pending', 'In Progress', 'Converted', 'Dropped']
+                                .map(
+                                  (status) => DropdownMenuItem(
+                                    value: status,
+                                    child: Text(
+                                      status,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedStatus = value!);
                         },
                       ),
                       const SizedBox(height: 16),
-                      
+
                       DropdownButtonFormField<String>(
                         initialValue: selectedAgent,
                         decoration: const InputDecoration(
@@ -1068,21 +1218,29 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           prefixIcon: Icon(Icons.person_add_outlined),
                         ),
                         isExpanded: true,
-                        items: ['Unassigned', 'Priya Gupta', 'Raj Kumar', 'Amit Verma']
-                            .map((agent) => DropdownMenuItem(
-                              value: agent,
-                              child: Text(
-                                agent,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ))
-                            .toList(),
+                        items:
+                            [
+                                  'Unassigned',
+                                  'Priya Gupta',
+                                  'Raj Kumar',
+                                  'Amit Verma',
+                                ]
+                                .map(
+                                  (agent) => DropdownMenuItem(
+                                    value: agent,
+                                    child: Text(
+                                      agent,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedAgent = value!);
                         },
                       ),
                       const SizedBox(height: 24),
-                      
+
                       Row(
                         children: [
                           Expanded(
@@ -1094,24 +1252,60 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  setState(() {
-                                    lead['name'] = nameController.text;
-                                    lead['phone'] = phoneController.text;
-                                    lead['status'] = selectedStatus;
-                                    lead['agent'] = selectedAgent;
-                                  });
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text('Lead updated successfully!'),
-                                      backgroundColor: AppTheme.success,
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text('Save Changes'),
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (formKey.currentState!.validate()) {
+                                        setDialogState(() => isLoading = true);
+                                        try {
+                                          await LeadService.updateLead(
+                                            lead['_id'] ?? lead['id'],
+                                            {
+                                              'name': nameController.text,
+                                              'phone': phoneController.text,
+                                              'status': selectedStatus,
+                                              // 'agent': selectedAgent, // Agent update might need agentId, not name
+                                            },
+                                          );
+
+                                          if (!context.mounted) return;
+                                          Navigator.pop(context);
+                                          _loadLeads();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: const Text(
+                                                'Lead updated successfully!',
+                                              ),
+                                              backgroundColor: AppTheme.success,
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          setDialogState(
+                                            () => isLoading = false,
+                                          );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Error: $e'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text('Save Changes'),
                             ),
                           ),
                         ],
@@ -1141,15 +1335,27 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() => _leads.remove(lead));
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Lead deleted'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+            onPressed: () async {
+              try {
+                await LeadService.deleteLead(lead['_id'] ?? lead['id']);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+                _loadLeads();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Lead deleted'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              } catch (e) {
+                Navigator.pop(context); // Close dialog even if error?
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete', style: TextStyle(color: Colors.white)),

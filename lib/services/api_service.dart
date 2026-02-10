@@ -99,10 +99,10 @@ class ApiService {
     return _processResponse(response);
   }
 
-  /// Helper to decode the HTTP response and throw if not successful.  This
+  /// Helper to decode the HTTP response and throw if not successful. This
   /// method surfaces the server's `message` property if present, or falls back
-  /// to the status reason phrase.  Successful responses return the decoded
-  /// JSON body (Map<String, dynamic>).
+  /// to the status reason phrase. Successful responses return the decoded
+  /// JSON body (Map&lt;String, dynamic&gt;).
   static Map<String, dynamic> _processResponse(http.Response response) {
     final statusCode = response.statusCode;
     final Map<String, dynamic> jsonBody = jsonDecode(

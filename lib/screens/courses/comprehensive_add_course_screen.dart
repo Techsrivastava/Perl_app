@@ -7,6 +7,13 @@ import 'package:educonnect/widgets/app_header.dart';
 import 'package:educonnect/widgets/custom_text_field.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/data/indian_courses_data.dart';
+import 'package:educonnect/services/course_service.dart';
+import 'package:educonnect/services/document_service.dart';
+import 'package:educonnect/services/auth_service.dart';
+import 'package:educonnect/services/university_service.dart';
+import 'package:educonnect/services/course_service.dart';
+import 'package:educonnect/services/document_service.dart';
+import 'package:educonnect/services/auth_service.dart';
 
 class ComprehensiveAddCourseScreen extends StatefulWidget {
   const ComprehensiveAddCourseScreen({super.key});
@@ -277,6 +284,25 @@ class _ComprehensiveAddCourseScreenState
     if (mounted) Navigator.pop(context);
   }
 
+  Future<String?> _uploadFile(File? file, String type) async {
+    if (file == null) return null;
+    try {
+      final response = await DocumentService.uploadDocument(
+        file: file,
+        type: 'COURSE_ASSET',
+        studentId: null, // Generic upload
+        notes: 'Course Asset: $type',
+      );
+      // Return download URL
+      final docId = response['_id'];
+      final token = await AuthService.getToken();
+      return DocumentService.getDownloadUrl(docId, token);
+    } catch (e) {
+      debugPrint('Error uploading $type: $e');
+      return null;
+    }
+  }
+
   Future<void> _handlePublish() async {
     if (!_formKey.currentState!.validate()) {
       _showSnackBar('Please fill all required fields', Colors.orange);
@@ -288,11 +314,92 @@ class _ComprehensiveAddCourseScreenState
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    _showSnackBar('✅ Course published successfully!', Colors.green);
-    if (mounted) Navigator.pop(context);
+
+    try {
+      // 1. Upload Files
+      final entranceTestUrl = await _uploadFile(
+        _entranceTestPdfFile,
+        'Entrance Test Paper',
+      );
+      final scholarshipPolicyUrl = await _uploadFile(
+        _scholarshipPolicyFile,
+        'Scholarship Policy',
+      );
+      final prospectusUrl = await _uploadFile(_prospectusFile, 'Prospectus');
+      final feeStructureUrl = await _uploadFile(
+        _feeStructurePdfFile,
+        'Fee Structure',
+      );
+      final syllabusUrl = await _uploadFile(_syllabusPdfFile, 'Syllabus');
+      final certificateFormatUrl = await _uploadFile(
+        _certificateFormatFile,
+        'Certificate Format',
+      );
+
+      // 2. Prepare Course Data
+      final courseData = {
+        'name': _selectedMasterCourse!.name,
+        // But the schema says generic.
+        // If logged in as University, the backend likely knows the University ID.
+        // Let's rely on backend or fetch profile first?
+        // CourseService.createCourse expects data.
+        // Wait, 'university' field in Course model is required.
+        // If I am a University User, I should get my ID.
+        // UniversityService.getMyUniversity() returns University model with ID.
+        'abbreviation': _selectedMasterCourse!.abbreviation ?? '',
+        'department': _selectedMasterCourse!.department ?? '',
+        'duration': _courseDurationController.text, // e.g. "3" or "4"
+        // 'level': _selectedMasterCourse!.level, // Backend schema has level
+        'description': _customDescriptionController.text.isNotEmpty
+            ? _customDescriptionController.text
+            : _selectedMasterCourse!.name, // Fallback
+
+        'fee': {
+          'baseAmount': double.tryParse(_totalCourseFeeController.text) ?? 0,
+          'structure': _feeType, // YEARWISE or SEMESTERWISE
+        },
+        'actualFee': double.tryParse(_totalCourseFeeController.text) ?? 0,
+
+        // 'displayFee': // Add if we have a field for it
+        'totalSeats': int.tryParse(_intakeCapacityController.text) ?? 0,
+        'availableSeats': int.tryParse(_availableSeatsController.text) ?? 0,
+
+        'admissionProcess': _selectedAdmissionTypes.join(', '),
+        'entranceExam': _entranceTestNameController.text,
+
+        // URLs
+        'entranceTestPaper': entranceTestUrl,
+        'scholarshipPolicy': scholarshipPolicyUrl,
+        'prospectus': prospectusUrl,
+        'feeStructure': feeStructureUrl,
+        'syllabus': syllabusUrl,
+        'certificateFormat': certificateFormatUrl,
+
+        // Other fields mapped as needed
+        'status': 'published', // Publishing directly
+      };
+
+      // Fetch University ID if needed manually, but better to check if backend infers it.
+      // Backend createCourse checks req.user.role. If UNIVERSITY, it might assign req.user._id if that's how it's linked?
+      // Course model: university: { type: ObjectId, ref: 'University' }
+      // Backend controller: const { university } = req.body;
+      // It expects university ID in body.
+      // So I must fetch it.
+
+      final university = await UniversityService.getMyUniversity();
+      courseData['university'] = university.id;
+
+      await CourseService.createCourse(courseData);
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSnackBar('✅ Course published successfully!', Colors.green);
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSnackBar('Error: ${e.toString()}', Colors.red);
+    }
   }
 
   void _calculatePerUnitFee() {

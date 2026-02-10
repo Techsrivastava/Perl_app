@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/models/admission_model.dart';
+import 'package:educonnect/services/agent_service.dart';
 import 'fee_module.dart';
 
 class CourseFeeDetailsScreen extends StatefulWidget {
@@ -68,8 +69,7 @@ class _CourseFeeDetailsScreenState extends State<CourseFeeDetailsScreen> {
   void initState() {
     super.initState();
     actualFeeController = TextEditingController(
-      text:
-          widget.admissionForm.feeDetails?.actualFee?.toString() ?? '',
+      text: widget.admissionForm.feeDetails?.actualFee?.toString() ?? '',
     );
     agentCodeController = TextEditingController(
       text: widget.admissionForm.feeDetails?.agentCode ?? '',
@@ -197,7 +197,7 @@ class _CourseFeeDetailsScreenState extends State<CourseFeeDetailsScreen> {
     });
   }
 
-  void _saveAndContinue() {
+  Future<void> _saveAndContinue() async {
     if (selectedUniversity == null ||
         selectedCourse == null ||
         selectedAdmissionSource == null ||
@@ -214,23 +214,64 @@ class _CourseFeeDetailsScreenState extends State<CourseFeeDetailsScreen> {
 
     if (selectedAdmissionSource == 'Agent' &&
         agentCodeController.text.isNotEmpty) {
-      widget.admissionForm.feeDetails!.agentCode = agentCodeController.text;
-      // Mock agent data - replace with actual API call
-      widget.admissionForm.feeDetails!.agentName =
-          'Agent: ${agentCodeController.text}';
-      widget.admissionForm.feeDetails!.agentShareType = 'percent';
-      widget.admissionForm.feeDetails!.agentShareValue = 25.0;
-      widget.admissionForm.feeDetails!.agentCommission =
-          FeeModule.calculateAgentCommission(
-            actualProfit: widget.admissionForm.feeDetails!.actualProfit ?? 0,
-            agentSharePercentage:
-                widget.admissionForm.feeDetails!.agentShareValue ?? 0,
+      // Verify Agent
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (c) => const Center(child: CircularProgressIndicator()),
+      );
+
+      try {
+        final agentData = await AgentService.lookupAgentByCode(
+          agentCodeController.text.trim(),
+        );
+
+        // Close loader
+        if (mounted) Navigator.pop(context);
+
+        widget.admissionForm.agentId = agentData['_id'];
+        widget.admissionForm.feeDetails!.agentCode = agentData['referralCode'];
+        widget.admissionForm.feeDetails!.agentName = agentData['name'];
+
+        // Commission logic
+        double commissionPct = 0;
+        if (agentData['commissionPercentage'] != null) {
+          commissionPct = (agentData['commissionPercentage'] as num).toDouble();
+        }
+
+        widget.admissionForm.feeDetails!.agentShareType = 'percent';
+        widget.admissionForm.feeDetails!.agentShareValue = commissionPct;
+
+        widget.admissionForm.feeDetails!.agentCommission =
+            FeeModule.calculateAgentCommission(
+              actualProfit: widget.admissionForm.feeDetails!.actualProfit ?? 0,
+              agentSharePercentage: commissionPct,
+            );
+      } catch (e) {
+        // Close loader
+        if (mounted) Navigator.pop(context);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Agent Verification Failed: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
           );
+        }
+        return; // Stop execution
+      }
+    } else {
+      // Clear agent data if not agent
+      widget.admissionForm.agentId = null;
+      widget.admissionForm.feeDetails!.agentCode = null;
+      widget.admissionForm.feeDetails!.agentName = null;
+      widget.admissionForm.feeDetails!.agentCommission = 0;
     }
 
     widget.admissionForm.updatedAt = DateTime.now();
 
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override

@@ -3,9 +3,11 @@ import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/widgets/app_header.dart';
 import 'package:educonnect/widgets/status_badge.dart';
-import 'package:educonnect/services/mock_data_service.dart';
 import 'package:educonnect/screens/students/student_details_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:educonnect/services/student_service.dart';
+import 'package:educonnect/models/student_model.dart';
+import 'dart:async';
 
 class StudentsScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -17,7 +19,12 @@ class StudentsScreen extends StatefulWidget {
 }
 
 class _StudentsScreenState extends State<StudentsScreen> {
-  final mockData = MockDataService();
+  // final mockData = MockDataService(); // Removed mock service
+  List<Student> _allStudents = [];
+  List<Student> _filteredStudents = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
   String _searchQuery = '';
   String _selectedStatus = 'All';
   String _selectedYear = 'All Years';
@@ -26,55 +33,98 @@ class _StudentsScreenState extends State<StudentsScreen> {
   bool _showAdvancedFilters = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadStudents();
+  }
+
+  Future<void> _loadStudents() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final studentsData = await StudentService.getStudents();
+      final students = studentsData
+          .map((json) => Student.fromJson(json))
+          .toList();
+
+      if (!mounted) return;
+
+      setState(() {
+        _allStudents = students;
+        _filteredStudents = students; // Initialize with all
+        _filterStudents();
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _filterStudents() {
+    setState(() {
+      _filteredStudents = _allStudents.where((student) {
+        final matchesSearch =
+            student.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            student.email.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            student.courseName.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+        final matchesStatus =
+            _selectedStatus == 'All' || student.status == _selectedStatus;
+
+        // Year filter
+        final matchesYear =
+            _selectedYear == 'All Years' ||
+            student.appliedDate.year.toString() == _selectedYear;
+
+        // Date range filter
+        final matchesDateRange =
+            (_startDate == null && _endDate == null) ||
+            (_startDate != null &&
+                _endDate != null &&
+                student.appliedDate.isAfter(
+                  _startDate!.subtract(const Duration(days: 1)),
+                ) &&
+                student.appliedDate.isBefore(
+                  _endDate!.add(const Duration(days: 1)),
+                )) ||
+            (_startDate != null &&
+                _endDate == null &&
+                student.appliedDate.isAfter(
+                  _startDate!.subtract(const Duration(days: 1)),
+                )) ||
+            (_startDate == null &&
+                _endDate != null &&
+                student.appliedDate.isBefore(
+                  _endDate!.add(const Duration(days: 1)),
+                ));
+
+        return matchesSearch &&
+            matchesStatus &&
+            matchesYear &&
+            matchesDateRange;
+      }).toList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final students = mockData.students;
-    final filteredStudents = students.where((student) {
-      final matchesSearch =
-          student.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          student.email.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          student.courseName.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesStatus =
-          _selectedStatus == 'All' || student.status == _selectedStatus;
-
-      // Year filter
-      final matchesYear =
-          _selectedYear == 'All Years' ||
-          student.appliedDate.year.toString() == _selectedYear;
-
-      // Date range filter
-      final matchesDateRange =
-          (_startDate == null && _endDate == null) ||
-          (_startDate != null &&
-              _endDate != null &&
-              student.appliedDate.isAfter(
-                _startDate!.subtract(const Duration(days: 1)),
-              ) &&
-              student.appliedDate.isBefore(
-                _endDate!.add(const Duration(days: 1)),
-              )) ||
-          (_startDate != null &&
-              _endDate == null &&
-              student.appliedDate.isAfter(
-                _startDate!.subtract(const Duration(days: 1)),
-              )) ||
-          (_startDate == null &&
-              _endDate != null &&
-              student.appliedDate.isBefore(
-                _endDate!.add(const Duration(days: 1)),
-              ));
-
-      return matchesSearch && matchesStatus && matchesYear && matchesDateRange;
-    }).toList();
-
-    // Calculate statistics
-    final totalStudents = students.length;
-    final pendingStudents = students
+    // Calculate statistics based on _allStudents (or _filteredStudents if preferred, usually statistics are on total)
+    final totalStudents = _allStudents.length;
+    final pendingStudents = _allStudents
         .where((s) => s.status == AppConstants.statusPending)
         .length;
-    final approvedStudents = students
+    final approvedStudents = _allStudents
         .where((s) => s.status == AppConstants.statusApproved)
         .length;
-    final rejectedStudents = students
+    final rejectedStudents = _allStudents
         .where((s) => s.status == AppConstants.statusRejected)
         .length;
 
@@ -174,6 +224,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                         onChanged: (value) {
                           setState(() {
                             _searchQuery = value;
+                            _filterStudents();
                           });
                         },
                       ),
@@ -333,6 +384,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                                   onChanged: (value) {
                                     setState(() {
                                       _selectedYear = value!;
+                                      _filterStudents();
                                     });
                                   },
                                 ),
@@ -468,7 +520,23 @@ class _StudentsScreenState extends State<StudentsScreen> {
 
           // Students List
           Expanded(
-            child: filteredStudents.isEmpty
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _errorMessage != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Error: $_errorMessage'),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: _loadStudents,
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  )
+                : _filteredStudents.isEmpty
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -489,15 +557,19 @@ class _StudentsScreenState extends State<StudentsScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(
-                      AppConstants.defaultPadding / 2,
+                : RefreshIndicator(
+                    // Added RefreshIndicator
+                    onRefresh: _loadStudents,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(
+                        AppConstants.defaultPadding / 2,
+                      ),
+                      itemCount: _filteredStudents.length,
+                      itemBuilder: (context, index) {
+                        final student = _filteredStudents[index];
+                        return _buildStudentCard(student);
+                      },
                     ),
-                    itemCount: filteredStudents.length,
-                    itemBuilder: (context, index) {
-                      final student = filteredStudents[index];
-                      return _buildStudentCard(student);
-                    },
                   ),
           ),
         ],
@@ -531,6 +603,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
         } else {
           _endDate = picked;
         }
+        _filterStudents();
       });
     }
   }
@@ -541,6 +614,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
       _selectedYear = 'All Years';
       _startDate = null;
       _endDate = null;
+      _filterStudents();
     });
   }
 
@@ -606,6 +680,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
       onSelected: (selected) {
         setState(() {
           _selectedStatus = value;
+          _filterStudents();
         });
       },
       backgroundColor: chipColor.withOpacity(0.1),

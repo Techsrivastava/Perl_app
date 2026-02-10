@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../config/theme.dart';
+import '../../../models/agent_model.dart';
 
 class EditAgentForm extends StatefulWidget {
-  final Map<String, dynamic> agent;
+  final Agent agent;
   final Function(Map<String, dynamic>) onSave;
 
   const EditAgentForm({super.key, required this.agent, required this.onSave});
@@ -27,24 +28,24 @@ class _EditAgentFormState extends State<EditAgentForm> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.agent['agent_name']);
-    _firmController = TextEditingController(text: widget.agent['firm_name']);
-    _mobileController = TextEditingController(text: widget.agent['mobile']);
-    _emailController = TextEditingController(text: widget.agent['email']);
+    _nameController = TextEditingController(text: widget.agent.name);
+    _firmController = TextEditingController(text: widget.agent.firmName);
+    _mobileController = TextEditingController(text: widget.agent.phone);
+    _emailController = TextEditingController(text: widget.agent.email);
     _altContactController = TextEditingController(
-      text: widget.agent['alt_contact'] ?? '',
+      text: '', // Agent model doesn't have alt_contact yet
     );
     _addressController = TextEditingController(
-      text: widget.agent['address'] ?? '',
+      text: '', // Agent model doesn't have address yet
     );
-    _cityController = TextEditingController(text: widget.agent['city']);
+    _cityController = TextEditingController(text: widget.agent.city);
     _pincodeController = TextEditingController(
-      text: widget.agent['pincode'] ?? '',
+      text: '', // Agent model doesn't have pincode yet
     );
     _remarksController = TextEditingController(
-      text: widget.agent['remarks'] ?? '',
+      text: '', // Agent model doesn't have remarks yet
     );
-    _selectedState = widget.agent['state'];
+    _selectedState = widget.agent.state;
   }
 
   @override
@@ -66,7 +67,7 @@ class _EditAgentFormState extends State<EditAgentForm> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text('Edit ${widget.agent['agent_name']}'),
+        title: Text('Edit ${widget.agent.name}'),
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
       ),
@@ -94,7 +95,7 @@ class _EditAgentFormState extends State<EditAgentForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.agent['agent_id'],
+                          widget.agent.id,
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
@@ -102,7 +103,7 @@ class _EditAgentFormState extends State<EditAgentForm> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.agent['agent_name'],
+                          widget.agent.name,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -231,23 +232,26 @@ class _EditAgentFormState extends State<EditAgentForm> {
                 ),
                 child: Column(
                   children: [
-                    _buildInfoRow('Status', widget.agent['status']),
+                    _buildInfoRow('Status', widget.agent.status),
                     const SizedBox(height: 8),
-                    _buildInfoRow('Joined Date', widget.agent['joined_date']),
+                    _buildInfoRow(
+                      'Joined Date',
+                      '${widget.agent.joinedDate.day}/${widget.agent.joinedDate.month}/${widget.agent.joinedDate.year}',
+                    ),
                     const SizedBox(height: 8),
                     _buildInfoRow(
                       'Total Leads',
-                      widget.agent['total_leads'].toString(),
+                      widget.agent.totalLeads.toString(),
                     ),
                     const SizedBox(height: 8),
                     _buildInfoRow(
                       'Verified Admissions',
-                      widget.agent['verified_admissions'].toString(),
+                      widget.agent.verifiedAdmissions.toString(),
                     ),
                     const SizedBox(height: 8),
                     _buildInfoRow(
                       'Total Earnings',
-                      '₹${widget.agent['total_earnings']}',
+                      '₹${widget.agent.totalEarnings}',
                     ),
                   ],
                 ),

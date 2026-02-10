@@ -2,266 +2,223 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/config/theme.dart';
-import 'package:educonnect/models/consultancy_model.dart';
-import 'package:educonnect/services/mock_data_service.dart';
+import 'package:educonnect/services/report_service.dart';
+import 'package:educonnect/services/commission_service.dart';
 import 'package:educonnect/widgets/app_header.dart';
-import 'package:educonnect/widgets/status_badge.dart';
 
 class ReportsScreen extends StatefulWidget {
-  final Consultancy? consultancy; // ✅ optional: show all or one consultancy
+  final String? consultancyId; // ✅ optional: show all or one consultancy
+  // Accept consultancy object and extract ID
+  final dynamic consultancy;
 
-  // ❌ removed `const` to make hot reload safe
-  const ReportsScreen({super.key, this.consultancy});
+  const ReportsScreen({super.key, this.consultancyId, this.consultancy});
+
+  String? get effectiveConsultancyId => consultancyId ?? consultancy?.id;
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  final mockData = MockDataService();
   String _selectedReportType = 'All';
+  bool _isLoading = true;
+  List<dynamic> _transactions = [];
+  Map<String, dynamic>? _reportData;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReportData();
+  }
+
+  Future<void> _loadReportData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Fetch commission transactions
+      final transactions = await CommissionService.getTransactions();
+
+      // Fetch comprehensive report data
+      final reportData = await ReportService.getCommissionReport();
+
+      if (mounted) {
+        setState(() {
+          _transactions = transactions;
+          _reportData = reportData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final allTransactions = mockData.commissionTransactions;
-
-    // ✅ Filter for selected consultancy if passed
-    final transactions = widget.consultancy == null
-        ? allTransactions
-        : allTransactions
-              .where((t) => t.consultancyId == widget.consultancy!.id)
+    // Filter transactions if consultancyId provided
+    final filteredTransactions = widget.consultancyId == null
+        ? _transactions
+        : _transactions
+              .where((t) => t['consultancy']?['_id'] == widget.consultancyId)
               .toList();
 
-    final consultancies = widget.consultancy == null
-        ? mockData.consultancies
-        : [widget.consultancy!];
-
-    final students = mockData.students
-        .where(
-          (s) =>
-              widget.consultancy == null ||
-              s.consultancyId == widget.consultancy!.id,
-        )
-        .toList();
-
-    // 🔹 Stats
-    final totalStudents = students.length;
-    final pendingStudents = students
-        .where((s) => s.status == AppConstants.statusPending)
-        .length;
-    final approvedStudents = students
-        .where((s) => s.status == AppConstants.statusApproved)
-        .length;
-    final rejectedStudents = students
-        .where((s) => s.status == AppConstants.statusRejected)
-        .length;
-
-    final totalConsultancies = consultancies.length;
-    final activeConsultancies = consultancies
-        .where((c) => c.status == AppConstants.statusActive)
-        .length;
-    final totalStudentsEnrolled = consultancies.fold(
-      0,
-      (sum, c) => sum + c.studentsCount,
-    );
-    final totalCommission = consultancies.fold(
-      0.0,
-      (sum, c) => sum + c.totalCommission,
-    );
-
-    // 🔹 Filter by status (dropdown)
-    final filteredTransactions = _selectedReportType == 'All'
-        ? transactions
-        : transactions.where((t) => t.status == _selectedReportType).toList();
+    // Further filter by status dropdown
+    final displayTransactions = _selectedReportType == 'All'
+        ? filteredTransactions
+        : filteredTransactions
+              .where((t) => t['status'] == _selectedReportType)
+              .toList();
 
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       appBar: AppHeader(
-        title: widget.consultancy == null
-            ? 'Reports'
-            : '${widget.consultancy!.name} Reports',
+        title: widget.consultancyId == null ? 'Reports' : 'Consultancy Reports',
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding / 2),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🔹 Filter Dropdown
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Report Type: ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.charcoal,
-                    ),
+                  Text(
+                    'Error: $_errorMessage',
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
                   ),
-                  Expanded(
-                    child: DropdownMenu<String>(
-                      initialSelection: _selectedReportType,
-                      expandedInsets: EdgeInsets.zero,
-                      textStyle: const TextStyle(fontSize: 12),
-                      dropdownMenuEntries:
-                          [
-                            'All',
-                            AppConstants.statusPending,
-                            AppConstants.statusApproved,
-                            AppConstants.statusRejected,
-                          ].map((type) {
-                            return DropdownMenuEntry<String>(
-                              value: type,
-                              label: type,
-                            );
-                          }).toList(),
-                      onSelected: (value) {
-                        setState(() {
-                          _selectedReportType = value!;
-                        });
-                      },
-                    ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadReportData,
+                    child: const Text('Retry'),
                   ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // 🔹 Student Summary
-            _buildInfoSection(
-              title: 'Student Summary',
-              children: [
-                _buildStatRow(
-                  'Total Students',
-                  totalStudents.toString(),
-                  AppTheme.primaryBlue,
-                ),
-                _buildStatRow(
-                  'Pending',
-                  pendingStudents.toString(),
-                  AppTheme.warning,
-                ),
-                _buildStatRow(
-                  'Approved',
-                  approvedStudents.toString(),
-                  AppTheme.success,
-                ),
-                _buildStatRow(
-                  'Rejected',
-                  rejectedStudents.toString(),
-                  AppTheme.error,
-                ),
-              ],
-            ),
-
-            // 🔹 Consultancy Summary
-            _buildInfoSection(
-              title: 'Consultancy Summary',
-              children: [
-                _buildStatRow(
-                  'Total Consultancies',
-                  totalConsultancies.toString(),
-                  AppTheme.primaryBlue,
-                ),
-                _buildStatRow(
-                  'Active Consultancies',
-                  activeConsultancies.toString(),
-                  AppTheme.success,
-                ),
-                _buildStatRow(
-                  'Students Enrolled',
-                  totalStudentsEnrolled.toString(),
-                  AppTheme.warning,
-                ),
-                _buildStatRow(
-                  'Total Commission',
-                  '\$${NumberFormat('#,##0.00').format(totalCommission)}',
-                  AppTheme.error,
-                ),
-              ],
-            ),
-
-            // 🔹 Consultancy-Wise Breakdown
-            _buildInfoSection(
-              title: 'Consultancy-Wise Summary',
-              children: consultancies.map((consultancy) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.lightGray,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              consultancy.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: AppTheme.charcoal,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Students: ${consultancy.studentsCount} | Commission: \$${NumberFormat('#,##0.00').format(consultancy.totalCommission)}',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppTheme.mediumGray,
-                              ),
-                            ),
-                          ],
-                        ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadReportData,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppConstants.defaultPadding / 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🔹 Filter Dropdown
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      StatusBadge(status: consultancy.status),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-
-            // 🔹 Transactions List
-            _buildInfoSection(
-              title: 'Commission Transactions',
-              children: filteredTransactions.isEmpty
-                  ? [
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text(
-                            'No transactions found',
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Report Type: ',
                             style: TextStyle(
                               fontSize: 12,
-                              color: AppTheme.mediumGray,
-                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.charcoal,
                             ),
                           ),
-                        ),
+                          Expanded(
+                            child: DropdownButton<String>(
+                              value: _selectedReportType,
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              items: ['All', 'PENDING', 'APPROVED', 'PAID'].map(
+                                (type) {
+                                  return DropdownMenuItem(
+                                    value: type,
+                                    child: Text(
+                                      type,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedReportType = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ]
-                  : filteredTransactions.map(_buildTransactionCard).toList(),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // 🔹 Summary from Report Data
+                    if (_reportData != null) ...[
+                      _buildInfoSection(
+                        title: 'Commission Summary',
+                        children: [
+                          _buildStatRow(
+                            'Total Commission',
+                            '₹${NumberFormat('#,##0.00').format(_reportData!['totalCommission'] ?? 0)}',
+                            AppTheme.primaryBlue,
+                          ),
+                          _buildStatRow(
+                            'Pending',
+                            '₹${NumberFormat('#,##0.00').format(_reportData!['pendingCommission'] ?? 0)}',
+                            AppTheme.warning,
+                          ),
+                          _buildStatRow(
+                            'Approved',
+                            '₹${NumberFormat('#,##0.00').format(_reportData!['approvedCommission'] ?? 0)}',
+                            AppTheme.success,
+                          ),
+                          _buildStatRow(
+                            'Paid',
+                            '₹${NumberFormat('#,##0.00').format(_reportData!['paidCommission'] ?? 0)}',
+                            Colors.green,
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // 🔹 Transactions List
+                    _buildInfoSection(
+                      title: 'Commission Transactions',
+                      children: displayTransactions.isEmpty
+                          ? [
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text(
+                                    'No transactions found',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppTheme.mediumGray,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]
+                          : displayTransactions
+                                .map(_buildTransactionCard)
+                                .toList(),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -325,7 +282,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildTransactionCard(CommissionTransaction t) {
+  Widget _buildTransactionCard(dynamic t) {
+    final studentName = t['admission']?['student']?['name'] ?? 'Unknown';
+    final courseName = t['admission']?['course']?['name'] ?? 'Unknown Course';
+    final amount = (t['amount'] ?? 0).toDouble();
+    final status = t['status'] ?? 'PENDING';
+    final createdAt = t['createdAt'] != null
+        ? DateTime.parse(t['createdAt'])
+        : DateTime.now();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
@@ -342,7 +307,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             children: [
               Expanded(
                 child: Text(
-                  t.studentName,
+                  studentName,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -350,12 +315,26 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   ),
                 ),
               ),
-              StatusBadge(status: t.status, isSmall: true),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(status).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: _getStatusColor(status),
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            t.courseName,
+            courseName,
             style: const TextStyle(fontSize: 10, color: AppTheme.mediumGray),
           ),
           const SizedBox(height: 4),
@@ -363,14 +342,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Fees: \$${NumberFormat('#,##0').format(t.courseFees)}',
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AppTheme.mediumGray,
-                ),
-              ),
-              Text(
-                'Comm: \$${NumberFormat('#,##0.00').format(t.calculatedCommission)}',
+                'Amount: ₹${NumberFormat('#,##0.00').format(amount)}',
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -381,11 +353,26 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ),
           const SizedBox(height: 2),
           Text(
-            'Date: ${DateFormat('MMM dd, yyyy').format(t.transactionDate)}',
+            'Date: ${DateFormat('MMM dd, yyyy').format(createdAt)}',
             style: const TextStyle(fontSize: 9, color: AppTheme.mediumGray),
           ),
         ],
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toUpperCase()) {
+      case 'PAID':
+        return Colors.green;
+      case 'APPROVED':
+        return AppTheme.success;
+      case 'PENDING':
+        return AppTheme.warning;
+      case 'REJECTED':
+        return AppTheme.error;
+      default:
+        return AppTheme.mediumGray;
+    }
   }
 }

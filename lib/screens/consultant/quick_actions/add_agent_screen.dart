@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import '../../../services/agent_service.dart';
 
 class AddAgentScreen extends StatefulWidget {
   const AddAgentScreen({super.key});
@@ -32,27 +33,67 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
     super.dispose();
   }
 
-  void _handleSubmit() {
+  bool _isLoading = false;
+
+  Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('✅ Success!'),
-          content: Text('Agent ${_nameController.text} created successfully!'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.success,
-              ),
-              child: const Text('OK', style: TextStyle(color: Colors.white)),
+      setState(() => _isLoading = true);
+
+      try {
+        final Map<String, dynamic> agentData = {
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim().isEmpty
+              ? 'agent.${_mobileController.text}@example.com' // Fallback if empty
+              : _emailController.text.trim(),
+          'phone': _mobileController.text.trim(),
+          'password': _passwordController.text.trim(),
+          'address': _addressController.text.trim(),
+          'isActive': _enableDashboard,
+          // Commission Data
+          if (_commissionType == 'Percentage' &&
+              _commissionValueController.text.isNotEmpty)
+            'commissionPercentage':
+                double.tryParse(_commissionValueController.text.trim()) ?? 0,
+          // Add other fields if backend supports them (e.g. remarks)
+        };
+
+        await AgentService.createAgent(agentData);
+
+        if (!mounted) return;
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('✅ Success!'),
+            content: Text(
+              'Agent ${_nameController.text} created successfully!',
             ),
-          ],
-        ),
-      );
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close Dialog
+                  Navigator.pop(context, true); // Close Screen & Return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.success,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 

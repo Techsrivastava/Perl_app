@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/custom_text_field.dart';
-import 'package:educonnect/screens/auth/verification_screen.dart';
+import 'package:educonnect/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,52 +14,45 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _passwordController =
+      TextEditingController(); // Added password controller
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose(); // Dispose password controller
     super.dispose();
   }
 
-  // Mock credentials (email only for OTP login)
-  final Map<String, Map<String, String>> _mockCredentials = {
-    'university@example.com': {
-      'type': 'university',
-      'name': 'Stanford University',
-    },
-    'consultant@example.com': {
-      'type': 'consultant',
-      'name': 'Rajesh Consultancy',
-    },
-  };
-
+  // Handle Login with AuthService
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
-      await Future.delayed(const Duration(seconds: 1));
+      try {
+        final email = _emailController.text.trim();
+        final password = _passwordController.text;
 
-      if (!mounted) return;
+        // Call AuthService
+        await AuthService.login(email, password);
 
-      final email = _emailController.text.trim().toLowerCase();
+        if (!mounted) return;
 
-      // Check if email exists in mock credentials
-      if (_mockCredentials.containsKey(email)) {
-        setState(() => _isLoading = false);
-        
-        // Navigate to OTP screen for both university and consultant
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerificationScreen(email: email),
-          ),
-        );
-      } else {
-        setState(() => _isLoading = false);
-        _showError('Invalid email. Use demo credentials.');
+        // Navigate to MainScreen on success
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } catch (e) {
+        if (!mounted) return;
+        _showError(e.toString());
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -101,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 75,
                         height: 75,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [AppTheme.primaryBlue, AppTheme.darkBlue],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -109,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primaryBlue.withOpacity(0.3),
+                              color: AppTheme.primaryBlue.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -165,17 +160,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
+                const SizedBox(height: 16),
+
+                // Password Field
+                CustomTextField(
+                  label: 'Password',
+                  hint: 'Enter your password',
+                  controller: _passwordController,
+                  obscureText: !_isPasswordVisible,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppTheme.mediumGray,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password is required';
+                    }
+                    return null;
+                  },
+                ),
+
                 const SizedBox(height: 24),
 
                 // Login Button
                 CustomButton(
-                  label: 'Send OTP',
+                  label: 'Login',
                   onPressed: _handleLogin,
                   isLoading: _isLoading,
                   isFullWidth: true,
-                  icon: Icons.mail_outline,
+                  icon: Icons.login_rounded,
                 ),
-
 
                 const SizedBox(height: 24),
 
@@ -228,41 +251,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 12),
                       _buildCredentialRow(
                         '🏛️ University',
-                        'university@example.com',
+                        'university@example.com / 123456',
                       ),
                       const SizedBox(height: 12),
                       _buildCredentialRow(
                         '💼 Consultant',
-                        'consultant@example.com',
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blue.shade200),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Colors.blue.shade700,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'OTP will be sent to your email',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.blue.shade700,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        'consultant@example.com / 123456',
                       ),
                     ],
                   ),
@@ -293,7 +287,11 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.email_outlined, size: 12, color: AppTheme.primaryBlue),
+                  const Icon(
+                    Icons.email_outlined,
+                    size: 12,
+                    color: AppTheme.primaryBlue,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(

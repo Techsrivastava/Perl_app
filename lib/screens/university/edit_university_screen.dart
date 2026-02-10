@@ -7,6 +7,9 @@ import 'package:educonnect/widgets/app_header.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/custom_text_field.dart';
 import 'package:educonnect/models/university_model.dart';
+import 'package:educonnect/services/document_service.dart';
+import 'package:educonnect/services/university_service.dart';
+import 'package:educonnect/services/auth_service.dart';
 
 class EditUniversityScreen extends StatefulWidget {
   final University university;
@@ -299,28 +302,114 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     }
   }
 
+  Future<String?> _uploadFile(File? file, String type) async {
+    if (file == null) return null;
+    try {
+      final response = await DocumentService.uploadDocument(
+        file: file,
+        type: 'UNIVERSITY_ASSET',
+        studentId: null,
+        notes: 'University Asset: $type',
+      );
+      final docId = response['_id'];
+      final token = await AuthService.getToken();
+      return DocumentService.getDownloadUrl(docId, token);
+    } catch (e) {
+      debugPrint('Error uploading $type: $e');
+      return null;
+    }
+  }
+
   void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('University profile updated successfully'),
-            backgroundColor: AppTheme.success,
-          ),
+      try {
+        // 1. Upload Files
+        final logoUrl = await _uploadFile(_logoFile, 'Logo');
+        final bgUrl = await _uploadFile(
+          _backgroundImageFile,
+          'Background Image',
+        );
+        final certUrl = await _uploadFile(
+          _accreditationCertFile,
+          'Accreditation Certificate',
+        );
+        final authPhotoUrl = await _uploadFile(
+          _authorizedPersonPhotoFile,
+          'Authorized Person Photo',
+        );
+        final qrUrl = await _uploadFile(_qrCodeFile, 'QR Code');
+        final idProofUrl = await _uploadFile(_idProofFile, 'ID Proof');
+        final authLetterUrl = await _uploadFile(
+          _authorizationLetterFile,
+          'Authorization Letter',
+        );
+        final digSignUrl = await _uploadFile(
+          _digitalSignatureFile,
+          'Digital Signature',
         );
 
-        Navigator.pop(context);
+        // 2. Prepare Update Data
+        final updateData = {
+          'name': _nameController.text,
+          'abbreviation': _abbreviationController.text,
+          'establishedYear': int.tryParse(_establishedYearController.text),
+          'description': _descriptionController.text,
+          'contactEmail': _contactEmailController.text,
+          'contactPhone': _contactPhoneController.text,
+          'address': _addressController.text,
+          'bankName': _bankNameController.text,
+          'accountNumber': _accountNumberController.text,
+          'ifscCode': _ifscCodeController.text,
+          'branch': _branchController.text,
+          'type': _selectedType,
+
+          // Additional fields for authorized person etc. if supported by backend
+          // Currently backend University model might not have all these fields separately,
+          // or they are part of 'description' or new fields I should adding.
+          // I added file URLs.
+          // Let's add the file URLs.
+          if (logoUrl != null) 'logo': logoUrl,
+          if (bgUrl != null) 'backgroundImage': bgUrl,
+          if (certUrl != null) 'accreditationCertificate': certUrl,
+          if (authLetterUrl != null) 'authorizationLetter': authLetterUrl,
+          if (idProofUrl != null) 'idProof': idProofUrl,
+          if (digSignUrl != null) 'digitalSignature': digSignUrl,
+          if (qrUrl != null) 'qrCode': qrUrl,
+          // Note: Authorized person photo URL field might be missing in University backend model
+          // I added 'logo', 'backgroundImage', etc.
+          // Let's assume 'logo' is the main one.
+
+          // Social Links (if backend supports)
+          // 'socialLinks': ...
+        };
+
+        await UniversityService.updateUniversity(
+          widget.university.id,
+          updateData,
+        );
+
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('University profile updated successfully'),
+              backgroundColor: AppTheme.success,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }

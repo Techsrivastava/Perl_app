@@ -10,8 +10,8 @@ class DocumentService {
   /// Upload a document with file
   static Future<Map<String, dynamic>> uploadDocument({
     required File file,
-    required String studentId,
     required String type,
+    String? studentId,
     String? admissionId,
     String? notes,
   }) async {
@@ -27,7 +27,7 @@ class DocumentService {
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
     // Add form fields
-    request.fields['student'] = studentId;
+    if (studentId != null) request.fields['student'] = studentId;
     request.fields['type'] = type;
     if (admissionId != null) request.fields['admission'] = admissionId;
     if (notes != null) request.fields['notes'] = notes;
