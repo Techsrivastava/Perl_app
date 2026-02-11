@@ -15,27 +15,28 @@ class _AdmissionApplicationScreenState
     extends State<AdmissionApplicationScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
-  
+
   // Fee Module State Variables
   final _actualFeeController = TextEditingController();
   final _agentCodeController = TextEditingController();
   final _expenseTitleController = TextEditingController();
   final _expenseAmountController = TextEditingController();
-  
+
   String _admissionBy = 'Consultancy'; // Consultancy | Agent
-  final String _universityPaymentMode = 'Share Deduct'; // Share Deduct | Full Fee
-  
+  final String _universityPaymentMode =
+      'Share Deduct'; // Share Deduct | Full Fee
+
   // Mock data - Replace with actual API data
   final double _universityFee = 80000;
   final double _displayFee = 120000;
   final String _consultancyShareType = 'percent';
   final double _consultancyShareValue = 15;
-  
+
   // Agent data (populated when agent code is entered)
   String? _agentName;
   String? _agentShareType; // percent / flat
   double? _agentShareValue;
-  
+
   // Calculated values
   double _actualProfit = 0;
   double _agentCommission = 0;
@@ -44,7 +45,7 @@ class _AdmissionApplicationScreenState
   double _agentTotalPayout = 0;
   double _finalProfit = 0;
   double _amountToUniversity = 0;
-  
+
   // Expenses lists
   final List<Map<String, dynamic>> _agentExpenses = [];
   final List<Map<String, dynamic>> _consultancyExpenses = [];
@@ -65,12 +66,12 @@ class _AdmissionApplicationScreenState
   String _category = 'General';
 
   // Academic Details
-  final _tenth_board = TextEditingController();
-  final _tenth_marks = TextEditingController();
-  final _tenth_year = TextEditingController();
-  final _twelfth_board = TextEditingController();
-  final _twelfth_marks = TextEditingController();
-  final _twelfth_year = TextEditingController();
+  final _tenthBoard = TextEditingController();
+  final _tenthMarks = TextEditingController();
+  final _tenthYear = TextEditingController();
+  final _twelfthBoard = TextEditingController();
+  final _twelfthMarks = TextEditingController();
+  final _twelfthYear = TextEditingController();
 
   // Documents
   final Map<String, bool> _uploadedDocs = {
@@ -429,7 +430,7 @@ class _AdmissionApplicationScreenState
         const SizedBox(height: 12),
         _buildTextField(
           'Board/University',
-          _tenth_board,
+          _tenthBoard,
           'E.g., CBSE, State Board',
           Icons.school,
           required: true,
@@ -439,7 +440,7 @@ class _AdmissionApplicationScreenState
             Expanded(
               child: _buildTextField(
                 'Marks/Percentage',
-                _tenth_marks,
+                _tenthMarks,
                 'E.g., 85%',
                 Icons.grade,
                 required: true,
@@ -449,7 +450,7 @@ class _AdmissionApplicationScreenState
             Expanded(
               child: _buildTextField(
                 'Passing Year',
-                _tenth_year,
+                _tenthYear,
                 'E.g., 2020',
                 Icons.calendar_today,
                 keyboardType: TextInputType.number,
@@ -465,7 +466,7 @@ class _AdmissionApplicationScreenState
         const SizedBox(height: 12),
         _buildTextField(
           'Board/University',
-          _twelfth_board,
+          _twelfthBoard,
           'E.g., CBSE, State Board',
           Icons.school,
           required: true,
@@ -475,7 +476,7 @@ class _AdmissionApplicationScreenState
             Expanded(
               child: _buildTextField(
                 'Marks/Percentage',
-                _twelfth_marks,
+                _twelfthMarks,
                 'E.g., 78%',
                 Icons.grade,
                 required: true,
@@ -485,7 +486,7 @@ class _AdmissionApplicationScreenState
             Expanded(
               child: _buildTextField(
                 'Passing Year',
-                _twelfth_year,
+                _twelfthYear,
                 'E.g., 2022',
                 Icons.calendar_today,
                 keyboardType: TextInputType.number,
@@ -536,7 +537,9 @@ class _AdmissionApplicationScreenState
     double actualFee = double.tryParse(_actualFeeController.text) ?? 0;
     _actualProfit = actualFee - _universityFee;
 
-    if (_admissionBy == 'Agent' && _agentShareType != null && _agentShareValue != null) {
+    if (_admissionBy == 'Agent' &&
+        _agentShareType != null &&
+        _agentShareValue != null) {
       if (_agentShareType == 'percent') {
         _agentCommission = _actualProfit * (_agentShareValue! / 100);
       } else if (_agentShareType == 'flat') {
@@ -546,10 +549,20 @@ class _AdmissionApplicationScreenState
       _agentCommission = 0;
     }
 
-    _agentExpensesTotal = _agentExpenses.fold<double>(0, (sum, e) => sum + (e['amount'] ?? 0));
-    _consultancyExpensesTotal = _consultancyExpenses.fold<double>(0, (sum, e) => sum + (e['amount'] ?? 0));
+    _agentExpensesTotal = _agentExpenses.fold<double>(
+      0,
+      (sum, e) => sum + (e['amount'] ?? 0),
+    );
+    _consultancyExpensesTotal = _consultancyExpenses.fold<double>(
+      0,
+      (sum, e) => sum + (e['amount'] ?? 0),
+    );
     _agentTotalPayout = _agentCommission + _agentExpensesTotal;
-    _finalProfit = _actualProfit - _agentCommission - _agentExpensesTotal - _consultancyExpensesTotal;
+    _finalProfit =
+        _actualProfit -
+        _agentCommission -
+        _agentExpensesTotal -
+        _consultancyExpensesTotal;
 
     if (_universityPaymentMode == 'Share Deduct') {
       _amountToUniversity = _universityFee;
@@ -566,7 +579,7 @@ class _AdmissionApplicationScreenState
         _agentShareValue = 25.0;
         _calculateFinancials();
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ Agent found: $_agentName'),
@@ -601,14 +614,26 @@ class _AdmissionApplicationScreenState
                     const SizedBox(width: 8),
                     const Text(
                       'Auto-Filled from Course Setup',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                _buildReadOnlyRow('University Fee (Fixed)', '₹${_universityFee.toStringAsFixed(0)}'),
-                _buildReadOnlyRow('Display Fee (Shown to Students)', '₹${_displayFee.toStringAsFixed(0)}'),
-                _buildReadOnlyRow('Consultancy Share', '$_consultancyShareType - $_consultancyShareValue${_consultancyShareType == "percent" ? "%" : ""}'),
+                _buildReadOnlyRow(
+                  'University Fee (Fixed)',
+                  '₹${_universityFee.toStringAsFixed(0)}',
+                ),
+                _buildReadOnlyRow(
+                  'Display Fee (Shown to Students)',
+                  '₹${_displayFee.toStringAsFixed(0)}',
+                ),
+                _buildReadOnlyRow(
+                  'Consultancy Share',
+                  '$_consultancyShareType - $_consultancyShareValue${_consultancyShareType == "percent" ? "%" : ""}',
+                ),
               ],
             ),
           ),
@@ -637,7 +662,8 @@ class _AdmissionApplicationScreenState
               if (v == null || v.isEmpty) return 'Required';
               double? val = double.tryParse(v);
               if (val == null) return 'Enter valid amount';
-              if (val < _universityFee) return 'Must be ≥ university fee (₹${_universityFee.toStringAsFixed(0)})';
+              if (val < _universityFee)
+                return 'Must be ≥ university fee (₹${_universityFee.toStringAsFixed(0)})';
               return null;
             },
           ),
@@ -769,7 +795,9 @@ class _AdmissionApplicationScreenState
                         _fetchAgentDetails(_agentCodeController.text);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter agent code first')),
+                          const SnackBar(
+                            content: Text('Please enter agent code first'),
+                          ),
                         );
                       }
                     },
@@ -778,7 +806,7 @@ class _AdmissionApplicationScreenState
                 ),
               ),
             ),
-            
+
             if (_agentName == null && _agentCodeController.text.isNotEmpty)
               Container(
                 margin: const EdgeInsets.only(top: 12),
@@ -790,7 +818,11 @@ class _AdmissionApplicationScreenState
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                    const Icon(
+                      Icons.info_outline,
+                      color: Colors.amber,
+                      size: 20,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -801,7 +833,7 @@ class _AdmissionApplicationScreenState
                   ],
                 ),
               ),
-            
+
             if (_agentName != null) ...[
               const SizedBox(height: 12),
               Container(
@@ -824,7 +856,7 @@ class _AdmissionApplicationScreenState
                     const SizedBox(height: 12),
                     const Divider(),
                     const SizedBox(height: 8),
-                    
+
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -886,7 +918,7 @@ class _AdmissionApplicationScreenState
         ),
       ),
       const SizedBox(height: 20),
-      
+
       const Text(
         'Agent Expenses',
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -894,7 +926,7 @@ class _AdmissionApplicationScreenState
       const SizedBox(height: 8),
       _buildExpenseInput(isAgent: true),
       if (_agentExpenses.isNotEmpty) ..._buildExpenseList(_agentExpenses, true),
-      
+
       if (_agentCommission > 0)
         Container(
           margin: const EdgeInsets.only(top: 12),
@@ -923,10 +955,7 @@ class _AdmissionApplicationScreenState
                     const SizedBox(height: 2),
                     Text(
                       'Profit + Expenses',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -961,7 +990,8 @@ class _AdmissionApplicationScreenState
       ),
       const SizedBox(height: 8),
       _buildExpenseInput(isAgent: false),
-      if (_consultancyExpenses.isNotEmpty) ..._buildExpenseList(_consultancyExpenses, false),
+      if (_consultancyExpenses.isNotEmpty)
+        ..._buildExpenseList(_consultancyExpenses, false),
     ];
   }
 
@@ -1032,7 +1062,10 @@ class _AdmissionApplicationScreenState
     );
   }
 
-  List<Widget> _buildExpenseList(List<Map<String, dynamic>> expenses, bool isAgent) {
+  List<Widget> _buildExpenseList(
+    List<Map<String, dynamic>> expenses,
+    bool isAgent,
+  ) {
     return [
       const SizedBox(height: 8),
       ...expenses.asMap().entries.map((entry) {
@@ -1219,8 +1252,8 @@ class _AdmissionApplicationScreenState
         ]),
 
         _buildReviewCard('Academic Details', [
-          '10th: ${_tenth_board.text} - ${_tenth_marks.text} (${_tenth_year.text})',
-          '12th: ${_twelfth_board.text} - ${_twelfth_marks.text} (${_twelfth_year.text})',
+          '10th: ${_tenthBoard.text} - ${_tenthMarks.text} (${_tenthYear.text})',
+          '12th: ${_twelfthBoard.text} - ${_twelfthMarks.text} (${_twelfthYear.text})',
         ]),
 
         _buildReviewCard('Documents', [
@@ -1369,8 +1402,14 @@ class _AdmissionApplicationScreenState
                 ),
                 const SizedBox(height: 12),
                 _singleRow('Admission By', _admissionBy),
-                _singleRow('Actual Fee Collected', '₹${_actualProfit + _universityFee}'),
-                _singleRow('University Fee', '₹${_universityFee.toStringAsFixed(0)}'),
+                _singleRow(
+                  'Actual Fee Collected',
+                  '₹${_actualProfit + _universityFee}',
+                ),
+                _singleRow(
+                  'University Fee',
+                  '₹${_universityFee.toStringAsFixed(0)}',
+                ),
                 const Divider(height: 16),
                 _singleRow(
                   'Actual Profit',
@@ -1403,7 +1442,10 @@ class _AdmissionApplicationScreenState
                       const SizedBox(width: 8),
                       const Text(
                         'Agent Summary',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
                       ),
                     ],
                   ),
@@ -1416,7 +1458,9 @@ class _AdmissionApplicationScreenState
                     decoration: BoxDecoration(
                       color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1442,7 +1486,10 @@ class _AdmissionApplicationScreenState
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _singleRow('Agent Expenses', '₹${_agentExpensesTotal.toStringAsFixed(0)}'),
+                  _singleRow(
+                    'Agent Expenses',
+                    '₹${_agentExpensesTotal.toStringAsFixed(0)}',
+                  ),
                   const Divider(height: 16),
                   _singleRow(
                     'Total Payable to Agent',
@@ -1484,8 +1531,14 @@ class _AdmissionApplicationScreenState
                 ),
                 const SizedBox(height: 12),
                 if (_admissionBy == 'Agent')
-                  _singleRow('Agent Expenses Total', '₹${_agentExpensesTotal.toStringAsFixed(0)}'),
-                _singleRow('Consultancy Expenses Total', '₹${_consultancyExpensesTotal.toStringAsFixed(0)}'),
+                  _singleRow(
+                    'Agent Expenses Total',
+                    '₹${_agentExpensesTotal.toStringAsFixed(0)}',
+                  ),
+                _singleRow(
+                  'Consultancy Expenses Total',
+                  '₹${_consultancyExpensesTotal.toStringAsFixed(0)}',
+                ),
               ],
             ),
           ),
@@ -1522,10 +1575,7 @@ class _AdmissionApplicationScreenState
                       const SizedBox(height: 4),
                       Text(
                         'After all deductions',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -1585,7 +1635,10 @@ class _AdmissionApplicationScreenState
                     _universityPaymentMode == 'Share Deduct'
                         ? 'You pay university fee only. Keep the profit.'
                         : 'You pay full amount. University returns share later.',
-                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ],
@@ -1609,7 +1662,10 @@ class _AdmissionApplicationScreenState
                     const SizedBox(width: 8),
                     const Text(
                       'Ledger Creation',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -1619,10 +1675,22 @@ class _AdmissionApplicationScreenState
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 8),
-                _buildLedgerInfo('Consultancy Ledger', 'Profit tracking', Icons.business),
-                _buildLedgerInfo('University Ledger', 'Payment tracking', Icons.school),
+                _buildLedgerInfo(
+                  'Consultancy Ledger',
+                  'Profit tracking',
+                  Icons.business,
+                ),
+                _buildLedgerInfo(
+                  'University Ledger',
+                  'Payment tracking',
+                  Icons.school,
+                ),
                 if (_admissionBy == 'Agent')
-                  _buildLedgerInfo('Agent Ledger', 'Commission & payout', Icons.person),
+                  _buildLedgerInfo(
+                    'Agent Ledger',
+                    'Commission & payout',
+                    Icons.person,
+                  ),
               ],
             ),
           ),
@@ -1651,10 +1719,7 @@ class _AdmissionApplicationScreenState
               ),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               ),
             ],
           ),

@@ -6,11 +6,7 @@ class AppLoading extends StatelessWidget {
   final String? message;
   final double size;
 
-  const AppLoading({
-    super.key,
-    this.message,
-    this.size = 40.0,
-  });
+  const AppLoading({super.key, this.message, this.size = 40.0});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +26,7 @@ class AppLoading extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               message!,
-              style: const TextStyle(
-                color: AppTheme.mediumGray,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: AppTheme.mediumGray, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ],
@@ -47,10 +40,7 @@ class AppLoading extends StatelessWidget {
 class AppLoadingOverlay extends StatelessWidget {
   final String? message;
 
-  const AppLoadingOverlay({
-    super.key,
-    this.message,
-  });
+  const AppLoadingOverlay({super.key, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +55,8 @@ class AppLoadingOverlay extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => WillPopScope(
-        onWillPop: () async => false,
-        child: AppLoadingOverlay(message: message),
-      ),
+      builder: (_) =>
+          PopScope(canPop: false, child: AppLoadingOverlay(message: message)),
     );
   }
 

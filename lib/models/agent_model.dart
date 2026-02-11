@@ -6,6 +6,8 @@ class Agent {
   final String firmName;
   final String city;
   final String state;
+  final String address;
+  final String pincode;
   final String status;
   final DateTime joinedDate;
   final int totalLeads;
@@ -24,6 +26,8 @@ class Agent {
     required this.firmName,
     required this.city,
     required this.state,
+    required this.address,
+    required this.pincode,
     required this.status,
     required this.joinedDate,
     required this.totalLeads,
@@ -56,6 +60,8 @@ class Agent {
       firmName: json['firmName'] ?? '',
       city: json['city'] ?? '',
       state: json['state'] ?? '',
+      address: json['address'] ?? '',
+      pincode: json['pincode'] ?? '',
       status: (json['isActive'] == true) ? 'Active' : 'Inactive',
       joinedDate: DateTime.parse(
         json['createdAt'] ?? DateTime.now().toIso8601String(),

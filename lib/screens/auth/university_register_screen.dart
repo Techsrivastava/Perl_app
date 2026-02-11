@@ -6,6 +6,8 @@ import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/custom_text_field.dart';
+import 'package:educonnect/services/university_service.dart';
+import 'package:educonnect/widgets/app_logo.dart';
 
 class UniversityRegisterScreen extends StatefulWidget {
   const UniversityRegisterScreen({super.key});
@@ -22,20 +24,23 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
   bool _isLoading = false;
 
   // Basic Information Controllers
-  final _nameController = TextEditingController();
+  final _universityNameController = TextEditingController();
   final _abbreviationController = TextEditingController();
   final _establishedYearController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   // Contact Information Controllers
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _websiteController = TextEditingController();
+  final _cityController = TextEditingController();
   final _pincodeController = TextEditingController();
 
   // Authorize Person Controllers
   final _authorizePersonNameController = TextEditingController();
+  final _companyNameController = TextEditingController();
   final _firmNameController = TextEditingController();
   final _authorizePersonDetailsController = TextEditingController();
   final _authorizePersonPhoneController = TextEditingController();
@@ -73,7 +78,6 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
       'University'; // University, College, Institute, Consultancy, Consultant
   String _selectedType = 'Government';
   String _selectedState = 'Delhi';
-  String _selectedCity = '';
   final List<String> _selectedFacilities = [];
   final List<String> _selectedAccreditations = [];
 
@@ -83,34 +87,11 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
     'Institute',
   ];
 
-  // Company/Agency registration types
-  final List<String> _companyRegistrationTypes = [
-    'Pvt. Ltd.',
-    'LLP',
-    'Proprietorship',
-    'NGO',
-    'Trust',
-  ];
-
   // Authorization Type: 'individual' or 'firm'
   String _authorizationType = 'individual';
 
-  // Company/Agency Tie-Up Details
-  final bool _operatedViaAgency = false;
-  final _companyNameController = TextEditingController();
-  final _registrationNumberController = TextEditingController();
-  final _companyAddressController = TextEditingController();
-  final _companyEmailController = TextEditingController();
-  final _companyContactController = TextEditingController();
-  final _authorizedCompanyPersonController = TextEditingController();
-  final _authorizedPersonDesignationController = TextEditingController();
-  final _authorizedPersonContactController = TextEditingController();
   final _remarksController = TextEditingController();
-  String? _companyRegistrationType;
-  DateTime? _agreementFromDate;
-  DateTime? _agreementToDate;
   File? _companyRegistrationCertFile;
-  File? _companyPanGstFile;
   File? _mouAgreementFile;
   File? _authPersonIdFile;
 
@@ -137,26 +118,29 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _universityNameController.dispose();
     _abbreviationController.dispose();
     _establishedYearController.dispose();
     _descriptionController.dispose();
+    _passwordController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
     _websiteController.dispose();
+    _cityController.dispose();
     _pincodeController.dispose();
     _authorizePersonNameController.dispose();
+    _companyNameController.dispose();
     _firmNameController.dispose();
     _authorizePersonDetailsController.dispose();
     _authorizePersonPhoneController.dispose();
     _authorizePersonEmailController.dispose();
     _bankNameController.dispose();
+    _accountHolderNameController.dispose();
     _accountNumberController.dispose();
     _ifscController.dispose();
     _branchController.dispose();
     _upiIdController.dispose();
-    _accountHolderNameController.dispose();
     _googleMapsLinkController.dispose();
     _facebookLinkController.dispose();
     _twitterLinkController.dispose();
@@ -164,14 +148,6 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
     _instagramLinkController.dispose();
     _customTestNameController.dispose();
     _customTestDescriptionController.dispose();
-    _companyNameController.dispose();
-    _registrationNumberController.dispose();
-    _companyAddressController.dispose();
-    _companyEmailController.dispose();
-    _companyContactController.dispose();
-    _authorizedCompanyPersonController.dispose();
-    _authorizedPersonDesignationController.dispose();
-    _authorizedPersonContactController.dispose();
     _remarksController.dispose();
     _alternateEmailController.dispose();
     _alternateContactController.dispose();
@@ -202,22 +178,6 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
       if (result != null) {
         setState(() {
           _companyRegistrationCertFile = File(result.files.single.path!);
-        });
-      }
-    } catch (e) {
-      debugPrint('Error picking file: $e');
-    }
-  }
-
-  Future<void> _pickCompanyPanGst() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-      );
-      if (result != null) {
-        setState(() {
-          _companyPanGstFile = File(result.files.single.path!);
         });
       }
     } catch (e) {
@@ -396,33 +356,69 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
 
   Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
+      if (!_acceptDeclaration) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please accept the declaration')),
+        );
+        return;
+      }
+
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        final universityData = {
+          'name': _universityNameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'address': _addressController.text.trim(),
+          'city': _cityController.text.trim(),
+          'state': _selectedState,
+          'pincode': _pincodeController.text.trim(),
+          'establishedYear': int.tryParse(_establishedYearController.text) ?? 0,
+          'type': _registrationType,
+          'bankDetails': {
+            'accountHolderName': _accountHolderNameController.text.trim(),
+            'bankName': _bankNameController.text.trim(),
+            'accountNumber': _accountNumberController.text.trim(),
+            'ifscCode': _ifscController.text.trim(),
+            'branch': _branchController.text.trim(),
+            'upiId': _upiIdController.text.trim(),
+          },
+        };
 
-      if (mounted) {
-        setState(() => _isLoading = false);
+        await UniversityService.createUniversity(universityData);
 
-        // Show success dialog
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Registration Successful'),
-            content: const Text(
-              'Your university registration has been submitted for approval.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
+        if (mounted) {
+          setState(() => _isLoading = false);
+
+          // Show success dialog
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Registration Successful'),
+              content: const Text(
+                'Your university registration has been submitted for approval.',
               ),
-            ],
-          ),
-        );
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          );
+        }
       }
     }
   }
@@ -432,7 +428,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       appBar: AppBar(
-        title: const Text('University Registration EDit'),
+        title: const Text('University Registration'),
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: AppTheme.white,
         elevation: 0,
@@ -441,6 +437,12 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
         key: _formKey,
         child: Column(
           children: [
+            // App Logo Header
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: const AppLogo(height: 60),
+            ),
+
             // Progress Indicator
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -485,7 +487,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                   color: AppTheme.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, -5),
                     ),
@@ -873,11 +875,11 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
 
           CustomTextField(
             label: '$entityName Name *',
-            hint: 'e.g., Delhi $entityName',
-            controller: _nameController,
+            hint: 'Enter $entityName name',
+            controller: _universityNameController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'University name is required';
+                return '$entityName name is required';
               }
               return null;
             },
@@ -1032,7 +1034,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                     }
                   });
                 },
-                selectedColor: AppTheme.primaryBlue.withOpacity(0.3),
+                selectedColor: AppTheme.primaryBlue.withValues(alpha: 0.3),
               );
             }).toList(),
           ),
@@ -1066,7 +1068,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                     }
                   });
                 },
-                selectedColor: AppTheme.success.withOpacity(0.3),
+                selectedColor: AppTheme.success.withValues(alpha: 0.3),
               );
             }).toList(),
           ),
@@ -1229,8 +1231,7 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                 child: CustomTextField(
                   label: 'City *',
                   hint: 'e.g., New Delhi',
-                  controller: TextEditingController(text: _selectedCity),
-                  onChanged: (value) => _selectedCity = value,
+                  controller: _cityController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'City is required';
@@ -1620,6 +1621,9 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                 label: 'Company / Agency Name *',
                 hint: 'Enter company name',
                 controller: _companyNameController,
+                prefixIcon: const Icon(
+                  Icons.business_center,
+                ), // Added prefix icon
                 validator: (value) {
                   if (_authorizationType == 'firm' &&
                       _registrationType != 'College' &&
@@ -1741,6 +1745,23 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
                 r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
               ).hasMatch(value)) {
                 return 'Invalid email format';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          CustomTextField(
+            label: 'Login Password *',
+            hint: 'Create a password for university login',
+            controller: _passwordController,
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Password is required';
+              }
+              if (value.length < 6) {
+                return 'Password must be at least 6 characters';
               }
               return null;
             },
@@ -2127,7 +2148,9 @@ class _UniversityRegisterScreenState extends State<UniversityRegisterScreen> {
             decoration: BoxDecoration(
               color: AppTheme.lightBlue,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
+              border: Border.all(
+                color: AppTheme.primaryBlue.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               children: [

@@ -15,8 +15,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
-  final String _selectedUniversity = 'All';
-  final String _selectedCourse = 'All';
 
   List<Student> _allStudents = [];
   bool _isLoading = true;
@@ -352,7 +350,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
+                            color: Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.red),
                           ),
@@ -395,7 +393,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red[900]!.withOpacity(0.1),
+                            color: Colors.red[900]!.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.red[900]!),
                           ),
@@ -443,12 +441,6 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
     );
   }
 
-  String _getDocumentUploadDate(Student student) {
-    return student.documents.isNotEmpty
-        ? student.registeredDate.toIso8601String()
-        : '';
-  }
-
   Widget _buildTimelineItem(
     String title,
     String date,
@@ -478,7 +470,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
               Container(
                 width: 2,
                 height: 60,
-                color: isActive ? color.withOpacity(0.3) : Colors.grey[300],
+                color: isActive
+                    ? color.withValues(alpha: 0.3)
+                    : Colors.grey[300],
               ),
           ],
         ),
@@ -538,7 +532,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.12), color.withOpacity(0.05)],
+          colors: [
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withOpacity(0.3)),
@@ -570,12 +567,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.1), color.withOpacity(0.03)],
+          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.03)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -810,7 +807,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _getStatusColor(student.status).withOpacity(0.2),
+          color: _getStatusColor(student.status).withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
@@ -829,8 +826,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getStatusColor(student.status).withOpacity(0.1),
-                  _getStatusColor(student.status).withOpacity(0.03),
+                  _getStatusColor(student.status).withValues(alpha: 0.1),
+                  _getStatusColor(student.status).withValues(alpha: 0.03),
                 ],
               ),
               borderRadius: const BorderRadius.vertical(
@@ -845,7 +842,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                     gradient: LinearGradient(
                       colors: [
                         _getStatusColor(student.status),
-                        _getStatusColor(student.status).withOpacity(0.7),
+                        _getStatusColor(student.status).withValues(alpha: 0.7),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(10),
@@ -884,13 +881,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        _getStatusColor(student.status).withOpacity(0.15),
-                        _getStatusColor(student.status).withOpacity(0.08),
+                        _getStatusColor(student.status).withValues(alpha: 0.15),
+                        _getStatusColor(student.status).withValues(alpha: 0.08),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _getStatusColor(student.status).withOpacity(0.4),
+                      color: _getStatusColor(
+                        student.status,
+                      ).withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                   ),
@@ -1595,10 +1594,13 @@ class _StudentDetailsView extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
+          colors: [
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.05),
+          ],
         ),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -1676,12 +1678,12 @@ class _EditStudentFormState extends State<_EditStudentForm> {
   late TextEditingController _cityController;
   late TextEditingController _stateController;
   late TextEditingController _pincodeController;
-  late TextEditingController _tenth_boardController;
-  late TextEditingController _tenth_marksController;
-  late TextEditingController _tenth_yearController;
-  late TextEditingController _twelfth_boardController;
-  late TextEditingController _twelfth_marksController;
-  late TextEditingController _twelfth_yearController;
+  late TextEditingController _tenthBoardController;
+  late TextEditingController _tenthMarksController;
+  late TextEditingController _tenthYearController;
+  late TextEditingController _twelfthBoardController;
+  late TextEditingController _twelfthMarksController;
+  late TextEditingController _twelfthYearController;
   late TextEditingController _remarksController;
 
   String _gender = 'Male';
@@ -1708,23 +1710,23 @@ class _EditStudentFormState extends State<_EditStudentForm> {
     _pincodeController = TextEditingController(
       text: widget.student.pincode ?? '',
     );
-    _tenth_boardController = TextEditingController(
+    _tenthBoardController = TextEditingController(
       text: widget.student.tenthBoard ?? '',
     );
-    _tenth_marksController = TextEditingController(
-      text: widget.student.tenthMarks ?? '',
+    _tenthMarksController = TextEditingController(
+      text: widget.student.tenthMarks?.toString() ?? '',
     );
-    _tenth_yearController = TextEditingController(
-      text: widget.student.tenthYear ?? '',
+    _tenthYearController = TextEditingController(
+      text: widget.student.tenthYear?.toString() ?? '',
     );
-    _twelfth_boardController = TextEditingController(
+    _twelfthBoardController = TextEditingController(
       text: widget.student.twelfthBoard ?? '',
     );
-    _twelfth_marksController = TextEditingController(
-      text: widget.student.twelfthMarks ?? '',
+    _twelfthMarksController = TextEditingController(
+      text: widget.student.twelfthMarks?.toString() ?? '',
     );
-    _twelfth_yearController = TextEditingController(
-      text: widget.student.twelfthYear ?? '',
+    _twelfthYearController = TextEditingController(
+      text: widget.student.twelfthYear?.toString() ?? '',
     );
     _remarksController = TextEditingController(
       text: widget.student.remarks ?? '',
@@ -1745,12 +1747,12 @@ class _EditStudentFormState extends State<_EditStudentForm> {
     _cityController.dispose();
     _stateController.dispose();
     _pincodeController.dispose();
-    _tenth_boardController.dispose();
-    _tenth_marksController.dispose();
-    _tenth_yearController.dispose();
-    _twelfth_boardController.dispose();
-    _twelfth_marksController.dispose();
-    _twelfth_yearController.dispose();
+    _tenthBoardController.dispose();
+    _tenthMarksController.dispose();
+    _tenthYearController.dispose();
+    _twelfthBoardController.dispose();
+    _twelfthMarksController.dispose();
+    _twelfthYearController.dispose();
     _remarksController.dispose();
     super.dispose();
   }
@@ -1889,7 +1891,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             const SizedBox(height: 8),
 
             TextFormField(
-              controller: _tenth_boardController,
+              controller: _tenthBoardController,
               decoration: _inputDecoration('Board/University', Icons.school),
             ),
             const SizedBox(height: 12),
@@ -1898,14 +1900,14 @@ class _EditStudentFormState extends State<_EditStudentForm> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    controller: _tenth_marksController,
+                    controller: _tenthMarksController,
                     decoration: _inputDecoration('Marks %', Icons.grade),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
-                    controller: _tenth_yearController,
+                    controller: _tenthYearController,
                     decoration: _inputDecoration('Year', Icons.calendar_today),
                     keyboardType: TextInputType.number,
                   ),
@@ -1928,7 +1930,7 @@ class _EditStudentFormState extends State<_EditStudentForm> {
             const SizedBox(height: 8),
 
             TextFormField(
-              controller: _twelfth_boardController,
+              controller: _twelfthBoardController,
               decoration: _inputDecoration('Board/University', Icons.school),
             ),
             const SizedBox(height: 12),
@@ -1937,14 +1939,14 @@ class _EditStudentFormState extends State<_EditStudentForm> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    controller: _twelfth_marksController,
+                    controller: _twelfthMarksController,
                     decoration: _inputDecoration('Marks %', Icons.grade),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
-                    controller: _twelfth_yearController,
+                    controller: _twelfthYearController,
                     decoration: _inputDecoration('Year', Icons.calendar_today),
                     keyboardType: TextInputType.number,
                   ),
@@ -2040,12 +2042,12 @@ class _EditStudentFormState extends State<_EditStudentForm> {
                     'city': _cityController.text,
                     'state': _stateController.text,
                     'pincode': _pincodeController.text,
-                    '10th_board': _tenth_boardController.text,
-                    '10th_marks': _tenth_marksController.text,
-                    '10th_year': _tenth_yearController.text,
-                    '12th_board': _twelfth_boardController.text,
-                    '12th_marks': _twelfth_marksController.text,
-                    '12th_year': _twelfth_yearController.text,
+                    '10th_board': _tenthBoardController.text,
+                    '10th_marks': _tenthMarksController.text,
+                    '10th_year': _tenthYearController.text,
+                    '12th_board': _twelfthBoardController.text,
+                    '12th_marks': _twelfthMarksController.text,
+                    '12th_year': _twelfthYearController.text,
                     'remarks': _remarksController.text,
                   });
                   Navigator.pop(context);

@@ -35,13 +35,9 @@ class _EditAgentFormState extends State<EditAgentForm> {
     _altContactController = TextEditingController(
       text: '', // Agent model doesn't have alt_contact yet
     );
-    _addressController = TextEditingController(
-      text: '', // Agent model doesn't have address yet
-    );
+    _addressController = TextEditingController(text: widget.agent.address);
     _cityController = TextEditingController(text: widget.agent.city);
-    _pincodeController = TextEditingController(
-      text: '', // Agent model doesn't have pincode yet
-    );
+    _pincodeController = TextEditingController(text: widget.agent.pincode);
     _remarksController = TextEditingController(
       text: '', // Agent model doesn't have remarks yet
     );
@@ -295,6 +291,8 @@ class _EditAgentFormState extends State<EditAgentForm> {
                             'mobile': _mobileController.text,
                             'email': _emailController.text,
                             'city': _cityController.text,
+                            'address': _addressController.text,
+                            'pincode': _pincodeController.text,
                             'state': _selectedState,
                           });
                           Navigator.pop(context);

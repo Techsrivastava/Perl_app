@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:educonnect/services/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/widgets/custom_button.dart';
@@ -38,20 +39,36 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        final userData = {
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'role': _selectedRole
+              .toUpperCase(), // Student -> STUDENT, Consultant -> CONSULTANT
+        };
 
-      if (mounted) {
-        setState(() => _isLoading = false);
+        await AuthService.register(userData);
 
-        // Navigate to verification screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                VerificationScreen(email: _emailController.text),
-          ),
-        );
+        if (mounted) {
+          setState(() => _isLoading = false);
+          // Navigate to verification screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  VerificationScreen(email: _emailController.text),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          );
+        }
       }
     }
   }

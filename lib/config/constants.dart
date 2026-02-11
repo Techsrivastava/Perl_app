@@ -4,7 +4,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API Constants (for future use)
-  static const String baseUrl = 'https://api.example.com';
+  static const String baseUrl = 'http://localhost:5000/api/v1';
   static const int timeoutDuration = 30;
 
   // Storage Keys
@@ -18,13 +18,13 @@ class AppConstants {
   static const int otpResendDelay = 25; // seconds
 
   // Modern UI Constants
-  static const double defaultPadding = 20.0;  // More spacious
+  static const double defaultPadding = 20.0; // More spacious
   static const double smallPadding = 12.0;
   static const double largePadding = 32.0;
   static const double extraLargePadding = 40.0;
-  static const double borderRadius = 16.0;  // More rounded
+  static const double borderRadius = 16.0; // More rounded
   static const double smallRadius = 12.0;
-  static const double cardElevation = 0.0;  // Flat design
+  static const double cardElevation = 0.0; // Flat design
 
   // Animation Durations
   static const Duration shortAnimation = Duration(milliseconds: 200);

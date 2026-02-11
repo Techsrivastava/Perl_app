@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
@@ -111,11 +112,7 @@ class AuthService {
 
     if (userString != null) {
       try {
-        return Map<String, dynamic>.from(
-          // Parse JSON string back to Map
-          // You may need to import dart:convert for jsonDecode
-          {}, // Placeholder - implement JSON parsing
-        );
+        return jsonDecode(userString) as Map<String, dynamic>;
       } catch (e) {
         debugPrint('Parse user data error: $e');
         return null;
@@ -134,9 +131,7 @@ class AuthService {
   /// Save user data
   static Future<void> _saveUser(Map<String, dynamic> user) async {
     final prefs = await SharedPreferences.getInstance();
-    // Convert user map to JSON string for storage
-    // You may need to use jsonEncode from dart:convert
-    await prefs.setString(_userKey, user.toString());
+    await prefs.setString(_userKey, jsonEncode(user));
   }
 
   /// Clear all authentication data

@@ -46,8 +46,7 @@ class UniversityService {
     Map<String, dynamic> universityData,
   ) async {
     final token = await AuthService.getToken();
-    if (token == null) throw Exception('Not authenticated');
-
+    // Allow public registration without token
     final response = await ApiService.post(
       '/universities',
       universityData,
