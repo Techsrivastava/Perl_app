@@ -326,10 +326,19 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         onTap: () {
           Navigator.of(context).pop();
-          if (route.startsWith('/')) {
-            Navigator.of(context).pushNamed(route);
-          } else {
+          // Map of routes that should be handled by the parent MainScreen via switching tabs
+          const mainRoutes = [
+            '/dashboard',
+            '/university-profile',
+            '/courses',
+            '/students',
+            '/consultancy',
+          ];
+
+          if (mainRoutes.contains(route)) {
             widget.onNavigate(route);
+          } else {
+            Navigator.of(context).pushNamed(route);
           }
         },
       ),

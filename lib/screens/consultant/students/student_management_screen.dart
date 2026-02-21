@@ -4,7 +4,8 @@ import '../../../../services/student_service.dart';
 import '../../../../models/student_model.dart';
 
 class StudentManagementScreen extends StatefulWidget {
-  const StudentManagementScreen({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  const StudentManagementScreen({super.key, this.scaffoldKey});
 
   @override
   State<StudentManagementScreen> createState() =>
@@ -638,12 +639,101 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
 
   @override
   Widget build(BuildContext context) {
+    final bool isNested = widget.scaffoldKey != null;
+
+    final content = Column(
+      children: [
+        // Stats Cards
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  'Total',
+                  _allStudents.length.toString(),
+                  Icons.people,
+                  Colors.blue,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildStatCard(
+                  'Approved',
+                  _getStatusCount('Admission Approved').toString(),
+                  Icons.check_circle,
+                  Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildStatCard(
+                  'Applied',
+                  _getStatusCount('Applied').toString(),
+                  Icons.hourglass_empty,
+                  Colors.orange,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildStatCard(
+                  'Reverted',
+                  _getStatusCount('Reverted').toString(),
+                  Icons.refresh,
+                  Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Search Bar
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: TextField(
+            onChanged: (value) => setState(() => _searchQuery = value),
+            decoration: InputDecoration(
+              hintText: 'Search by name, ID, or mobile...',
+              prefixIcon: const Icon(Icons.search, size: 20),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              isDense: true,
+            ),
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: List.generate(5, (_) => _buildStudentList()),
+          ),
+        ),
+      ],
+    );
+
+    if (isNested) {
+      return content;
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('Student Management'),
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
+        leading: widget.scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => widget.scaffoldKey?.currentState?.openDrawer(),
+              )
+            : null,
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -706,82 +796,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          // Stats Cards
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    'Total',
-                    _allStudents.length.toString(),
-                    Icons.people,
-                    Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Approved',
-                    _getStatusCount('Admission Approved').toString(),
-                    Icons.check_circle,
-                    Colors.green,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Applied',
-                    _getStatusCount('Applied').toString(),
-                    Icons.hourglass_empty,
-                    Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Reverted',
-                    _getStatusCount('Reverted').toString(),
-                    Icons.refresh,
-                    Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Search Bar
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: TextField(
-              onChanged: (value) => setState(() => _searchQuery = value),
-              decoration: InputDecoration(
-                hintText: 'Search by name, ID, or mobile...',
-                prefixIcon: const Icon(Icons.search, size: 20),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                isDense: true,
-              ),
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: List.generate(5, (_) => _buildStudentList()),
-            ),
-          ),
-        ],
-      ),
+      body: content,
     );
   }
 
