@@ -9,21 +9,48 @@ class AuthService {
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'user_data';
 
-  /// Login with email and password
-  /// Returns user data and token on success
+  /// Login with email and password (Step 1)
+  /// Returns a message on success (OTP sent) or direct token (Super Admin/Student)
   static Future<Map<String, dynamic>> login(
     String email,
     String password,
   ) async {
-    final response = await ApiService.post('/auth/login', {
+    final response = await ApiService.post('/auth/login/request', {
       'email': email,
       'password': password,
     });
 
-    // Save token and user data
+    // Handle direct login (Super Admin/Student)
+    if (response['success'] == true && response['token'] != null) {
+      final token = response['token'];
+      final user = response['data']?['user'] ?? response['data'];
+
+      await _saveToken(token);
+      await _saveUser(user);
+
+      return {'token': token, 'user': user, 'directLogin': true};
+    }
+
+    if (response['success'] == true) {
+      return {'message': response['message'], 'directLogin': false};
+    }
+
+    throw Exception(response['message'] ?? 'Login request failed');
+  }
+
+  /// Verify OTP and issue token (Step 2)
+  static Future<Map<String, dynamic>> verifyOtp(
+    String email,
+    String otp,
+  ) async {
+    final response = await ApiService.post('/auth/login/verify', {
+      'email': email,
+      'otp': otp,
+    });
+
     if (response['success'] == true) {
       final token = response['token'];
-      final user = response['data'];
+      final user = response['data']?['user'] ?? response['data'];
 
       await _saveToken(token);
       await _saveUser(user);
@@ -31,7 +58,7 @@ class AuthService {
       return {'token': token, 'user': user};
     }
 
-    throw Exception(response['message'] ?? 'Login failed');
+    throw Exception(response['message'] ?? 'Verification failed');
   }
 
   /// Register new user account

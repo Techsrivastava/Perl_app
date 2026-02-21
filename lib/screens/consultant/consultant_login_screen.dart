@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/services/auth_service.dart';
 
 class ConsultantLoginScreen extends StatefulWidget {
   const ConsultantLoginScreen({super.key});
@@ -10,38 +11,71 @@ class ConsultantLoginScreen extends StatefulWidget {
 
 class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _mobileController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
   bool _isLogin = true; // Toggle between login and signup
 
   // Signup fields
   final _nameController = TextEditingController();
   final _businessNameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _mobileController = TextEditingController();
   final _whatsappController = TextEditingController();
   String _registrationType = 'Individual';
 
   @override
   void dispose() {
-    _mobileController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
     _businessNameController.dispose();
-    _emailController.dispose();
+    _mobileController.dispose();
     _whatsappController.dispose();
     super.dispose();
   }
 
-  void _handleAuth() {
+  void _handleAuth() async {
     if (_formKey.currentState!.validate()) {
-      // Simulate authentication
-      if (_isLogin) {
-        // Navigate to consultant dashboard
-        Navigator.pushReplacementNamed(context, '/consultant-dashboard');
-      } else {
-        // Registration successful - Navigate to profile completion
-        Navigator.pushReplacementNamed(context, '/consultant-profile-setup');
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        if (_isLogin) {
+          final email = _emailController.text.trim();
+          final password = _passwordController.text;
+
+          // Call AuthService
+          final result = await AuthService.login(email, password);
+
+          if (!mounted) return;
+
+          if (result['directLogin'] == true) {
+            // Navigate to consultant dashboard (if role matches)
+            Navigator.pushReplacementNamed(context, '/consultant-dashboard');
+          } else {
+            // Navigate to verification screen
+            Navigator.pushNamed(context, '/verification', arguments: email);
+          }
+        } else {
+          // Registration logic (can be implemented if needed)
+          // For now, focusing on login
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registration is coming soon')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -186,18 +220,35 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                             const SizedBox(height: 16),
                           ],
 
-                          // Mobile Number
+                          // Email / Mobile Field
                           TextFormField(
-                            controller: _mobileController,
+                            controller: _isLogin
+                                ? _emailController
+                                : _mobileController,
                             decoration: InputDecoration(
-                              labelText: 'Mobile Number *',
-                              prefixIcon: const Icon(Icons.phone),
+                              labelText: _isLogin
+                                  ? 'Email Address *'
+                                  : 'Mobile Number *',
+                              prefixIcon: Icon(
+                                _isLogin ? Icons.email : Icons.phone,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            keyboardType: TextInputType.phone,
-                            validator: (v) => v!.isEmpty ? 'Required' : null,
+                            keyboardType: _isLogin
+                                ? TextInputType.emailAddress
+                                : TextInputType.phone,
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Required';
+                              if (_isLogin &&
+                                  !RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(v)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 16),
 
@@ -252,14 +303,23 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: Text(
-                              _isLogin ? 'Login' : 'Register',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    _isLogin ? 'Login' : 'Register',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ),
                           const SizedBox(height: 16),
 

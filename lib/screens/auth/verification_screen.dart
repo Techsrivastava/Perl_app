@@ -4,6 +4,8 @@ import 'package:educonnect/config/constants.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/screens/main/main_screen.dart';
 
+import 'package:educonnect/services/auth_service.dart';
+
 class VerificationScreen extends StatefulWidget {
   final String email;
 
@@ -15,10 +17,10 @@ class VerificationScreen extends StatefulWidget {
 
 class _VerificationScreenState extends State<VerificationScreen> {
   final List<TextEditingController> _otpControllers = List.generate(
-    4,
+    6,
     (index) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
   bool _isLoading = false;
   bool _canResend = false;
@@ -65,10 +67,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void _handleVerification() async {
     final otp = _otpControllers.map((controller) => controller.text).join();
 
-    if (otp.length != 4) {
+    if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter the complete OTP'),
+          content: Text('Please enter the complete 6-digit OTP'),
           backgroundColor: AppTheme.error,
         ),
       );
@@ -79,22 +81,32 @@ class _VerificationScreenState extends State<VerificationScreen> {
       _isLoading = true;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Call AuthService
+      await AuthService.verifyOtp(widget.email, otp);
 
-    if (mounted) {
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
       });
 
-      // Navigate based on email
-      if (widget.email.contains('consultant')) {
-        Navigator.pushReplacementNamed(context, '/consultant-dashboard');
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-          (route) => false,
+      // Navigate to Dashboard on success
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MainScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppTheme.error,
+          ),
         );
       }
     }
@@ -137,7 +149,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -176,7 +188,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'We sent a 4-digit code to',
+                      'We sent a 6-digit code to',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppTheme.mediumGray,
@@ -200,9 +212,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
               // OTP Input Fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(4, (index) {
+                children: List.generate(6, (index) {
                   return SizedBox(
-                    width: 60,
+                    width: 45,
                     child: TextFormField(
                       controller: _otpControllers[index],
                       focusNode: _focusNodes[index],
@@ -210,11 +222,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       keyboardType: TextInputType.number,
                       maxLength: 1,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                       decoration: InputDecoration(
                         counterText: '',
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(
@@ -268,7 +283,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: 32),
 
               // Help Text
               Container(

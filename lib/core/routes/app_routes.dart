@@ -5,7 +5,8 @@ class AppRoutes {
   static const String consultantLogin = '/consultant-login';
   static const String universityRegister = '/university-register';
   static const String consultantRegister = '/consultant-register';
-  
+  static const String verification = '/verification';
+
   // University Routes
   static const String universityDashboard = '/dashboard';
   static const String universityProfile = '/profile';
@@ -19,7 +20,7 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String settings = '/settings';
   static const String support = '/support';
-  
+
   // Consultant Routes
   static const String consultantDashboard = '/consultant-dashboard';
   static const String consultantProfile = '/consultant-profile';
@@ -28,7 +29,8 @@ class AppRoutes {
   static const String consultantCommission = '/consultant-commission';
   static const String consultantNotifications = '/consultant-notifications';
   static const String consultantAddAgent = '/consultant-add-agent';
-  static const String consultantPendingPayments = '/consultant-pending-payments';
+  static const String consultantPendingPayments =
+      '/consultant-pending-payments';
   static const String consultantUniversities = '/consultant-universities';
   static const String consultantStudents = '/consultant-students';
   static const String consultantAgents = '/consultant-agents';

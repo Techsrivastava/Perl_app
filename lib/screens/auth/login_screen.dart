@@ -38,12 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
         final password = _passwordController.text;
 
         // Call AuthService
-        await AuthService.login(email, password);
+        final result = await AuthService.login(email, password);
 
         if (!mounted) return;
 
-        // Navigate to MainScreen on success
-        Navigator.pushReplacementNamed(context, '/dashboard');
+        if (result['directLogin'] == true) {
+          // Navigate to Dashboard on success (Super Admin / Student)
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        } else {
+          // Navigate to VerificationScreen for others (Consultant, etc.)
+          Navigator.pushNamed(context, '/verification', arguments: email);
+        }
       } catch (e) {
         if (!mounted) return;
         _showError(e.toString());

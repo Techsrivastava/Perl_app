@@ -4,6 +4,7 @@ import 'package:educonnect/core/routes/app_routes.dart';
 // Auth
 import 'package:educonnect/screens/auth/login_screen.dart';
 import 'package:educonnect/screens/auth/university_register_screen.dart';
+import 'package:educonnect/screens/auth/verification_screen.dart';
 
 // University
 import 'package:educonnect/screens/dashboard/dashboard_screen.dart';
@@ -43,93 +44,97 @@ class RouteGenerator {
       // Auth Routes
       case AppRoutes.login:
         return _buildRoute(const LoginScreen());
-      
+
       case AppRoutes.consultantLogin:
         return _buildRoute(const ConsultantLoginScreen());
-      
+
       case AppRoutes.universityRegister:
         return _buildRoute(const UniversityRegisterScreen());
-      
+
       case AppRoutes.consultantRegister:
         return _buildRoute(const ComprehensiveConsultantRegisterScreen());
+
+      case AppRoutes.verification:
+        final email = settings.arguments as String;
+        return _buildRoute(VerificationScreen(email: email));
 
       // University Routes
       case AppRoutes.universityDashboard:
         return _buildRoute(const DashboardScreen());
-      
+
       case AppRoutes.universityProfile:
         return _buildRoute(const ProfileScreen());
-      
+
       case AppRoutes.addCourse:
         return _buildRoute(const ComprehensiveAddCourseScreen());
-      
+
       case AppRoutes.courseManagement:
         return _buildRoute(const CoursesScreen());
-      
+
       case AppRoutes.studentManagement:
         return _buildRoute(const StudentsScreen());
-      
+
       case AppRoutes.consultantShareSetup:
         return _buildRoute(const ConsultantShareSetupScreen());
-      
+
       case AppRoutes.consultantShareReport:
         return _buildRoute(const ConsultantShareReportScreen());
-      
+
       case AppRoutes.feeReports:
         return _buildRoute(const FeeStudentReportsScreen());
-      
+
       case AppRoutes.feeTemplate:
         return _buildRoute(const OneTimeFeeTemplateScreen());
-      
+
       case AppRoutes.notifications:
         return _buildRoute(const NotificationsScreen());
-      
+
       case AppRoutes.settings:
         return _buildRoute(const SettingsScreen());
-      
+
       case AppRoutes.support:
         return _buildRoute(const SupportScreen());
 
       // Consultant Routes
       case AppRoutes.consultantDashboard:
         return _buildRoute(const ConsultantDashboardScreen());
-      
+
       case AppRoutes.consultantProfile:
         return _buildRoute(const ConsultantProfileScreen());
-      
+
       case AppRoutes.consultantProfileSetup:
         return _buildRoute(const ConsultantProfileSetupScreen());
-      
+
       case AppRoutes.consultantLeads:
         return _buildRoute(const ViewLeadsScreen());
-      
+
       case AppRoutes.consultantCommission:
         return _buildRoute(const CommissionSummaryScreen());
-      
+
       case AppRoutes.consultantNotifications:
         return _buildRoute(const ConsultantNotificationsScreen());
-      
+
       case AppRoutes.consultantAddAgent:
         return _buildRoute(const AddAgentScreen());
-      
+
       case AppRoutes.consultantPendingPayments:
         return _buildRoute(const PendingPaymentsScreen());
-      
+
       case AppRoutes.consultantUniversities:
         return _buildRoute(const UniversitiesCoursesScreen());
-      
+
       case AppRoutes.consultantStudents:
         return _buildRoute(const StudentManagementScreen());
-      
+
       case AppRoutes.consultantAgents:
         return _buildRoute(const AgentManagementScreen());
-      
+
       case AppRoutes.consultantFeePayments:
         return _buildRoute(const FeePaymentManagementScreen());
-      
+
       case AppRoutes.consultantSupport:
         return _buildRoute(const SupportConsultantScreen());
-      
+
       case AppRoutes.admissionForm:
         return _buildRoute(AdmissionFormScreen());
 
@@ -145,18 +150,14 @@ class RouteGenerator {
 
 class _ErrorScreen extends StatelessWidget {
   final String routeName;
-  
+
   const _ErrorScreen({required this.routeName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Error'),
-      ),
-      body: Center(
-        child: Text('Route not found: $routeName'),
-      ),
+      appBar: AppBar(title: const Text('Error')),
+      body: Center(child: Text('Route not found: $routeName')),
     );
   }
 }
