@@ -15,10 +15,12 @@ class AuthService {
     String email,
     String password,
   ) async {
+    if (kDebugMode) print('🔐 [AuthService] Requesting login for $email');
     final response = await ApiService.post('/auth/login/request', {
       'email': email,
       'password': password,
     });
+    if (kDebugMode) print('✅ [AuthService] Login response received');
 
     // Handle direct login (Super Admin/Student)
     if (response['success'] == true && response['token'] != null) {

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:educonnect/config/constants.dart';
 
 /// A minimal HTTP client for interacting with the backend API.
 ///
@@ -10,7 +12,7 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://educrmbackend-production-7480.up.railway.app/api/v1',
+    defaultValue: 'https://educrmbackend-production-051a.up.railway.app/api/v1',
   );
 
   /// Perform a POST request.  Optionally include a JWT token for authenticated
@@ -23,14 +25,25 @@ class ApiService {
     String? token,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
-    );
+    if (kDebugMode) {
+      print('🚀 [API POST] $uri');
+      print('📦 [Request Body] ${jsonEncode(body)}');
+    }
+
+    final response = await http
+        .post(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(body),
+        )
+        .timeout(Duration(seconds: AppConstants.timeoutDuration));
+
+    if (kDebugMode) {
+      print('📥 [Response] ${response.statusCode} - ${response.body}');
+    }
     return _processResponse(response);
   }
 
