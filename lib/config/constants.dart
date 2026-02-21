@@ -4,7 +4,8 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API Constants (for future use)
-  static const String baseUrl = 'http://localhost:5000/api/v1';
+  static const String baseUrl =
+      'https://educrmbackend-production-051a.up.railway.app/api/v1';
   static const int timeoutDuration = 30;
 
   // Storage Keys
