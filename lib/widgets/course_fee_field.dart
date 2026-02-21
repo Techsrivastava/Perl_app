@@ -62,7 +62,7 @@ class CourseFeeField extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: AppTheme.primaryBlue.withOpacity(0.05),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.05),
                   border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Text(

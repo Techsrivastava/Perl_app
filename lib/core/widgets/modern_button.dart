@@ -109,7 +109,7 @@ class ModernIconButton extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: (color ?? AppTheme.primaryBlue).withOpacity(0.1),
+        color: (color ?? AppTheme.primaryBlue).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: IconButton(

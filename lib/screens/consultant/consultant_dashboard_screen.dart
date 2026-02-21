@@ -6,10 +6,14 @@ import 'package:educonnect/screens/consultant/students/student_management_screen
 import 'package:educonnect/screens/consultant/agents/agent_management_screen.dart';
 import 'package:educonnect/screens/consultant/fee_payment/fee_payment_management_screen.dart';
 import 'package:educonnect/screens/auth/login_screen.dart';
-import '../../services/student_service.dart';
-import '../../services/agent_service.dart';
-import '../../services/university_service.dart';
-import '../../services/course_service.dart';
+import 'package:educonnect/screens/consultant/quick_actions/view_leads_screen.dart';
+import 'package:educonnect/screens/consultant/quick_actions/commission_summary_screen.dart';
+import 'package:educonnect/screens/consultant/support/support_consultant_screen.dart';
+import 'package:educonnect/screens/university/fee_student_reports_screen.dart';
+import 'package:educonnect/screens/consultant/marketing/marketing_tools_screen.dart';
+import '../../services/auth_service.dart';
+import '../../services/notification_service.dart';
+import '../../services/dashboard_service.dart';
 
 class ConsultantDashboardScreen extends StatefulWidget {
   const ConsultantDashboardScreen({super.key});
@@ -24,15 +28,18 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
 
   bool _isLoading = true;
 
-  // Real data stats
   Map<String, dynamic> _dashboardStats = {
     'universities': 0,
     'courses': 0,
     'students': 0,
     'agents': 0,
     'earnings': 0,
-    'pending ': 0,
+    'pending': 0,
+    'leads': 0,
   };
+
+  Map<String, dynamic>? _userData;
+  List<Map<String, dynamic>> _notificationFeed = [];
 
   @override
   void initState() {
@@ -42,96 +49,38 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
 
   Future<void> _loadStats() async {
     try {
-      final students = await StudentService.getStudents();
-      final agents = await AgentService.getAgents();
-      final universities = await UniversityService.getUniversities();
-      final courses = await CourseService.getCourses();
-
-      // Calculate logic if needed, e.g. active students
-      int activeStudents = students
-          .where(
-            (s) =>
-                s['status'] == 'Admission Approved' ||
-                s['status'] == 'Confirmed',
-          )
-          .length;
-
-      // Calculate earnings from agents if available, or just mock for now as it's complex
-      // double totalEarnings = agents.fold(0, (sum, agent) => sum + (agent['total_earnings'] ?? 0));
+      final user = await AuthService.getUser();
+      final stats = await DashboardService.getConsultantDashboard();
+      final notifications = await NotificationService.getNotifications();
 
       if (mounted) {
         setState(() {
+          _userData = user;
           _dashboardStats = {
-            'universities': universities.length,
-            'courses': courses.length,
-            'students': students.length, // Total students
-            'agents': agents.length,
-            'earnings':
-                0, // Placeholder as calculation is complex without backend endpoint
-            'pending ': 0,
+            'universities': stats['totalUniversities'] ?? 0,
+            'courses': stats['totalCourses'] ?? 0,
+            'students': stats['totalStudents'] ?? 0,
+            'agents': stats['totalAgents'] ?? 0,
+            'earnings': stats['totalEarnings'] ?? 0,
+            'pending': stats['pendingPayments'] ?? 0,
+            'leads': stats['totalLeads'] ?? 0,
           };
+          _notificationFeed = notifications
+              .map((n) => n as Map<String, dynamic>)
+              .toList();
           _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        // Fail silently or show snackbar?
-        print('Error loading dashboard stats: $e');
+        debugPrint('Error loading dashboard stats: $e');
       }
     }
   }
 
-  final List<Map<String, dynamic>> _notificationFeed = [
-    {
-      'id': 9001,
-      'category': 'Admissions',
-      'title': 'Admission Approved',
-      'message': '✅ Admission for Rahul Sharma has been approved.',
-      'timestamp': DateTime(2025, 11, 7, 11, 15),
-      'priority': 'High',
-      'isRead': false,
-    },
-    {
-      'id': 9002,
-      'category': 'Payments',
-      'title': 'Payment Received',
-      'message': '💰 ₹50,000 payment received for John Doe (BPT).',
-      'timestamp': DateTime(2025, 11, 7, 10, 45),
-      'priority': 'High',
-      'isRead': false,
-    },
-    {
-      'id': 9003,
-      'category': 'University Updates',
-      'title': 'Fee Structure Updated',
-      'message': '🏫 Sunrise University updated BNYS fee structure.',
-      'timestamp': DateTime(2025, 11, 6, 18, 5),
-      'priority': 'Medium',
-      'isRead': true,
-    },
-    {
-      'id': 9004,
-      'category': 'Reverted Applications',
-      'title': 'Action Required',
-      'message': '🔁 Upload missing TC for Priya Verma’s application.',
-      'timestamp': DateTime(2025, 11, 6, 9, 30),
-      'priority': 'High',
-      'isRead': false,
-    },
-    {
-      'id': 9005,
-      'category': 'Agent Activity',
-      'title': 'New Lead Added',
-      'message': '👥 Agent Saurabh Yadav added BNYS lead “Neha Kapoor”.',
-      'timestamp': DateTime(2025, 11, 5, 16, 10),
-      'priority': 'Low',
-      'isRead': true,
-    },
-  ];
-
   int get _unreadNotificationCount =>
-      _notificationFeed.where((n) => !(n['isRead'] as bool)).length;
+      _notificationFeed.where((n) => n['isRead'] == false).length;
 
   void _handleLogout() {
     showDialog(
@@ -145,13 +94,16 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false,
-              );
+              await AuthService.logout();
+              if (mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
             child: const Text('Logout', style: TextStyle(color: Colors.red)),
           ),
@@ -237,7 +189,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.3),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -267,14 +219,14 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                   ),
                   const SizedBox(height: 16),
                   // Name with emoji
-                  const Row(
+                  Row(
                     children: [
-                      Text('👋', style: TextStyle(fontSize: 20)),
-                      SizedBox(width: 8),
+                      const Text('👋', style: TextStyle(fontSize: 20)),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Rajesh Consultancy',
-                          style: TextStyle(
+                          _userData?['name'] ?? 'Consultant',
+                          style: const TextStyle(
                             fontSize: 19,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -292,9 +244,11 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.white.withOpacity(0.3)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -306,10 +260,10 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'ID: CONS2001',
+                          'ID: ${_userData?['_id']?.toString().substring(0, 8).toUpperCase() ?? 'CONS2001'}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.95),
+                            color: Colors.white.withValues(alpha: 0.95),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -552,15 +506,15 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
         gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  AppTheme.primaryBlue.withOpacity(0.15),
-                  AppTheme.primaryBlue.withOpacity(0.05),
+                  AppTheme.primaryBlue.withValues(alpha: 0.15),
+                  AppTheme.primaryBlue.withValues(alpha: 0.05),
                 ],
               )
             : null,
         borderRadius: BorderRadius.circular(12),
         border: isSelected
             ? Border.all(
-                color: AppTheme.primaryBlue.withOpacity(0.3),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.2),
                 width: 1.5,
               )
             : null,
@@ -576,7 +530,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppTheme.primaryBlue.withOpacity(0.15)
+                    ? AppTheme.primaryBlue.withValues(alpha: 0.15)
                     : AppTheme.lightGray,
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -624,15 +578,15 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
       case 5:
         return _buildPaymentsScreen();
       case 6:
-        return _buildReportsScreen();
+        return const FeeStudentReportsScreen();
       case 7:
-        return _buildLeadsScreen();
+        return const ViewLeadsScreen();
       case 8:
-        return _buildMarketingScreen();
+        return const MarketingToolsScreen();
       case 9:
-        return _buildCommissionScreen();
+        return const CommissionSummaryScreen();
       case 10:
-        return _buildHelpScreen();
+        return const SupportConsultantScreen();
       default:
         return _buildDashboardHome();
     }
@@ -661,7 +615,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.2),
                   blurRadius: 15,
                   offset: const Offset(0, 4),
                 ),
@@ -678,7 +632,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -690,7 +644,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                 ),
@@ -721,7 +675,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Rajesh Consultancy',
+                      _userData?['name'] ?? 'Consultant',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -735,7 +689,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
+                        color: Colors.white.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -751,7 +705,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                             'Everything looks great!',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -833,15 +787,15 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 'View Leads',
                 Icons.phone_in_talk,
                 Colors.blue,
-                '48 Total',
-                '5 New',
+                _isLoading ? '...' : '${_dashboardStats['leads']} Total',
+                null,
                 () => Navigator.pushNamed(context, '/consultant-leads'),
               ),
               _buildQuickActionCard(
                 'Commission',
                 Icons.account_balance_wallet,
                 Colors.green,
-                '₹1.82L',
+                _isLoading ? '...' : '₹${_dashboardStats['earnings']}',
                 null,
                 () => Navigator.pushNamed(
                   context,
@@ -852,7 +806,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 'Add Agent',
                 Icons.group_add,
                 Colors.orange,
-                '8 Active',
+                _isLoading ? '...' : '${_dashboardStats['agents']} Active',
                 null,
                 () => Navigator.pushNamed(context, '/consultant-add-agent'),
               ),
@@ -860,8 +814,8 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 'Payments',
                 Icons.pending_actions,
                 Colors.red,
-                '6 Pending',
-                'Review',
+                _isLoading ? '...' : '${_dashboardStats['pending']} Pending',
+                _dashboardStats['pending'] > 0 ? 'Review' : null,
                 () => Navigator.pushNamed(
                   context,
                   '/consultant-pending-payments',
@@ -939,7 +893,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.25),
+            color: color.withValues(alpha: 0.25),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -954,14 +908,14 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: Colors.white, size: 16),
               ),
               Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 size: 11,
               ),
             ],
@@ -989,7 +943,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -998,7 +952,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
                 subtitle,
                 style: TextStyle(
                   fontSize: 9,
-                  color: Colors.white.withOpacity(0.75),
+                  color: Colors.white.withValues(alpha: 0.75),
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -1156,7 +1110,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isRead ? Colors.white : iconInfo.color.withOpacity(0.04),
+        color: isRead ? Colors.white : iconInfo.color.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: iconInfo.color.withValues(alpha: 0.2),
@@ -1288,41 +1242,6 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
   Widget _buildStudentsScreen() => const StudentManagementScreen();
   Widget _buildAgentsScreen() => const AgentManagementScreen();
   Widget _buildPaymentsScreen() => const FeePaymentManagementScreen();
-  Widget _buildReportsScreen() =>
-      _buildPlaceholder('Reports & Analytics', Icons.bar_chart);
-  Widget _buildLeadsScreen() =>
-      _buildPlaceholder('Lead Management', Icons.phone_in_talk);
-  Widget _buildMarketingScreen() =>
-      _buildPlaceholder('Marketing & Posters', Icons.campaign);
-  Widget _buildCommissionScreen() =>
-      _buildPlaceholder('Commission Management', Icons.account_balance_wallet);
-  Widget _buildHelpScreen() =>
-      _buildPlaceholder('Help & Support', Icons.help_outline);
-
-  Widget _buildPlaceholder(String title, IconData icon) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Coming Soon',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _NotificationCategoryIcon {

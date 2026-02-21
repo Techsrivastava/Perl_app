@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:intl/intl.dart';
+import '../../services/admission_service.dart';
+import '../../services/fee_service.dart';
+import '../../services/commission_service.dart';
+import '../../services/course_service.dart';
+import '../../services/university_service.dart';
 
 class FeeStudentReportsScreen extends StatefulWidget {
   const FeeStudentReportsScreen({super.key});
@@ -23,10 +28,49 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
   bool _selectCommissionReport = false;
   bool _selectAdmissionStatus = false;
 
+  // Dynamic Data
+  bool _isLoading = true;
+  List<dynamic> _admissions = [];
+  List<dynamic> _commissions = [];
+  List<dynamic> _courses = [];
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() => _isLoading = true);
+    try {
+      final results = await Future.wait([
+        AdmissionService.getAdmissions(),
+        FeeService.getPayments(),
+        CommissionService.getTransactions(),
+        CourseService.getCourses(),
+        UniversityService.getUniversities(),
+      ]);
+
+      if (mounted) {
+        setState(() {
+          _admissions = results[0];
+          _commissions = results[2];
+          _courses = results[3];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading data: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -49,7 +93,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
           controller: _tabController,
           isScrollable: true,
           labelColor: AppTheme.white,
-          unselectedLabelColor: AppTheme.white.withOpacity(0.6),
+          unselectedLabelColor: AppTheme.white.withValues(alpha: 0.6),
           indicatorColor: AppTheme.white,
           labelStyle: const TextStyle(
             fontSize: 10,
@@ -64,16 +108,18 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildTotalFeesTab(),
-          _buildPendingPaymentsTab(),
-          _buildCommissionReportTab(),
-          _buildAdmissionStatusTab(),
-          _buildStudentExportTab(),
-        ],
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                _buildTotalFeesTab(),
+                _buildPendingPaymentsTab(),
+                _buildCommissionReportTab(),
+                _buildAdmissionStatusTab(),
+                _buildStudentExportTab(),
+              ],
+            ),
     );
   }
 
@@ -81,9 +127,9 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -143,86 +189,52 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
 
   // 1️⃣ Total Fees Tab - With Student Details
   Widget _buildTotalFeesTab() {
-    // Detailed student fee data
-    final studentFees = [
-      {
-        'studentName': 'Rahul Kumar',
-        'studentId': 'STU001',
-        'course': 'BNYS',
-        'courseFee': 120000,
-        'paid': 90000,
-        'pending': 30000,
-        'year': '2025',
-        'semester': '1st Sem',
-        'lastPayment': DateTime(2025, 10, 20),
-        'consultancy': 'EduConnect Agency',
-        'consultancyCode': 'CON001',
-      },
-      {
-        'studentName': 'Amit Patel',
-        'studentId': 'STU003',
-        'course': 'BNYS',
-        'courseFee': 120000,
-        'paid': 60000,
-        'pending': 60000,
-        'year': '2025',
-        'semester': '1st Sem',
-        'lastPayment': DateTime(2025, 9, 15),
-        'consultancy': 'TechConsult',
-        'consultancyCode': 'CON003',
-      },
-      {
-        'studentName': 'Priya Sharma',
-        'studentId': 'STU002',
-        'course': 'BPT',
-        'courseFee': 110000,
-        'paid': 110000,
-        'pending': 0,
-        'year': '2025',
-        'semester': '2nd Sem',
-        'lastPayment': DateTime(2025, 10, 25),
-        'consultancy': 'AlphaEdu Consultants',
-        'consultancyCode': 'CON002',
-      },
-      {
-        'studentName': 'Neha Singh',
-        'studentId': 'STU005',
-        'course': 'BPT',
-        'courseFee': 110000,
-        'paid': 110000,
-        'pending': 0,
-        'year': '2025',
-        'semester': '2nd Sem',
-        'lastPayment': DateTime(2025, 10, 28),
-        'consultancy': 'AlphaEdu Consultants',
-        'consultancyCode': 'CON002',
-      },
-      {
-        'studentName': 'Sneha Reddy',
-        'studentId': 'STU004',
-        'course': 'B.Tech CS',
-        'courseFee': 500000,
-        'paid': 400000,
-        'pending': 100000,
-        'year': '2025',
-        'semester': '3rd Sem',
-        'lastPayment': DateTime(2025, 10, 30),
-        'consultancy': 'EduConnect Agency',
-        'consultancyCode': 'CON001',
-      },
-      {
-        'studentName': 'Karan Mehta',
-        'studentId': 'STU006',
-        'course': 'B.Tech CS',
-        'courseFee': 500000,
-        'paid': 450000,
-        'pending': 50000,
-        'year': '2025',
-        'semester': '3rd Sem',
-        'lastPayment': DateTime(2025, 11, 2),
-        'consultancy': 'Global Edu Partners',
-        'consultancyCode': 'CON004',
-      },
+    // Map real admissions data
+    final studentFees = _admissions.map((json) {
+      final student = json['student'] is Map ? json['student'] : {};
+      final course = json['course'] is Map ? json['course'] : {};
+      final consultant = json['consultant'] is Map ? json['consultant'] : {};
+
+      double parseDouble(dynamic value) {
+        if (value == null) return 0.0;
+        if (value is int) return value.toDouble();
+        if (value is double) return value;
+        if (value is String) return double.tryParse(value) ?? 0.0;
+        return 0.0;
+      }
+
+      return {
+        'studentName': student['name'] ?? 'Unknown',
+        'studentId': student['student_id'] ?? student['id'] ?? 'N/A',
+        'course': course['name'] ?? 'Unknown',
+        'courseFee': parseDouble(json['totalFee'] ?? student['total_fee']),
+        'paid': parseDouble(json['paidAmount'] ?? student['paid_amount']),
+        'pending': parseDouble(
+          json['pendingAmount'] ?? student['pending_amount'],
+        ),
+        'year': (json['createdAt'] != null)
+            ? DateTime.parse(json['createdAt']).year.toString()
+            : '2025',
+        'semester': json['semester'] ?? '1st Sem',
+        'lastPayment': (json['updatedAt'] != null)
+            ? DateTime.parse(json['updatedAt'])
+            : DateTime.now(),
+        'consultancy': consultant['name'] ?? 'Self',
+        'consultancyCode': consultant['code'] ?? 'N/A',
+      };
+    }).toList();
+
+    // Get unique courses for filter
+    final availableCourses = [
+      'All Courses',
+      ..._courses
+          .map((c) => c['name']?.toString() ?? 'Unknown')
+          .where((n) => n != 'Unknown')
+          .toSet(),
+    ];
+    final availableYears = [
+      'All Years',
+      ...studentFees.map((s) => s['year'].toString()).toSet(),
     ];
 
     // Filter students
@@ -278,7 +290,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                       ),
                     ),
                     style: const TextStyle(fontSize: 11),
-                    items: ['All Courses', 'BNYS', 'BPT', 'B.Tech CS']
+                    items: availableCourses
                         .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                         .toList(),
                     onChanged: (v) => setState(() => _selectedCourse = v!),
@@ -297,7 +309,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                       ),
                     ),
                     style: const TextStyle(fontSize: 11),
-                    items: ['All Years', '2025', '2024']
+                    items: availableYears
                         .map((y) => DropdownMenuItem(value: y, child: Text(y)))
                         .toList(),
                     onChanged: (v) => setState(() => _selectedYear = v!),
@@ -387,7 +399,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.success.withOpacity(0.3),
+                  color: AppTheme.success.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -397,7 +409,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.success.withOpacity(0.1),
+                      color: AppTheme.success.withValues(alpha: 0.1),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(10),
                       ),
@@ -468,7 +480,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                       horizontal: 12,
                       vertical: 8,
                     ),
-                    color: AppTheme.lightGray.withOpacity(0.3),
+                    color: AppTheme.lightGray.withValues(alpha: 0.3),
                     child: Row(
                       children: [
                         Expanded(
@@ -507,11 +519,11 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: AppTheme.lightGray.withOpacity(0.5),
+                            color: AppTheme.lightGray.withValues(alpha: 0.5),
                           ),
                         ),
                         color: isPaid
-                            ? AppTheme.success.withOpacity(0.02)
+                            ? AppTheme.success.withValues(alpha: 0.02)
                             : null,
                       ),
                       child: Column(
@@ -523,8 +535,8 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                                 height: 40,
                                 decoration: BoxDecoration(
                                   color: isPaid
-                                      ? AppTheme.success.withOpacity(0.1)
-                                      : AppTheme.warning.withOpacity(0.1),
+                                      ? AppTheme.success.withValues(alpha: 0.1)
+                                      : AppTheme.warning.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Center(
@@ -823,60 +835,48 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
 
   // 2️⃣ Pending Payments Tab - Course-wise
   Widget _buildPendingPaymentsTab() {
-    final mockPayments = [
-      {
-        'studentName': 'Rahul Kumar',
-        'studentId': 'STU001',
-        'email': 'rahul@email.com',
-        'phone': '+91 9876543210',
-        'course': 'BNYS',
-        'courseFee': 120000,
-        'paidAmount': 90000,
-        'pendingAmount': 30000,
-        'consultant': 'EduConnect',
-        'semester': '1st Sem',
-        'dueDate': DateTime(2025, 11, 15),
-      },
-      {
-        'studentName': 'Amit Patel',
-        'studentId': 'STU003',
-        'email': 'amit@email.com',
-        'phone': '+91 9876543212',
-        'course': 'BNYS',
-        'courseFee': 120000,
-        'paidAmount': 60000,
-        'pendingAmount': 60000,
-        'consultant': 'TechConsult',
-        'semester': '1st Sem',
-        'dueDate': DateTime(2025, 11, 10),
-      },
-      {
-        'studentName': 'Priya Sharma',
-        'studentId': 'STU002',
-        'email': 'priya@email.com',
-        'phone': '+91 9876543211',
-        'course': 'BPT',
-        'courseFee': 110000,
-        'paidAmount': 85000,
-        'pendingAmount': 25000,
-        'consultant': 'AlphaEdu',
-        'semester': '2nd Sem',
-        'dueDate': DateTime(2025, 11, 20),
-      },
-      {
-        'studentName': 'Sneha Reddy',
-        'studentId': 'STU004',
-        'email': 'sneha@email.com',
-        'phone': '+91 9876543213',
-        'course': 'B.Tech CS',
-        'courseFee': 500000,
-        'paidAmount': 400000,
-        'pendingAmount': 100000,
-        'consultant': 'EduConnect',
-        'semester': '3rd Sem',
-        'dueDate': DateTime(2025, 11, 25),
-      },
-    ];
+    final mockPayments = _admissions
+        .where((a) {
+          final student = a['student'] is Map ? a['student'] : {};
+          final pending =
+              (a['pendingAmount'] ?? student['pending_amount'] ?? 0);
+          return (pending is num && pending > 0) ||
+              (pending is String && (double.tryParse(pending) ?? 0) > 0);
+        })
+        .map((a) {
+          final student = a['student'] is Map ? a['student'] : {};
+          final course = a['course'] is Map ? a['course'] : {};
+          final consultant = a['consultant'] is Map ? a['consultant'] : {};
+
+          double parseDouble(dynamic value) {
+            if (value == null) return 0.0;
+            if (value is int) return value.toDouble();
+            if (value is double) return value;
+            if (value is String) return double.tryParse(value) ?? 0.0;
+            return 0.0;
+          }
+
+          return {
+            'studentName': student['name'] ?? 'Unknown',
+            'studentId': student['student_id'] ?? student['id'] ?? 'N/A',
+            'email': student['email'] ?? '',
+            'phone': student['phone'] ?? student['mobile'] ?? '',
+            'course': course['name'] ?? 'Unknown',
+            'courseFee': parseDouble(a['totalFee'] ?? student['total_fee']),
+            'paidAmount': parseDouble(
+              a['paidAmount'] ?? student['paid_amount'],
+            ),
+            'pendingAmount': parseDouble(
+              a['pendingAmount'] ?? student['pending_amount'],
+            ),
+            'consultant': consultant['name'] ?? 'Self',
+            'semester': a['semester'] ?? '1st Sem',
+            'dueDate': (a['updatedAt'] != null)
+                ? DateTime.parse(a['updatedAt']).add(const Duration(days: 30))
+                : DateTime.now().add(const Duration(days: 30)),
+          };
+        })
+        .toList();
 
     // Group by course
     final courseGroups = <String, List<Map<String, dynamic>>>{};
@@ -943,7 +943,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -953,7 +953,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withOpacity(0.1),
+                      color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(10),
                       ),
@@ -1022,7 +1022,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                       horizontal: 12,
                       vertical: 8,
                     ),
-                    color: AppTheme.lightGray.withOpacity(0.3),
+                    color: AppTheme.lightGray.withValues(alpha: 0.3),
                     child: Row(
                       children: [
                         Expanded(
@@ -1048,183 +1048,179 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                   ),
 
                   // Student Cards
-                  ...payments
-                      .map(
-                        (payment) => Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppTheme.lightGray.withOpacity(0.5),
-                              ),
-                            ),
+                  ...payments.map(
+                    (payment) => Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppTheme.lightGray.withValues(alpha: 0.5),
                           ),
-                          child: Column(
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.warning.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        payment['studentName']
-                                            .toString()
-                                            .substring(0, 1),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.warning,
-                                        ),
-                                      ),
-                                    ),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.warning.withValues(
+                                    alpha: 0.1,
                                   ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          payment['studentName'].toString(),
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          'ID: ${payment['studentId']} • ${payment['semester']}',
-                                          style: const TextStyle(
-                                            fontSize: 9,
-                                            color: AppTheme.mediumGray,
-                                          ),
-                                        ),
-                                      ],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    payment['studentName'].toString().substring(
+                                      0,
+                                      1,
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.warning,
                                     ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '₹${NumberFormat('#,##,###').format(payment['pendingAmount'])}',
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.warning,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Due: ${DateFormat('dd MMM').format(payment['dueDate'] as DateTime)}',
-                                        style: const TextStyle(
-                                          fontSize: 8,
-                                          color: AppTheme.error,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '📧 Email',
-                                          style: TextStyle(
-                                            fontSize: 8,
-                                            color: AppTheme.mediumGray,
-                                          ),
-                                        ),
-                                        Text(
-                                          payment['email'].toString(),
-                                          style: const TextStyle(fontSize: 9),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      payment['studentName'].toString(),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '📞 Phone',
-                                          style: TextStyle(
-                                            fontSize: 8,
-                                            color: AppTheme.mediumGray,
-                                          ),
-                                        ),
-                                        Text(
-                                          payment['phone'].toString(),
-                                          style: const TextStyle(fontSize: 9),
-                                        ),
-                                      ],
+                                    Text(
+                                      'ID: ${payment['studentId']} • ${payment['semester']}',
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        color: AppTheme.mediumGray,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 6),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '🤝 Consultant',
-                                          style: TextStyle(
-                                            fontSize: 8,
-                                            color: AppTheme.mediumGray,
-                                          ),
-                                        ),
-                                        Text(
-                                          payment['consultant'].toString(),
-                                          style: const TextStyle(fontSize: 9),
-                                        ),
-                                      ],
+                                  Text(
+                                    '₹${NumberFormat('#,##,###').format(payment['pendingAmount'])}',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.warning,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '✅ Paid',
-                                          style: TextStyle(
-                                            fontSize: 8,
-                                            color: AppTheme.mediumGray,
-                                          ),
-                                        ),
-                                        Text(
-                                          '₹${NumberFormat('#,##,###').format(payment['paidAmount'])}',
-                                          style: const TextStyle(
-                                            fontSize: 9,
-                                            color: AppTheme.success,
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    'Due: ${DateFormat('dd MMM').format(payment['dueDate'] as DateTime)}',
+                                    style: const TextStyle(
+                                      fontSize: 8,
+                                      color: AppTheme.error,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                        ),
-                      )
-                      ,
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '📧 Email',
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        color: AppTheme.mediumGray,
+                                      ),
+                                    ),
+                                    Text(
+                                      payment['email'].toString(),
+                                      style: const TextStyle(fontSize: 9),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '📞 Phone',
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        color: AppTheme.mediumGray,
+                                      ),
+                                    ),
+                                    Text(
+                                      payment['phone'].toString(),
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '🤝 Consultant',
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        color: AppTheme.mediumGray,
+                                      ),
+                                    ),
+                                    Text(
+                                      payment['consultant'].toString(),
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '✅ Paid',
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        color: AppTheme.mediumGray,
+                                      ),
+                                    ),
+                                    Text(
+                                      '₹${NumberFormat('#,##,###').format(payment['paidAmount'])}',
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        color: AppTheme.success,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -1236,63 +1232,31 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
 
   // 3️⃣ Commission Report Tab - Complete Implementation
   Widget _buildCommissionReportTab() {
-    final commissionData = [
-      {
-        'consultantName': 'EduConnect Agency',
-        'code': 'CON001',
-        'course': 'BNYS',
-        'shareType': 'Percentage',
-        'shareValue': 15,
-        'students': 1,
-        'totalFee': 120000,
-        'commission': 18000,
-        'universityProfit': 102000,
-      },
-      {
-        'consultantName': 'EduConnect Agency',
-        'code': 'CON001',
-        'course': 'B.Tech CS',
-        'shareType': 'Percentage',
-        'shareValue': 12,
-        'students': 1,
-        'totalFee': 500000,
-        'commission': 60000,
-        'universityProfit': 440000,
-      },
-      {
-        'consultantName': 'TechConsult',
-        'code': 'CON003',
-        'course': 'BNYS',
-        'shareType': 'Flat',
-        'shareValue': 25000,
-        'students': 1,
-        'totalFee': 120000,
-        'commission': 25000,
-        'universityProfit': 95000,
-      },
-      {
-        'consultantName': 'AlphaEdu Consultants',
-        'code': 'CON002',
-        'course': 'BPT',
-        'shareType': 'Percentage',
-        'shareValue': 18,
-        'students': 2,
-        'totalFee': 220000,
-        'commission': 39600,
-        'universityProfit': 180400,
-      },
-      {
-        'consultantName': 'Global Edu Partners',
-        'code': 'CON004',
-        'course': 'B.Tech CS',
-        'shareType': 'Percentage',
-        'shareValue': 10,
-        'students': 1,
-        'totalFee': 500000,
-        'commission': 50000,
-        'universityProfit': 450000,
-      },
-    ];
+    final commissionData = _commissions.map((c) {
+      final consultant = c['agent'] is Map ? c['agent'] : {};
+      final course = c['course'] is Map ? c['course'] : {};
+
+      double parseDouble(dynamic value) {
+        if (value == null) return 0.0;
+        if (value is int) return value.toDouble();
+        if (value is double) return value;
+        if (value is String) return double.tryParse(value) ?? 0.0;
+        return 0.0;
+      }
+
+      return {
+        'consultantName': consultant['name'] ?? 'Unknown',
+        'code': consultant['code'] ?? 'N/A',
+        'course': course['name'] ?? 'Unknown',
+        'shareType': c['type'] ?? 'Percentage',
+        'shareValue': parseDouble(c['value']),
+        'students': c['studentCount'] ?? 1,
+        'totalFee': parseDouble(c['totalFee']),
+        'commission': parseDouble(c['earned']),
+        'universityProfit':
+            parseDouble(c['totalFee']) - parseDouble(c['earned']),
+      };
+    }).toList();
 
     final totalCommission = commissionData.fold<int>(
       0,
@@ -1351,7 +1315,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.warning.withOpacity(0.3),
+                  color: AppTheme.warning.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -1360,7 +1324,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.warning.withOpacity(0.1),
+                      color: AppTheme.warning.withValues(alpha: 0.1),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(10),
                       ),
@@ -1570,41 +1534,33 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
 
   // 4️⃣ Admission Status Tab - Course-wise
   Widget _buildAdmissionStatusTab() {
-    final mockAdmissions = [
-      {
-        'studentName': 'Rahul Kumar',
-        'studentId': 'STU001',
-        'email': 'rahul@email.com',
-        'phone': '+91 9876543210',
-        'course': 'BNYS',
-        'consultant': 'EduConnect',
-        'status': 'Approved',
-        'feeStatus': 'Paid',
-        'appliedDate': DateTime(2025, 10, 15),
-      },
-      {
-        'studentName': 'Amit Patel',
-        'studentId': 'STU003',
-        'email': 'amit@email.com',
-        'phone': '+91 9876543212',
-        'course': 'BNYS',
-        'consultant': 'TechConsult',
-        'status': 'Approved',
-        'feeStatus': 'Partially Paid',
-        'appliedDate': DateTime(2025, 10, 20),
-      },
-      {
-        'studentName': 'Priya Sharma',
-        'studentId': 'STU002',
-        'email': 'priya@email.com',
-        'phone': '+91 9876543211',
-        'course': 'BPT',
-        'consultant': 'AlphaEdu',
-        'status': 'Pending',
-        'feeStatus': 'Pending',
-        'appliedDate': DateTime(2025, 11, 1),
-      },
-    ];
+    final mockAdmissions = _admissions.map((a) {
+      final student = a['student'] is Map ? a['student'] : {};
+      final course = a['course'] is Map ? a['course'] : {};
+      final consultant = a['consultant'] is Map ? a['consultant'] : {};
+
+      return {
+        'studentName': student['name'] ?? 'Unknown',
+        'studentId': student['student_id'] ?? student['id'] ?? 'N/A',
+        'email': student['email'] ?? '',
+        'phone': student['phone'] ?? student['mobile'] ?? '',
+        'course': course['name'] ?? 'Unknown',
+        'consultant': consultant['name'] ?? 'Self',
+        'status': a['status'] ?? 'Pending',
+        'feeStatus':
+            (double.tryParse(
+                      (a['pendingAmount'] ?? student['pending_amount'] ?? 0)
+                          .toString(),
+                    ) ??
+                    0) <=
+                0
+            ? 'Paid'
+            : 'Pending',
+        'appliedDate': (a['createdAt'] != null)
+            ? DateTime.parse(a['createdAt'])
+            : DateTime.now(),
+      };
+    }).toList();
 
     final approved = mockAdmissions
         .where((s) => s['status'] == 'Approved')
@@ -1662,7 +1618,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: statusColor.withOpacity(0.3),
+                  color: statusColor.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -1674,7 +1630,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
+                          color: statusColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Center(
@@ -1718,7 +1674,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.2),
+                              color: statusColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -1737,7 +1693,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: feeColor.withOpacity(0.2),
+                              color: feeColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -1822,7 +1778,9 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
             decoration: BoxDecoration(
               color: AppTheme.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
+              border: Border.all(
+                color: AppTheme.primaryBlue.withValues(alpha: 0.3),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1914,7 +1872,9 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
             decoration: BoxDecoration(
               color: AppTheme.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppTheme.success.withOpacity(0.3)),
+              border: Border.all(
+                color: AppTheme.success.withValues(alpha: 0.3),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2109,10 +2069,10 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -2154,10 +2114,10 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: value ? color.withOpacity(0.05) : null,
+          color: value ? color.withValues(alpha: 0.05) : null,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: value ? color.withOpacity(0.5) : AppTheme.lightGray,
+            color: value ? color.withValues(alpha: 0.5) : AppTheme.lightGray,
             width: value ? 2 : 1,
           ),
         ),
@@ -2237,7 +2197,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
               width: 45,
               height: 45,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(23),
               ),
               child: Center(
@@ -2310,7 +2270,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.success.withOpacity(0.1),
+                  color: AppTheme.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -2323,7 +2283,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Payment: ${((student['paid'] as int) / (student['courseFee'] as int) * 100).toStringAsFixed(1)}% Complete',
+                        'Payment: ${((student['paid'] as num) / (student['courseFee'] as num) * 100).toStringAsFixed(1)}% Complete',
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -2423,7 +2383,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.warning.withOpacity(0.1),
+                  color: AppTheme.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -2439,7 +2399,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                           ),
                         ),
                         Text(
-                          '${((data['commission'] as int) / (data['totalFee'] as int) * 100).toStringAsFixed(1)}%',
+                          '${((data['commission'] as num) / (data['totalFee'] as num) * 100).toStringAsFixed(1)}%',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -2460,7 +2420,7 @@ class _FeeStudentReportsScreenState extends State<FeeStudentReportsScreen>
                           ),
                         ),
                         Text(
-                          '${((data['universityProfit'] as int) / (data['totalFee'] as int) * 100).toStringAsFixed(1)}%',
+                          '${((data['universityProfit'] as num) / (data['totalFee'] as num) * 100).toStringAsFixed(1)}%',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,

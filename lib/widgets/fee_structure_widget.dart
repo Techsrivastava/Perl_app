@@ -215,9 +215,11 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppTheme.primaryBlue.withOpacity(0.1),
+            color: AppTheme.primaryBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
+            border: Border.all(
+              color: AppTheme.primaryBlue.withValues(alpha: 0.3),
+            ),
           ),
           child: Row(
             children: [
@@ -400,11 +402,13 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: item.isOptional ? Colors.orange.withOpacity(0.05) : Colors.white,
+        color: item.isOptional
+            ? Colors.orange.withValues(alpha: 0.05)
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: item.isOptional
-              ? Colors.orange.withOpacity(0.3)
+              ? Colors.orange.withValues(alpha: 0.3)
               : Colors.grey[300]!,
           width: item.isOptional ? 1.5 : 1,
         ),
@@ -536,7 +540,7 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
                     ),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Colors.blue.withOpacity(0.05),
+                    fillColor: Colors.blue.withValues(alpha: 0.05),
                   ),
                   style: const TextStyle(fontSize: 12, color: Colors.black87),
                   items: const [
@@ -647,7 +651,7 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.05),
+                      color: Colors.blue.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -755,20 +759,20 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.primaryBlue.withOpacity(0.1),
-            AppTheme.success.withOpacity(0.1),
+            AppTheme.primaryBlue.withValues(alpha: 0.1),
+            AppTheme.success.withValues(alpha: 0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.primaryBlue.withOpacity(0.3),
+          color: AppTheme.primaryBlue.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -833,7 +837,7 @@ class _FeeStructureWidgetState extends State<FeeStructureWidget> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.1),
+                color: AppTheme.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(

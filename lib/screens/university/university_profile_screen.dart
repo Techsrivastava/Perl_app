@@ -118,7 +118,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         label,
         style: TextStyle(color: color ?? AppTheme.white, fontSize: 12),
       ),
-      backgroundColor: (color ?? AppTheme.primaryBlue).withOpacity(0.8),
+      backgroundColor: (color ?? AppTheme.primaryBlue).withValues(alpha: 0.8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
@@ -135,9 +135,9 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -290,7 +290,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     child: const Center(
                       child: Icon(Icons.image, size: 60, color: Colors.white24),
                     ),
@@ -313,7 +313,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                         border: Border.all(color: AppTheme.white, width: 3),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -347,7 +347,7 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                               university.abbreviation,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppTheme.white.withOpacity(0.95),
+                                color: AppTheme.white.withValues(alpha: 0.95),
                               ),
                             ),
                           ],

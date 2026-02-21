@@ -42,38 +42,11 @@ class _ConsultantShareSetupScreenState
 
   // Selected Consultants
   final List<String> _selectedConsultants = [];
-  final List<Map<String, String>> _consultants = [
-    {'id': 'C001', 'name': 'Rajesh Kumar', 'region': 'North'},
-    {'id': 'C002', 'name': 'Priya Sharma', 'region': 'South'},
-    {'id': 'C003', 'name': 'Amit Patel', 'region': 'West'},
-    {'id': 'C004', 'name': 'Neha Singh', 'region': 'East'},
-    {'id': 'C005', 'name': 'Sanjay Gupta', 'region': 'Central'},
-  ];
+  final List<Map<String, String>> _consultants = [];
 
   // Selected Courses
   List<String> _selectedCourses = [];
-  final List<Map<String, dynamic>> _courses = [
-    {
-      'id': 'CS001',
-      'name': 'B.Tech Computer Science',
-      'fee': 50000,
-      'category': 'Engineering',
-    },
-    {'id': 'CS002', 'name': 'MBA', 'fee': 80000, 'category': 'Management'},
-    {
-      'id': 'CS003',
-      'name': 'M.Tech AI/ML',
-      'fee': 60000,
-      'category': 'Engineering',
-    },
-    {'id': 'CS004', 'name': 'BBA', 'fee': 40000, 'category': 'Management'},
-    {
-      'id': 'CS005',
-      'name': 'B.Sc Data Science',
-      'fee': 45000,
-      'category': 'Science',
-    },
-  ];
+  final List<Map<String, dynamic>> _courses = [];
 
   // Document upload
   String? _uploadedDocumentName;
@@ -455,19 +428,19 @@ class _ConsultantShareSetupScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.primaryBlue.withOpacity(0.1), AppTheme.white],
+          colors: [AppTheme.primaryBlue.withValues(alpha: 0.1), AppTheme.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withOpacity(0.2),
+              color: AppTheme.primaryBlue.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -500,7 +473,7 @@ class _ConsultantShareSetupScreenState
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 1),
           ),
@@ -546,7 +519,7 @@ class _ConsultantShareSetupScreenState
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
-            fillColor: AppTheme.lightGray.withOpacity(0.3),
+            fillColor: AppTheme.lightGray.withValues(alpha: 0.3),
           ),
           items: _shareTypes.map((type) {
             return DropdownMenuItem(
@@ -570,7 +543,7 @@ class _ConsultantShareSetupScreenState
               : '🎯 One-time payment (1st year or full duration)',
           style: TextStyle(
             fontSize: 11,
-            color: AppTheme.mediumGray.withOpacity(0.8),
+            color: AppTheme.mediumGray.withValues(alpha: 0.8),
             fontStyle: FontStyle.italic,
           ),
         ),
@@ -596,7 +569,7 @@ class _ConsultantShareSetupScreenState
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
-            fillColor: AppTheme.lightGray.withOpacity(0.3),
+            fillColor: AppTheme.lightGray.withValues(alpha: 0.3),
             suffixIcon: _consultantSearchQuery.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear, size: 18),
@@ -616,7 +589,9 @@ class _ConsultantShareSetupScreenState
         Container(
           constraints: const BoxConstraints(maxHeight: 180),
           decoration: BoxDecoration(
-            border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+            border: Border.all(
+              color: AppTheme.mediumGray.withValues(alpha: 0.3),
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: filteredConsultants.isEmpty
@@ -662,7 +637,9 @@ class _ConsultantShareSetupScreenState
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryBlue.withOpacity(0.1),
+                              color: AppTheme.primaryBlue.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -813,7 +790,7 @@ class _ConsultantShareSetupScreenState
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
-            fillColor: AppTheme.lightGray.withOpacity(0.3),
+            fillColor: AppTheme.lightGray.withValues(alpha: 0.3),
             suffixIcon: _courseSearchQuery.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear, size: 18),
@@ -878,7 +855,7 @@ class _ConsultantShareSetupScreenState
                         }
                       });
                     },
-                    selectedColor: AppTheme.primaryBlue.withOpacity(0.2),
+                    selectedColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -896,7 +873,7 @@ class _ConsultantShareSetupScreenState
                         }
                       });
                     },
-                    selectedColor: AppTheme.primaryBlue.withOpacity(0.2),
+                    selectedColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -911,7 +888,9 @@ class _ConsultantShareSetupScreenState
         Container(
           constraints: const BoxConstraints(maxHeight: 200),
           decoration: BoxDecoration(
-            border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+            border: Border.all(
+              color: AppTheme.mediumGray.withValues(alpha: 0.3),
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: filteredCourses.isEmpty
@@ -960,7 +939,7 @@ class _ConsultantShareSetupScreenState
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.success.withOpacity(0.1),
+                              color: AppTheme.success.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -1123,12 +1102,12 @@ class _ConsultantShareSetupScreenState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.success.withOpacity(0.05), AppTheme.white],
+          colors: [AppTheme.success.withValues(alpha: 0.05), AppTheme.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.success.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -1168,7 +1147,7 @@ class _ConsultantShareSetupScreenState
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 18),

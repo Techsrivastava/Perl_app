@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/screens/auth/login_screen.dart';
+import 'package:educonnect/services/auth_service.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   final String currentRoute;
   final Function(String) onNavigate;
 
@@ -13,7 +14,43 @@ class AppDrawer extends StatelessWidget {
   });
 
   @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  Map<String, dynamic>? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await AuthService.getUser();
+    if (user != null && mounted) {
+      setState(() {
+        _user = user;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String name = _user?['name'] ?? 'User';
+    // If name is too long or empty, fallback
+    if (name.isEmpty) name = 'User';
+
+    // For specific roles, maybe use their institution name
+    if (_user?['role'] == 'UNIVERSITY' && _user?['name'] != null) {
+      name = _user!['name'];
+    } else if (_user?['role'] == 'CONSULTANT' &&
+        _user?['consultancyName'] != null) {
+      name = _user!['consultancyName'];
+    }
+
+    String email = _user?['email'] ?? '...';
+
     return Drawer(
       child: Column(
         children: [
@@ -21,7 +58,7 @@ class AppDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              onNavigate('/profile');
+              widget.onNavigate('/profile');
             },
             child: Container(
               width: double.infinity,
@@ -62,15 +99,15 @@ class AppDrawer extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          onNavigate('/profile');
+                          widget.onNavigate('/profile');
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Stanford University',
-                    style: TextStyle(
+                  Text(
+                    name,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.white,
@@ -78,7 +115,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'admin@stanford.edu',
+                    email,
                     style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.white.withValues(alpha: 0.8),
@@ -91,7 +128,7 @@ class AppDrawer extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.white.withOpacity(0.2),
+                      color: AppTheme.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Row(
@@ -121,42 +158,42 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.dashboard,
                   title: 'Dashboard',
                   route: '/dashboard',
-                  isSelected: currentRoute == '/dashboard',
+                  isSelected: widget.currentRoute == '/dashboard',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.school,
                   title: 'University Profile',
                   route: '/university-profile',
-                  isSelected: currentRoute == '/university-profile',
+                  isSelected: widget.currentRoute == '/university-profile',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.book,
                   title: 'Courses',
                   route: '/courses',
-                  isSelected: currentRoute == '/courses',
+                  isSelected: widget.currentRoute == '/courses',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.people,
                   title: 'Student Applications',
                   route: '/students',
-                  isSelected: currentRoute == '/students',
+                  isSelected: widget.currentRoute == '/students',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.business,
                   title: 'Consultant Reports',
                   route: '/consultancy',
-                  isSelected: currentRoute == '/consultancy',
+                  isSelected: widget.currentRoute == '/consultancy',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.handshake,
                   title: 'Consultant Share Setup',
                   route: '/consultant-share-setup',
-                  isSelected: currentRoute == '/consultant-share-setup',
+                  isSelected: widget.currentRoute == '/consultant-share-setup',
                 ),
                 _buildDrawerItem(
                   context: context,
@@ -164,15 +201,15 @@ class AppDrawer extends StatelessWidget {
                   title: 'Fee & Student Reports',
                   route: '/fee-student-reports',
                   isSelected:
-                      currentRoute == '/fee-student-reports' ||
-                      currentRoute == '/fee-reports',
+                      widget.currentRoute == '/fee-student-reports' ||
+                      widget.currentRoute == '/fee-reports',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.receipt_long,
                   title: 'One-Time Fee Template',
                   route: '/fee-template',
-                  isSelected: currentRoute == '/fee-template',
+                  isSelected: widget.currentRoute == '/fee-template',
                 ),
                 const Divider(),
                 _buildDrawerItem(
@@ -180,21 +217,21 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.notifications,
                   title: 'Notifications',
                   route: '/notifications',
-                  isSelected: currentRoute == '/notifications',
+                  isSelected: widget.currentRoute == '/notifications',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.help,
                   title: 'Support & Help',
                   route: '/support',
-                  isSelected: currentRoute == '/support',
+                  isSelected: widget.currentRoute == '/support',
                 ),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.settings,
                   title: 'Settings',
                   route: '/settings',
-                  isSelected: currentRoute == '/settings',
+                  isSelected: widget.currentRoute == '/settings',
                 ),
               ],
             ),
@@ -292,7 +329,7 @@ class AppDrawer extends StatelessWidget {
           if (route.startsWith('/')) {
             Navigator.of(context).pushNamed(route);
           } else {
-            onNavigate(route);
+            widget.onNavigate(route);
           }
         },
       ),

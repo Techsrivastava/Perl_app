@@ -155,67 +155,6 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     super.dispose();
   }
 
-  // File Pickers
-  Future<void> _pickLogo() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'svg'],
-      );
-      if (result != null) {
-        setState(() => _logoFile = File(result.files.single.path!));
-      }
-    } catch (e) {
-      debugPrint('Error picking logo: $e');
-    }
-  }
-
-  Future<void> _pickBackgroundImage() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-      if (result != null) {
-        setState(() => _backgroundImageFile = File(result.files.single.path!));
-      }
-    } catch (e) {
-      debugPrint('Error picking background: $e');
-    }
-  }
-
-  Future<void> _pickAccreditationCert() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-      );
-      if (result != null) {
-        setState(
-          () => _accreditationCertFile = File(result.files.single.path!),
-        );
-      }
-    } catch (e) {
-      debugPrint('Error picking certificate: $e');
-    }
-  }
-
-  Future<void> _pickAuthorizedPersonPhoto() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-      if (result != null) {
-        setState(
-          () => _authorizedPersonPhotoFile = File(result.files.single.path!),
-        );
-      }
-    } catch (e) {
-      debugPrint('Error picking photo: $e');
-    }
-  }
-
   Future<void> _pickQRCode() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -1216,7 +1155,7 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: AppTheme.mediumGray.withOpacity(0.5),
+                color: AppTheme.mediumGray.withValues(alpha: 0.5),
               ),
             ),
             focusedBorder: OutlineInputBorder(

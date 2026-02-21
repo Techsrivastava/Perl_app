@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/services/notification_service.dart';
 
 class ConsultantNotificationsScreen extends StatefulWidget {
   const ConsultantNotificationsScreen({super.key});
@@ -21,99 +22,43 @@ class _ConsultantNotificationsScreenState
     'Agent Activity',
   ];
 
-  final List<Map<String, dynamic>> _notifications = [
-    {
-      'id': 9001,
-      'category': 'Admissions',
-      'title': 'New Admission Application',
-      'message':
-          '🎓 New admission application received for BNYS – Sunrise University.',
-      'student': 'Neeraj Patel',
-      'relatedId': 'STU_4520',
-      'priority': 'High',
-      'timestamp': DateTime(2025, 11, 7, 10, 32),
-      'isRead': false,
-      'action': 'Submitted',
-    },
-    {
-      'id': 9002,
-      'category': 'Payments',
-      'title': 'Payment Verified',
-      'message': '🧾 Payment for Amit Singh verified successfully.',
-      'student': 'Amit Singh',
-      'relatedId': 'PAY_9032',
-      'priority': 'High',
-      'timestamp': DateTime(2025, 11, 7, 9, 15),
-      'isRead': false,
-      'action': 'Verified',
-    },
-    {
-      'id': 9003,
-      'category': 'University Updates',
-      'title': 'Fee Structure Updated',
-      'message': '🏫 Sunrise University has updated BNYS fee structure.',
-      'university': 'Sunrise University',
-      'priority': 'Medium',
-      'timestamp': DateTime(2025, 11, 6, 18, 5),
-      'isRead': true,
-      'action': 'Fee Update',
-    },
-    {
-      'id': 9004,
-      'category': 'Reverted Applications',
-      'title': 'Document Missing',
-      'message':
-          '🔁 Rohit Sharma’s admission reverted — Upload missing mark sheet.',
-      'student': 'Rohit Sharma',
-      'priority': 'High',
-      'timestamp': DateTime(2025, 11, 5, 15, 40),
-      'isRead': false,
-      'action': 'Document Required',
-    },
-    {
-      'id': 9005,
-      'category': 'Agent Activity',
-      'title': 'New Lead Added',
-      'message': '👤 Agent Saurabh Yadav added a new lead – BNYS Student.',
-      'agent': 'Saurabh Yadav',
-      'priority': 'Low',
-      'timestamp': DateTime(2025, 11, 7, 8, 20),
-      'isRead': false,
-      'action': 'Lead Added',
-    },
-    {
-      'id': 9006,
-      'category': 'Payments',
-      'title': 'Payment Rejected',
-      'message':
-          '🚫 Payment rejected — incorrect receipt uploaded for Priya Verma.',
-      'student': 'Priya Verma',
-      'priority': 'High',
-      'timestamp': DateTime(2025, 11, 4, 20, 10),
-      'isRead': true,
-      'action': 'Rejected',
-    },
-    {
-      'id': 9007,
-      'category': 'Agent Activity',
-      'title': 'Fee Receipt Uploaded',
-      'message': '💳 Fee receipt uploaded by Agent #102 for Rahul Kumar.',
-      'agent': 'Agent #102',
-      'priority': 'Medium',
-      'timestamp': DateTime(2025, 11, 3, 17, 30),
-      'isRead': true,
-      'action': 'Payment Upload',
-    },
-  ];
-
-  final Set<String> _selectedPriorities = {'All'};
-  bool _showUnreadOnly = false;
+  bool _isLoading = true;
+  List<dynamic> _notifications = [];
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
+    _loadNotifications();
   }
+
+  Future<void> _loadNotifications() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final notifications = await NotificationService.getNotifications();
+      if (mounted) {
+        setState(() {
+          _notifications = notifications;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  final Set<String> _selectedPriorities = {'All'};
+  bool _showUnreadOnly = false;
 
   @override
   void dispose() {
@@ -147,13 +92,17 @@ class _ConsultantNotificationsScreenState
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.3),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.notifications_active_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 12),
             Column(
@@ -169,10 +118,23 @@ class _ConsultantNotificationsScreenState
                   ),
                 ),
                 Text(
-                  unreadCount > 0 ? '$unreadCount unread' : 'All caught up!',
+                  _isLoading
+                      ? 'Updating...'
+                      : _notifications
+                                .where((n) => !(n['isRead'] ?? false))
+                                .length >
+                            0
+                      ? '${_notifications.where((n) => !(n['isRead'] ?? false)).length} unread'
+                      : 'All caught up!',
                   style: TextStyle(
                     fontSize: 11,
-                    color: unreadCount > 0 ? Colors.red : Colors.green,
+                    color:
+                        _notifications
+                                .where((n) => !(n['isRead'] ?? false))
+                                .length >
+                            0
+                        ? Colors.red
+                        : Colors.green,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -185,12 +147,16 @@ class _ConsultantNotificationsScreenState
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withOpacity(0.1),
+              color: AppTheme.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: IconButton(
               tooltip: 'Filter',
-              icon: const Icon(Icons.tune_rounded, size: 20, color: AppTheme.primaryBlue),
+              icon: const Icon(
+                Icons.tune_rounded,
+                size: 20,
+                color: AppTheme.primaryBlue,
+              ),
               onPressed: _openFilterBottomSheet,
             ),
           ),
@@ -198,12 +164,16 @@ class _ConsultantNotificationsScreenState
           Container(
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: IconButton(
               tooltip: 'Export',
-              icon: const Icon(Icons.download_rounded, size: 20, color: Colors.green),
+              icon: const Icon(
+                Icons.download_rounded,
+                size: 20,
+                color: Colors.green,
+              ),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -229,40 +199,75 @@ class _ConsultantNotificationsScreenState
               children: [
                 // Action buttons row
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: unreadCount > 0 
-                                ? AppTheme.primaryBlue.withOpacity(0.08)
-                                : Colors.green.withOpacity(0.08),
+                            color: unreadCount > 0
+                                ? AppTheme.primaryBlue.withValues(alpha: 0.08)
+                                : Colors.green.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: unreadCount > 0 
-                                  ? AppTheme.primaryBlue.withOpacity(0.2)
-                                  : Colors.green.withOpacity(0.2),
+                              color: unreadCount > 0
+                                  ? AppTheme.primaryBlue.withValues(alpha: 0.2)
+                                  : Colors.green.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                unreadCount > 0 ? Icons.mark_email_unread : Icons.check_circle_outline,
+                                _notifications
+                                            .where(
+                                              (n) => !(n['isRead'] ?? false),
+                                            )
+                                            .length >
+                                        0
+                                    ? Icons.mark_email_unread
+                                    : Icons.check_circle_outline,
                                 size: 16,
-                                color: unreadCount > 0 ? AppTheme.primaryBlue : Colors.green,
+                                color:
+                                    _notifications
+                                            .where(
+                                              (n) => !(n['isRead'] ?? false),
+                                            )
+                                            .length >
+                                        0
+                                    ? AppTheme.primaryBlue
+                                    : Colors.green,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  unreadCount > 0
-                                      ? 'You have $unreadCount new notifications'
+                                  _notifications
+                                              .where(
+                                                (n) => !(n['isRead'] ?? false),
+                                              )
+                                              .length >
+                                          0
+                                      ? 'You have ${_notifications.where((n) => !(n['isRead'] ?? false)).length} new notifications'
                                       : '✨ All notifications read!',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: unreadCount > 0 ? AppTheme.primaryBlue : Colors.green,
+                                    color:
+                                        _notifications
+                                                .where(
+                                                  (n) =>
+                                                      !(n['isRead'] ?? false),
+                                                )
+                                                .length >
+                                            0
+                                        ? AppTheme.primaryBlue
+                                        : Colors.green,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -273,25 +278,37 @@ class _ConsultantNotificationsScreenState
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton.icon(
-                        onPressed: () => _markAllRead(_tabs[_tabController.index]),
+                        onPressed: () =>
+                            _markAllRead(_tabs[_tabController.index]),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryBlue,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         icon: const Icon(Icons.done_all, size: 16),
-                        label: const Text('Mark Read', style: TextStyle(fontSize: 11)),
+                        label: const Text(
+                          'Mark Read',
+                          style: TextStyle(fontSize: 11),
+                        ),
                       ),
                       const SizedBox(width: 6),
                       IconButton(
-                        onPressed: () => _clearCategory(_tabs[_tabController.index]),
-                        icon: const Icon(Icons.delete_sweep_outlined, color: Colors.red, size: 20),
+                        onPressed: () =>
+                            _clearCategory(_tabs[_tabController.index]),
+                        icon: const Icon(
+                          Icons.delete_sweep_outlined,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.red.withOpacity(0.1),
+                          backgroundColor: Colors.red.withValues(alpha: 0.1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -323,10 +340,29 @@ class _ConsultantNotificationsScreenState
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: _tabs.map(_buildTabContent).toList(),
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Error: $_errorMessage',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadNotifications,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          : TabBarView(
+              controller: _tabController,
+              children: _tabs.map(_buildTabContent).toList(),
+            ),
     );
   }
 
@@ -347,18 +383,24 @@ class _ConsultantNotificationsScreenState
     );
   }
 
-  List<Map<String, dynamic>> _filteredNotifications(String category) {
+  List<dynamic> _filteredNotifications(String category) {
     return _notifications.where((notification) {
       final matchesCategory = notification['category'] == category;
-      final matchesRead = !_showUnreadOnly || !(notification['isRead'] as bool);
+      final matchesRead =
+          !_showUnreadOnly || !(notification['isRead'] ?? false);
       final matchesPriority =
           _selectedPriorities.contains('All') ||
-          _selectedPriorities.contains(notification['priority']);
+          _selectedPriorities.contains(notification['priority'] ?? 'Low');
       return matchesCategory && matchesRead && matchesPriority;
-    }).toList()..sort(
-      (a, b) =>
-          (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime),
-    );
+    }).toList()..sort((a, b) {
+      final aTime = a['createdAt'] != null
+          ? DateTime.parse(a['createdAt'])
+          : DateTime.now();
+      final bTime = b['createdAt'] != null
+          ? DateTime.parse(b['createdAt'])
+          : DateTime.now();
+      return bTime.compareTo(aTime);
+    });
   }
 
   Widget _buildEmptyState(String category) {
@@ -399,7 +441,7 @@ class _ConsultantNotificationsScreenState
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 36, color: color),
@@ -421,12 +463,16 @@ class _ConsultantNotificationsScreenState
     );
   }
 
-  Widget _buildNotificationCard(Map<String, dynamic> notification) {
-    final bool isRead = notification['isRead'] as bool;
-    final priority = notification['priority'] as String;
-    final DateTime timestamp = notification['timestamp'] as DateTime;
+  Widget _buildNotificationCard(dynamic notification) {
+    final bool isRead = notification['isRead'] ?? false;
+    final priority = notification['priority'] ?? 'Low';
+    final DateTime timestamp = notification['createdAt'] != null
+        ? DateTime.parse(notification['createdAt'])
+        : DateTime.now();
     final color = _priorityColor(priority);
-    final categoryIcon = _getCategoryIcon(notification['category'] as String);
+    final categoryIcon = _getCategoryIcon(
+      notification['category'] ?? 'General',
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -434,12 +480,16 @@ class _ConsultantNotificationsScreenState
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isRead ? const Color(0xFFF3F4F6) : color.withOpacity(0.3),
+          color: isRead
+              ? const Color(0xFFF3F4F6)
+              : color.withValues(alpha: 0.3),
           width: isRead ? 1 : 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: isRead ? Colors.black.withOpacity(0.03) : color.withOpacity(0.08),
+            color: isRead
+                ? Colors.black.withValues(alpha: 0.03)
+                : color.withValues(alpha: 0.08),
             blurRadius: isRead ? 8 : 12,
             offset: const Offset(0, 2),
           ),
@@ -461,14 +511,17 @@ class _ConsultantNotificationsScreenState
                   height: 52,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [categoryIcon.$2.withOpacity(0.9), categoryIcon.$2],
+                      colors: [
+                        categoryIcon.$2.withValues(alpha: 0.9),
+                        categoryIcon.$2,
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: categoryIcon.$2.withOpacity(0.3),
+                        color: categoryIcon.$2.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -507,7 +560,7 @@ class _ConsultantNotificationsScreenState
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: color.withOpacity(0.4),
+                                    color: color.withValues(alpha: 0.4),
                                     blurRadius: 4,
                                     spreadRadius: 1,
                                   ),
@@ -521,9 +574,12 @@ class _ConsultantNotificationsScreenState
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: categoryIcon.$2.withOpacity(0.1),
+                              color: categoryIcon.$2.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -565,7 +621,11 @@ class _ConsultantNotificationsScreenState
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.access_time_rounded, size: 13, color: AppTheme.mediumGray),
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 13,
+                                color: AppTheme.mediumGray,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 _formatTimestamp(timestamp),
@@ -578,15 +638,22 @@ class _ConsultantNotificationsScreenState
                             ],
                           ),
                           PopupMenuButton<String>(
-                            onSelected: (value) => _handleAction(value, notification),
-                            icon: Icon(Icons.more_vert, size: 18, color: AppTheme.mediumGray),
+                            onSelected: (value) =>
+                                _handleAction(value, notification),
+                            icon: Icon(
+                              Icons.more_vert,
+                              size: 18,
+                              color: AppTheme.mediumGray,
+                            ),
                             itemBuilder: (context) => [
                               PopupMenuItem<String>(
                                 value: isRead ? 'mark-unread' : 'mark-read',
                                 child: Row(
                                   children: [
                                     Icon(
-                                      isRead ? Icons.mark_email_unread_outlined : Icons.mark_email_read_outlined,
+                                      isRead
+                                          ? Icons.mark_email_unread_outlined
+                                          : Icons.mark_email_read_outlined,
                                       size: 18,
                                     ),
                                     const SizedBox(width: 8),
@@ -608,9 +675,16 @@ class _ConsultantNotificationsScreenState
                                 value: 'delete',
                                 child: Row(
                                   children: [
-                                    Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                    Icon(
+                                      Icons.delete_outline,
+                                      size: 18,
+                                      color: Colors.red,
+                                    ),
                                     SizedBox(width: 8),
-                                    Text('Delete', style: TextStyle(color: Colors.red)),
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -653,7 +727,7 @@ class _ConsultantNotificationsScreenState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -706,14 +780,13 @@ class _ConsultantNotificationsScreenState
     return chips;
   }
 
-
   Widget _buildPriorityChip(String priority, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

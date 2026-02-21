@@ -117,9 +117,9 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -211,9 +211,9 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +250,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -327,7 +327,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                 color: color,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -449,7 +449,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -462,7 +462,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           childrenPadding: EdgeInsets.zero,
           leading: CircleAvatar(
             radius: 18,
-            backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
+            backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
             child: Text(
               agent.isNotEmpty ? agent[0].toUpperCase() : '?',
               style: TextStyle(
@@ -532,7 +532,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.person_outline, size: 16, color: statusColor),
@@ -593,7 +593,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -641,7 +641,7 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.12),
+                    color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text(

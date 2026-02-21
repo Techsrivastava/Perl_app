@@ -116,15 +116,13 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
           a.email.toLowerCase().contains(_searchQuery.toLowerCase());
 
       final tabIndex = _tabController.index;
-      if (tabIndex == 6) {
-        return a.blocked && matchesSearch; // Blocked tab
-      }
-      if (tabIndex == 0) return matchesSearch; // All Agents tab
-      // For simplified demo, just returning search match.
-      // Ideally implement specific tab filters:
-      // Tab 1: All
-      // Tab 6: Blocked
-      // Others: Assign, Commissions etc might need different logic
+      if (tabIndex == 0) return matchesSearch; // All
+      if (tabIndex == 6) return a.blocked && matchesSearch; // Blocked
+
+      // Filter by status for other tabs if they map to specific statuses
+      // For now, mapping some tabs to statuses
+      if (tabIndex == 1)
+        return matchesSearch; // Add Agent tab - shown as form anyway
       return matchesSearch;
     }).toList();
   }
@@ -457,7 +455,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: statusColor.withOpacity(0.3), width: 1.5),
+        side: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -472,8 +470,8 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        statusColor.withOpacity(0.2),
-                        statusColor.withOpacity(0.05),
+                        statusColor.withValues(alpha: 0.2),
+                        statusColor.withValues(alpha: 0.05),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -502,7 +500,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.1),
+                              color: statusColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: statusColor),
                             ),
@@ -642,7 +640,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       side: BorderSide(
-                        color: AppTheme.primaryBlue.withOpacity(0.5),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.5),
                       ),
                       foregroundColor: AppTheme.primaryBlue,
                     ),

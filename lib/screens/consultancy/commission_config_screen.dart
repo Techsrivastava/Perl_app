@@ -72,7 +72,7 @@ class _CommissionConfigScreenState extends State<CommissionConfigScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -294,7 +294,7 @@ class _CommissionConfigScreenState extends State<CommissionConfigScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -356,7 +356,7 @@ class _CommissionConfigScreenState extends State<CommissionConfigScreen> {
       decoration: BoxDecoration(
         color: AppTheme.lightGray,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.mediumGray.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.mediumGray.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

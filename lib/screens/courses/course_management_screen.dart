@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/models/course_model.dart';
 import 'package:educonnect/models/stream_model.dart';
+import 'package:educonnect/services/course_service.dart';
 
 class CourseManagementScreen extends StatefulWidget {
   const CourseManagementScreen({super.key});
@@ -22,97 +23,25 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
   }
 
   Future<void> _loadCourses() async {
-    setState(() => _isLoading = true);
-
-    // Simulate loading delay
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Mock data with streams
-    final courses = [
-      Course(
-        id: '1',
-        name: 'Bachelor of Technology',
-        abbreviation: 'B.Tech',
-        code: 'BTECH01',
-        status: 'published',
-        department: 'Engineering',
-        duration: '4 years',
-        totalSeats: 120,
-        availableSeats: 45,
-        streams: [
-          CourseStream(
-            id: 's1',
-            courseId: '1',
-            name: 'Computer Science Engineering',
-            abbreviation: 'CSE',
-            totalSeats: 60,
-            availableSeats: 20,
-            status: 'published',
-            subjects: ['Data Structures', 'Algorithms', 'Database Systems'],
+    try {
+      final results = await CourseService.getCourses();
+      if (mounted) {
+        setState(() {
+          _courses = results.map((json) => Course.fromJson(json)).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading courses: $e'),
+            backgroundColor: AppTheme.error,
           ),
-          CourseStream(
-            id: 's2',
-            courseId: '1',
-            name: 'Mechanical Engineering',
-            abbreviation: 'ME',
-            totalSeats: 60,
-            availableSeats: 25,
-            status: 'draft',
-            subjects: ['Thermodynamics', 'Fluid Mechanics', 'Machine Design'],
-          ),
-        ],
-      ),
-      Course(
-        id: '2',
-        name: 'Master of Business Administration',
-        abbreviation: 'MBA',
-        code: 'MBA01',
-        status: 'draft',
-        department: 'Business',
-        duration: '2 years',
-        totalSeats: 60,
-        availableSeats: 30,
-        streams: [
-          CourseStream(
-            id: 's3',
-            courseId: '2',
-            name: 'Finance',
-            abbreviation: 'FIN',
-            totalSeats: 30,
-            availableSeats: 15,
-            status: 'published',
-            subjects: ['Financial Management', 'Investment Analysis'],
-          ),
-          CourseStream(
-            id: 's4',
-            courseId: '2',
-            name: 'Marketing',
-            abbreviation: 'MKT',
-            totalSeats: 30,
-            availableSeats: 15,
-            status: 'published',
-            subjects: ['Digital Marketing', 'Brand Management'],
-          ),
-        ],
-      ),
-      Course(
-        id: '3',
-        name: 'Bachelor of Computer Applications',
-        abbreviation: 'BCA',
-        code: 'BCA01',
-        status: 'published',
-        department: 'Computer Science',
-        duration: '3 years',
-        totalSeats: 90,
-        availableSeats: 35,
-        streams: [],
-      ),
-    ];
-
-    setState(() {
-      _courses = courses;
-      _isLoading = false;
-    });
+        );
+      }
+    }
   }
 
   void _toggleCourseStatus(Course course) {
@@ -180,9 +109,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
 
   void _editCourse(Course course) {
     // Navigate to course edit screen
+    // For now, redirect to ComprehensiveAddCourseScreen in edit mode or show detail
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Course edit screen - Coming soon!'),
+        content: Text('Course details available in University Portal'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -192,7 +122,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     // Navigate to stream edit screen
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Stream edit screen - Coming soon!'),
+        content: Text('Stream details available in University Portal'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -210,12 +140,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Add new course - Coming soon!'),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              Navigator.pushNamed(context, '/comprehensive-add-course');
             },
             tooltip: 'Add Course',
           ),
@@ -273,7 +198,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       elevation: isSelected ? 4 : 1,
-      color: isSelected ? AppTheme.primaryBlue.withOpacity(0.1) : Colors.white,
+      color: isSelected
+          ? AppTheme.primaryBlue.withValues(alpha: 0.1)
+          : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -452,12 +379,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
               IconButton(
                 icon: const Icon(Icons.add_circle, color: AppTheme.primaryBlue),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Add new stream - Coming soon!'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/comprehensive-add-course');
                 },
                 tooltip: 'Add Stream',
               ),
@@ -489,7 +411,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Add new stream - Coming soon!'),
+                              content: Text(
+                                'Add new stream in Comprehensive Add Course',
+                              ),
                               behavior: SnackBarBehavior.floating,
                             ),
                           );

@@ -19,7 +19,7 @@ class ModernBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isOutlined ? Colors.transparent : color.withOpacity(0.1),
+        color: isOutlined ? Colors.transparent : color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: isOutlined ? Border.all(color: color, width: 1.5) : null,
       ),

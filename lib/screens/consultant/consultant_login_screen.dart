@@ -59,11 +59,8 @@ class _ConsultantLoginScreenState extends State<ConsultantLoginScreen> {
             Navigator.pushNamed(context, '/verification', arguments: email);
           }
         } else {
-          // Registration logic (can be implemented if needed)
-          // For now, focusing on login
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Registration is coming soon')),
-          );
+          // Redirect to registration screen
+          Navigator.pushNamed(context, '/consultant-comprehensive-register');
         }
       } catch (e) {
         if (!mounted) return;

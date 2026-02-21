@@ -19,7 +19,6 @@ class ConsultancyScreen extends StatefulWidget {
 }
 
 class _ConsultancyScreenState extends State<ConsultancyScreen> {
-  // final mockData = MockDataService(); // Removed
   List<Consultancy> _consultancies = [];
   List<Consultancy> _filteredConsultancies = [];
   bool _isLoading = true;
@@ -295,9 +294,9 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

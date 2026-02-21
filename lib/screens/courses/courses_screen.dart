@@ -163,7 +163,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
       padding: EdgeInsets.all(AppConstants.defaultPadding / 1.5),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.primaryBlue.withOpacity(0.15), AppTheme.white],
+          colors: [AppTheme.primaryBlue.withValues(alpha: 0.15), AppTheme.white],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -192,7 +192,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -238,7 +238,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
               label: Text(dept, style: const TextStyle(fontSize: 13)),
               selected: _selectedDepartment == dept,
               onSelected: (_) => _onDepartmentChanged(dept),
-              selectedColor: AppTheme.primaryBlue.withOpacity(0.3),
+              selectedColor: AppTheme.primaryBlue.withValues(alpha: 0.3),
               backgroundColor: AppTheme.lightGray,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -421,11 +421,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.lightGray.withOpacity(0.8),
+        color: AppTheme.lightGray.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

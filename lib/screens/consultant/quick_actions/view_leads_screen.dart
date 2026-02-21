@@ -328,7 +328,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -566,7 +566,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: IconButton(
@@ -636,7 +636,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.2),
+                              color: statusColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: statusColor),
                             ),

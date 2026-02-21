@@ -490,6 +490,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Colors.blue,
                 isSmallPhone,
                 isMobile,
+                onTap: () {
+                  final role = _userData?['role'];
+                  if (role == 'UNIVERSITY') {
+                    Navigator.pushNamed(context, '/university-admissions');
+                  } else if (role == 'CONSULTANT') {
+                    Navigator.pushNamed(context, '/consultant-admissions');
+                  }
+                },
               ),
             ),
             SizedBox(width: spacing),
@@ -501,6 +509,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Colors.green,
                 isSmallPhone,
                 isMobile,
+                onTap: () {
+                  final role = _userData?['role'];
+                  if (role == 'UNIVERSITY') {
+                    Navigator.pushNamed(context, '/university-reports');
+                  } else if (role == 'CONSULTANT') {
+                    Navigator.pushNamed(context, '/consultant-reports');
+                  }
+                },
               ),
             ),
           ],
@@ -515,8 +531,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
     Color color,
     bool isSmallPhone,
-    bool isMobile,
-  ) {
+    bool isMobile, {
+    required VoidCallback onTap,
+  }) {
     final padding = isSmallPhone ? 10.0 : (isMobile ? 12.0 : 16.0);
     final titleSize = isSmallPhone ? 12.0 : (isMobile ? 13.0 : 15.0);
     final subtitleSize = isSmallPhone ? 10.0 : (isMobile ? 11.0 : 12.0);
@@ -537,7 +554,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: onTap,
           borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
           child: Padding(
             padding: EdgeInsets.all(padding),

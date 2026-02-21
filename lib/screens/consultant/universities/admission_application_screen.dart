@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/services/agent_service.dart';
 
 class AdmissionApplicationScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -26,11 +27,11 @@ class _AdmissionApplicationScreenState
   final String _universityPaymentMode =
       'Share Deduct'; // Share Deduct | Full Fee
 
-  // Mock data - Replace with actual API data
-  final double _universityFee = 80000;
-  final double _displayFee = 120000;
-  final String _consultancyShareType = 'percent';
-  final double _consultancyShareValue = 15;
+  // Dynamic data from course
+  late double _universityFee;
+  late double _displayFee;
+  late String _consultancyShareType;
+  late double _consultancyShareValue;
 
   // Agent data (populated when agent code is entered)
   String? _agentName;
@@ -115,6 +116,22 @@ class _AdmissionApplicationScreenState
     'Delhi',
     'Jammu & Kashmir',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize from course data
+    _universityFee = (widget.course['actualFee'] ?? 80000).toDouble();
+    _displayFee =
+        (widget.course['displayFee'] ?? widget.course['total_fee'] ?? 120000)
+            .toDouble();
+    _consultancyShareType = widget.course['consultancyShareType'] ?? 'percent';
+    _consultancyShareValue = (widget.course['consultancyShareValue'] ?? 15)
+        .toDouble();
+
+    _actualFeeController.text = _displayFee.toStringAsFixed(0);
+    _calculateFinancials();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -571,22 +588,34 @@ class _AdmissionApplicationScreenState
     }
   }
 
-  void _fetchAgentDetails(String agentCode) {
+  Future<void> _fetchAgentDetails(String agentCode) async {
     if (agentCode.isNotEmpty) {
-      setState(() {
-        _agentName = 'Agent Name for $agentCode';
-        _agentShareType = 'percent';
-        _agentShareValue = 25.0;
-        _calculateFinancials();
-      });
+      try {
+        final agent = await AgentService.lookupAgentByCode(agentCode);
+        setState(() {
+          _agentName = agent['name'] ?? 'Unknown Agent';
+          // Assuming the agent object has share info; fallback to defaults
+          _agentShareType = agent['shareType'] ?? 'percent';
+          _agentShareValue = (agent['shareValue'] ?? 20.0).toDouble();
+          _calculateFinancials();
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('✅ Agent found: $_agentName'),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
-        ),
-      );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Agent found: $_agentName'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('❌ Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
   }
 

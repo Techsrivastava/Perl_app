@@ -67,8 +67,8 @@ class _ComprehensiveAddCourseScreenState
   bool _scholarshipAvailable = false;
   File? _scholarshipPolicyFile;
 
-  // Mock Other Fees List (would come from university_fees table)
-  final List<Map<String, dynamic>> _availableOtherFees = [
+  // System Standard Fees (Production Defaults)
+  final List<Map<String, dynamic>> _systemStandardFees = [
     {'id': 1, 'name': 'Registration Fee', 'amount': 2000, 'mandatory': true},
     {'id': 2, 'name': 'Exam Fee', 'amount': 5000, 'mandatory': true},
     {'id': 3, 'name': 'Library Fee', 'amount': 3000, 'mandatory': true},
@@ -88,8 +88,8 @@ class _ComprehensiveAddCourseScreenState
   final String _documentTemplateName = 'Default UG Admission Docs';
   final List<Map<String, dynamic>> _documentRequirements = [];
 
-  // Default Master Document List
-  final List<Map<String, dynamic>> _defaultDocuments = [
+  // System Master Document List (Production Defaults)
+  final List<Map<String, dynamic>> _systemStandardDocuments = [
     {
       'doc_id': 1,
       'name': '10th Marksheet',
@@ -536,7 +536,7 @@ class _ComprehensiveAddCourseScreenState
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ..._availableOtherFees
+                        ..._systemStandardFees
                             .where((f) => f['mandatory'] == true)
                             .map((fee) {
                               final isSelected = selectedIds.contains(
@@ -599,7 +599,7 @@ class _ComprehensiveAddCourseScreenState
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ..._availableOtherFees
+                        ..._systemStandardFees
                             .where((f) => f['mandatory'] == false)
                             .map((fee) {
                               final isSelected = selectedIds.contains(
@@ -653,14 +653,14 @@ class _ComprehensiveAddCourseScreenState
                         onPressed: () {
                           // Update selections
                           setState(() {
-                            _selectedMandatoryFees = _availableOtherFees
+                            _selectedMandatoryFees = _systemStandardFees
                                 .where(
                                   (f) =>
                                       f['mandatory'] == true &&
                                       selectedIds.contains(f['id']),
                                 )
                                 .toList();
-                            _selectedOptionalFees = _availableOtherFees
+                            _selectedOptionalFees = _systemStandardFees
                                 .where(
                                   (f) =>
                                       f['mandatory'] == false &&
@@ -2119,7 +2119,7 @@ class _ComprehensiveAddCourseScreenState
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ..._defaultDocuments
+                        ..._systemStandardDocuments
                             .where((d) => d['mandatory'] == true)
                             .map((doc) {
                               final isSelected = selectedIds.contains(
@@ -2177,7 +2177,7 @@ class _ComprehensiveAddCourseScreenState
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ..._defaultDocuments
+                        ..._systemStandardDocuments
                             .where((d) => d['mandatory'] == false)
                             .map((doc) {
                               final isSelected = selectedIds.contains(
@@ -2237,7 +2237,7 @@ class _ComprehensiveAddCourseScreenState
                           onPressed: () {
                             setState(() {
                               // Add selected documents that aren't already added
-                              for (var doc in _defaultDocuments) {
+                              for (var doc in _systemStandardDocuments) {
                                 if (selectedIds.contains(doc['doc_id']) &&
                                     !_documentRequirements.any(
                                       (d) => d['doc_id'] == doc['doc_id'],

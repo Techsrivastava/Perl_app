@@ -270,7 +270,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                           onChanged: (value) => _toggleActiveStatus(),
                           activeThumbColor: AppTheme.success,
                           inactiveThumbColor: AppTheme.warning,
-                          inactiveTrackColor: AppTheme.warning.withOpacity(0.3),
+                          inactiveTrackColor: AppTheme.warning.withValues(alpha: 0.3),
                         ),
                       ),
                     ],

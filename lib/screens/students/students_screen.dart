@@ -19,7 +19,6 @@ class StudentsScreen extends StatefulWidget {
 }
 
 class _StudentsScreenState extends State<StudentsScreen> {
-  // final mockData = MockDataService(); // Removed mock service
   List<Student> _allStudents = [];
   List<Student> _filteredStudents = [];
   bool _isLoading = true;
@@ -622,9 +621,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -683,10 +682,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
           _filterStudents();
         });
       },
-      backgroundColor: chipColor.withOpacity(0.1),
+      backgroundColor: chipColor.withValues(alpha: 0.1),
       selectedColor: chipColor,
       checkmarkColor: Colors.white,
-      side: BorderSide(color: chipColor.withOpacity(0.5), width: 1),
+      side: BorderSide(color: chipColor.withValues(alpha: 0.5), width: 1),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       labelPadding: EdgeInsets.zero,
     );
@@ -729,10 +728,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withOpacity(0.1),
+                      color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: AppTheme.primaryBlue.withOpacity(0.3),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                         width: 2,
                       ),
                     ),
@@ -822,10 +821,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryBlue.withOpacity(0.05),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: AppTheme.primaryBlue.withOpacity(0.2),
+                          color: AppTheme.primaryBlue.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Column(
@@ -869,10 +868,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.success.withOpacity(0.05),
+                        color: AppTheme.success.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: AppTheme.success.withOpacity(0.2),
+                          color: AppTheme.success.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Column(
@@ -920,7 +919,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.lightGray.withOpacity(0.5),
+                  color: AppTheme.lightGray.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -1331,7 +1330,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
                                           color: AppTheme.primaryBlue
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                           width: 2,
                                         ),
                                       ),

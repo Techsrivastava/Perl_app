@@ -90,52 +90,67 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 // Logo and Title
                 Center(
                   child: Column(
                     children: [
                       Container(
-                        width: 75,
-                        height: 75,
+                        width: 100,
+                        height: 100,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.primaryBlue, AppTheme.darkBlue],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppTheme.white,
+                          shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
                               color: AppTheme.primaryBlue.withValues(
-                                alpha: 0.3,
+                                alpha: 0.15,
                               ),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
+                              blurRadius: 30,
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.school_rounded,
-                          color: AppTheme.white,
-                          size: 38,
+                        child: Center(
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  AppTheme.primaryBlue,
+                                  AppTheme.darkBlue,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: const Icon(
+                              Icons.auto_stories_rounded,
+                              color: AppTheme.white,
+                              size: 36,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 32),
                       const Text(
-                        'Welcome Back',
+                        'EduConnect',
                         style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
                           color: AppTheme.charcoal,
+                          letterSpacing: -0.5,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       const Text(
-                        'Sign in to continue',
+                        'Your Gateway to Academic Excellence',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                           color: AppTheme.mediumGray,
                         ),
                         textAlign: TextAlign.center,
@@ -144,14 +159,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 28),
+                const SizedBox(height: 48),
 
                 // Email Field
                 CustomTextField(
                   label: 'Email Address',
-                  hint: 'Enter your email address',
+                  hint: 'Enter your email',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  prefixIcon: const Icon(Icons.alternate_email_rounded),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
@@ -165,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // Password Field
                 CustomTextField(
@@ -173,12 +189,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   hint: 'Enter your password',
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
+                  prefixIcon: const Icon(Icons.lock_outline_rounded),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded,
                       color: AppTheme.mediumGray,
+                      size: 20,
                     ),
                     onPressed: () {
                       setState(() {
@@ -194,125 +212,65 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
-                const SizedBox(height: 24),
-
-                // Login Button
-                CustomButton(
-                  label: 'Login',
-                  onPressed: _handleLogin,
-                  isLoading: _isLoading,
-                  isFullWidth: true,
-                  icon: Icons.login_rounded,
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: AppTheme.primaryBlue,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-                // Demo Credentials Card
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.primaryBlue.withOpacity(0.1),
-                        AppTheme.darkBlue.withOpacity(0.05),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppTheme.primaryBlue.withOpacity(0.3),
-                      width: 1.5,
-                    ),
+                // Login Button
+                Hero(
+                  tag: 'login_btn',
+                  child: CustomButton(
+                    label: 'Sign In',
+                    onPressed: _handleLogin,
+                    isLoading: _isLoading,
+                    isFullWidth: true,
+                    icon: Icons.arrow_forward_rounded,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryBlue,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Icon(
-                              Icons.lock_outline,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'Demo Credentials',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.charcoal,
-                            ),
-                          ),
-                        ],
+                ),
+
+                const SizedBox(height: 40),
+
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Divider(color: AppTheme.lightGray, thickness: 1.5),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'SECURE ACCESS',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.mediumGray.withValues(alpha: 0.5),
+                          letterSpacing: 1.5,
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      const Divider(height: 1),
-                      const SizedBox(height: 12),
-                      _buildCredentialRow(
-                        '🏛️ University',
-                        'university@example.com / 123456',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildCredentialRow(
-                        '💼 Consultant',
-                        'consultant@example.com / 123456',
-                      ),
-                    ],
-                  ),
+                    ),
+                    const Expanded(
+                      child: Divider(color: AppTheme.lightGray, thickness: 1.5),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildCredentialRow(String label, String email) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.charcoal,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.email_outlined,
-                    size: 12,
-                    color: AppTheme.primaryBlue,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      email,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppTheme.mediumGray,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

@@ -35,7 +35,10 @@ class ModernEmptyState extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color.withOpacity(0.2), color.withOpacity(0.05)],
+                  colors: [
+                    color.withValues(alpha: 0.2),
+                    color.withValues(alpha: 0.05),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -47,30 +50,26 @@ class ModernEmptyState extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [color.withOpacity(0.9), color],
+                      colors: [color.withValues(alpha: 0.9), color],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: color.withOpacity(0.3),
+                        color: color.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
                     ],
                   ),
-                  child: Icon(
-                    icon,
-                    size: 40,
-                    color: Colors.white,
-                  ),
+                  child: Icon(icon, size: 40, color: Colors.white),
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Title
             Text(
               title,
@@ -82,9 +81,9 @@ class ModernEmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Subtitle
             Text(
               subtitle,
@@ -95,11 +94,14 @@ class ModernEmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             if (showComingSoon) ...[
               const SizedBox(height: 24),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Colors.amber.shade400, Colors.orange.shade500],
@@ -107,7 +109,7 @@ class ModernEmptyState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.4),
+                      color: Colors.amber.withValues(alpha: 0.4),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -116,7 +118,11 @@ class ModernEmptyState extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.access_time, color: Colors.white, size: 18),
+                    const Icon(
+                      Icons.access_time,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                     const SizedBox(width: 8),
                     const Text(
                       'Coming Soon',
@@ -131,7 +137,7 @@ class ModernEmptyState extends StatelessWidget {
                 ),
               ),
             ],
-            
+
             if (actionText != null && onActionPressed != null) ...[
               const SizedBox(height: 32),
               ElevatedButton.icon(
@@ -139,7 +145,10 @@ class ModernEmptyState extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

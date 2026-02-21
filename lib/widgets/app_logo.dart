@@ -96,7 +96,7 @@ class AppLogoWithText extends StatelessWidget {
           'University & Admission Management',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: useWhiteLogo
-                ? Colors.white.withOpacity(0.8)
+                ? Colors.white.withValues(alpha: 0.8)
                 : Colors.grey[600],
           ),
           textAlign: TextAlign.center,

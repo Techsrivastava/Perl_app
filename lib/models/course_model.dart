@@ -192,9 +192,9 @@ class Course {
       abbreviation: json['abbreviation'],
       code: json['code'],
       status: json['status'],
-      // streams: (json['streams'] as List?)
-      //     ?.map((e) => CourseStream.fromJson(e))
-      //     .toList(),
+      streams: (json['streams'] as List?)
+          ?.map((e) => CourseStream.fromJson(e))
+          .toList(),
       department: json['department'],
       degreeType: json['degreeType'],
       duration: json['duration'],

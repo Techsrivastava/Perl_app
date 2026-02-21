@@ -146,7 +146,7 @@ class _NavItemState extends State<_NavItem>
           child: InkWell(
             onTap: widget.onTap,
             splashColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
-            highlightColor: AppTheme.primaryBlue.withOpacity(0.05),
+            highlightColor: AppTheme.primaryBlue.withValues(alpha: 0.05),
             child: ClipRect(
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -167,8 +167,8 @@ class _NavItemState extends State<_NavItem>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              AppTheme.primaryBlue.withOpacity(0.2),
-                              AppTheme.primaryBlue.withOpacity(0.0),
+                              AppTheme.primaryBlue.withValues(alpha: 0.2),
+                              AppTheme.primaryBlue.withValues(alpha: 0.0),
                             ],
                           ),
                         ),
@@ -182,13 +182,13 @@ class _NavItemState extends State<_NavItem>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: widget.isSelected
-                                ? AppTheme.primaryBlue.withOpacity(0.15)
+                                ? AppTheme.primaryBlue.withValues(alpha: 0.15)
                                 : Colors.transparent,
                             boxShadow: widget.isSelected
                                 ? [
                                     BoxShadow(
-                                      color: AppTheme.primaryBlue.withOpacity(
-                                        0.3,
+                                      color: AppTheme.primaryBlue.withValues(
+                                        alpha: 0.3,
                                       ),
                                       blurRadius: 8,
                                       spreadRadius: 2,
@@ -243,8 +243,8 @@ class _NavItemState extends State<_NavItem>
                                 borderRadius: BorderRadius.circular(2),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppTheme.primaryBlue.withOpacity(
-                                      0.4,
+                                    color: AppTheme.primaryBlue.withValues(
+                                      alpha: 0.4,
                                     ),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),

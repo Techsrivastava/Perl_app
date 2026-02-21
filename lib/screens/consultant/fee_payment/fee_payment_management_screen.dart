@@ -218,7 +218,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -370,7 +370,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 6,
                   offset: const Offset(0, 1),
                 ),
@@ -486,9 +486,9 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,7 +533,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
         border: Border.all(color: Colors.grey[200]!, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -571,9 +571,11 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: statusColor.withOpacity(0.3)),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     record['status'],
@@ -692,9 +694,9 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.06),
+        color: color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.15), width: 0.5),
+        border: Border.all(color: color.withValues(alpha: 0.15), width: 0.5),
       ),
       child: Column(
         children: [
@@ -720,32 +722,6 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
     );
   }
 
-  // Helper method: Amount Box Widget
-  Widget _buildAmountBox(String label, String amount, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
-          const SizedBox(height: 4),
-          Text(
-            amount,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // Tab 2: Upload Fee Receipt
   Widget _buildUploadTab() {
     return SingleChildScrollView(
@@ -756,9 +732,9 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withOpacity(0.08),
+              color: AppTheme.primaryBlue.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
+              border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.2)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -769,7 +745,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                     color: Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppTheme.primaryBlue.withOpacity(0.3),
+                      color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Icon(
@@ -940,7 +916,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                     border: Border.all(color: Colors.grey[300]!, width: 1.2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
+                        color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 6,
                         offset: const Offset(0, 1),
                       ),
@@ -1346,7 +1322,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
               gradient: LinearGradient(
                 colors: [
                   AppTheme.primaryBlue,
-                  AppTheme.primaryBlue.withOpacity(0.7),
+                  AppTheme.primaryBlue.withValues(alpha: 0.7),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
@@ -1582,12 +1558,12 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue.withOpacity(0.1),
-                  Colors.blue.withOpacity(0.05),
+                  Colors.blue.withValues(alpha: 0.1),
+                  Colors.blue.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withOpacity(0.3)),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
             ),
             child: const Row(
               children: [
@@ -1748,7 +1724,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: (report['color'] as Color).withOpacity(0.1),
+                            color: (report['color'] as Color).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

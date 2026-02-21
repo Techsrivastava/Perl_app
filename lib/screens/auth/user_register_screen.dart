@@ -108,7 +108,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primaryBlue.withOpacity(0.3),
+                              color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),
@@ -341,7 +341,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,
-                      color: AppTheme.mediumGray.withOpacity(0.8),
+                      color: AppTheme.mediumGray.withValues(alpha: 0.8),
                       height: 1.4,
                     ),
                   ),
@@ -375,20 +375,20 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
           border: Border.all(
             color: isSelected
                 ? AppTheme.primaryBlue
-                : AppTheme.mediumGray.withOpacity(0.3),
+                : AppTheme.mediumGray.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.4),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
