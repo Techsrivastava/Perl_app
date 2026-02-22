@@ -33,11 +33,9 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
     super.dispose();
   }
 
-  bool _isLoading = false;
-
   Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      setState(() {});
 
       try {
         final Map<String, dynamic> agentData = {
@@ -92,7 +90,7 @@ class _AddAgentScreenState extends State<AddAgentScreen> {
           ),
         );
       } finally {
-        if (mounted) setState(() => _isLoading = false);
+        if (mounted) setState(() {});
       }
     }
   }

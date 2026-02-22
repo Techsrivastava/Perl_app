@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
+import 'package:educonnect/config/navigation_config.dart';
 
 class AppBottomNav extends StatefulWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final List<NavItem> items;
 
   const AppBottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    required this.items,
   });
 
   @override
@@ -18,6 +21,8 @@ class AppBottomNav extends StatefulWidget {
 class _AppBottomNavState extends State<AppBottomNav> {
   @override
   Widget build(BuildContext context) {
+    if (widget.items.isEmpty) return const SizedBox.shrink();
+
     final isSmallScreen = MediaQuery.of(context).size.width < 400;
 
     return Container(
@@ -41,43 +46,16 @@ class _AppBottomNavState extends State<AppBottomNav> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _NavItem(
-            icon: Icons.space_dashboard_rounded,
-            label: 'Dashboard',
-            isSelected: widget.currentIndex == 0,
-            onTap: () => widget.onTap(0),
+        children: List.generate(widget.items.length, (index) {
+          final item = widget.items[index];
+          return _NavItem(
+            icon: item.icon,
+            label: item.title,
+            isSelected: widget.currentIndex == index,
+            onTap: () => widget.onTap(index),
             isSmallScreen: isSmallScreen,
-          ),
-          _NavItem(
-            icon: Icons.library_books_rounded,
-            label: 'Courses',
-            isSelected: widget.currentIndex == 1,
-            onTap: () => widget.onTap(1),
-            isSmallScreen: isSmallScreen,
-          ),
-          _NavItem(
-            icon: Icons.group_rounded,
-            label: 'Students',
-            isSelected: widget.currentIndex == 2,
-            onTap: () => widget.onTap(2),
-            isSmallScreen: isSmallScreen,
-          ),
-          _NavItem(
-            icon: Icons.work_rounded,
-            label: 'Consult.',
-            isSelected: widget.currentIndex == 3,
-            onTap: () => widget.onTap(3),
-            isSmallScreen: isSmallScreen,
-          ),
-          _NavItem(
-            icon: Icons.account_balance_rounded,
-            label: 'Univ.',
-            isSelected: widget.currentIndex == 4,
-            onTap: () => widget.onTap(4),
-            isSmallScreen: isSmallScreen,
-          ),
-        ],
+          );
+        }),
       ),
     );
   }

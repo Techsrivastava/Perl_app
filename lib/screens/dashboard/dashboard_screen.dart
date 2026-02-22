@@ -89,22 +89,57 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // Adapt data structure based on role/response
-    // Ensure we have defaults if data is missing
+    // Role-based Stats Mapping
+    final role = _userData?['role'] ?? 'USER';
     final stats = _dashboardData ?? {};
 
-    // Example mapping - Adjust based on actual API response structure
-    // University: coursesCount, studentsApplied, pendingApplications
-    // Consultant: leadsCount, applicationsProcessed
+    String stat1Label = 'Total';
+    String stat1Value = '0';
+    String stat2Label = 'Students';
+    String stat2Value = '0';
+    String stat3Label = 'Applications';
+    String stat3Value = '0';
+    String stat4Label = 'Pending';
+    String stat4Value = '0';
 
-    // For now, mapping generic keys or using what's available
-    final stat1Value =
-        stats['totalCourses']?.toString() ??
-        stats['totalUniversities']?.toString() ??
-        '0';
-    final stat2Value = stats['totalStudents']?.toString() ?? '0';
-    final stat3Value = stats['totalApplications']?.toString() ?? '0';
-    final stat4Value = stats['pendingApplications']?.toString() ?? '0';
+    if (role == 'UNIVERSITY') {
+      stat1Label = 'Courses';
+      stat1Value = stats['totalCourses']?.toString() ?? '0';
+      stat2Label = 'Applied';
+      stat2Value = stats['studentsApplied']?.toString() ?? '0';
+      stat3Label = 'Admissions';
+      stat3Value = stats['totalAdmissions']?.toString() ?? '0';
+      stat4Label = 'Pending';
+      stat4Value = stats['pendingApplications']?.toString() ?? '0';
+    } else if (role == 'CONSULTANT') {
+      stat1Label = 'Leads';
+      stat1Value = stats['totalLeads']?.toString() ?? '0';
+      stat2Label = 'Agents';
+      stat2Value = stats['totalAgents']?.toString() ?? '0';
+      stat3Label = 'Applied';
+      stat3Value = stats['totalAdmissions']?.toString() ?? '0';
+      stat4Label = 'Earned';
+      stat4Value = '₹${stats['totalCommission'] ?? '0'}';
+    } else if (role == 'SUPER_ADMIN') {
+      stat1Label = 'Universities';
+      stat1Value = stats['totalUniversities']?.toString() ?? '0';
+      stat2Label = 'Consultants';
+      stat2Value = stats['totalConsultants']?.toString() ?? '0';
+      stat3Label = 'Students';
+      stat3Value = stats['totalStudents']?.toString() ?? '0';
+      stat4Label = 'Revenue';
+      stat4Value = '₹${stats['totalRevenue'] ?? '0'}';
+    } else {
+      // Default / Student
+      stat1Label = 'Applied';
+      stat1Value = stats['appliedUniversities']?.toString() ?? '0';
+      stat2Label = 'Status';
+      stat2Value = stats['applicationStatus']?.toString() ?? 'Active';
+      stat3Label = 'Notifications';
+      stat3Value = stats['unreadNotifications']?.toString() ?? '0';
+      stat4Label = 'Support';
+      stat4Value = stats['openTickets']?.toString() ?? '0';
+    }
 
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
@@ -143,9 +178,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       isSmallPhone,
                       isMobile,
                       isTablet,
+                      stat1Label,
                       stat1Value,
+                      stat2Label,
                       stat2Value,
+                      stat3Label,
                       stat3Value,
+                      stat4Label,
                       stat4Value,
                     ),
                     SizedBox(height: isSmallPhone ? 12 : 16),
@@ -320,10 +359,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     bool isSmallPhone,
     bool isMobile,
     bool isTablet,
-    String stat1, // Courses / Universities
-    String stat2, // Students
-    String stat3, // Total Applications / Commissions
-    String stat4, // Pending API / Applications
+    String label1,
+    String stat1,
+    String label2,
+    String stat2,
+    String label3,
+    String stat3,
+    String label4,
+    String stat4,
   ) {
     final spacing = isSmallPhone ? 6.0 : (isMobile ? 8.0 : 16.0);
 
@@ -332,9 +375,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       runSpacing: spacing,
       children: [
         _buildModernStatCard(
-          title: 'Total', // Label 1
+          title: label1,
           value: stat1,
-          subtitle: 'Records',
+          subtitle: 'Total',
           color: const Color(0xFF1E3A8A),
           gradientColor: const Color(0xFF3B82F6),
           icon: Icons.menu_book_rounded,
@@ -343,9 +386,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Students', // Label 2
+          title: label2,
           value: stat2,
-          subtitle: 'Active',
+          subtitle: 'Count',
           color: const Color(0xFF059669),
           gradientColor: const Color(0xFF10B981),
           icon: Icons.groups_rounded,
@@ -354,9 +397,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Applications', // Label 3
+          title: label3,
           value: stat3,
-          subtitle: 'Processed',
+          subtitle: 'Activity',
           color: const Color(0xFFD97706),
           gradientColor: const Color(0xFFF59E0B),
           icon: Icons.business_center_rounded,
@@ -365,9 +408,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           isTablet: isTablet,
         ),
         _buildModernStatCard(
-          title: 'Pending', // Label 4
+          title: label4,
           value: stat4,
-          subtitle: 'Actions',
+          subtitle: 'Status',
           color: const Color(0xFFDC2626),
           gradientColor: const Color(0xFFEF4444),
           icon: Icons.pending_actions_rounded,

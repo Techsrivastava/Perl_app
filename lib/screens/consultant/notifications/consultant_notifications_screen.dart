@@ -121,18 +121,16 @@ class _ConsultantNotificationsScreenState
                   _isLoading
                       ? 'Updating...'
                       : _notifications
-                                .where((n) => !(n['isRead'] ?? false))
-                                .length >
-                            0
+                            .where((n) => !(n['isRead'] ?? false))
+                            .isNotEmpty
                       ? '${_notifications.where((n) => !(n['isRead'] ?? false)).length} unread'
                       : 'All caught up!',
                   style: TextStyle(
                     fontSize: 11,
                     color:
                         _notifications
-                                .where((n) => !(n['isRead'] ?? false))
-                                .length >
-                            0
+                            .where((n) => !(n['isRead'] ?? false))
+                            .isNotEmpty
                         ? Colors.red
                         : Colors.green,
                     fontWeight: FontWeight.w600,
@@ -226,46 +224,33 @@ class _ConsultantNotificationsScreenState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                _notifications
-                                            .where(
-                                              (n) => !(n['isRead'] ?? false),
-                                            )
-                                            .length >
-                                        0
+                                _notifications.any(
+                                      (n) => !(n['isRead'] ?? false),
+                                    )
                                     ? Icons.mark_email_unread
                                     : Icons.check_circle_outline,
                                 size: 16,
                                 color:
-                                    _notifications
-                                            .where(
-                                              (n) => !(n['isRead'] ?? false),
-                                            )
-                                            .length >
-                                        0
+                                    _notifications.any(
+                                      (n) => !(n['isRead'] ?? false),
+                                    )
                                     ? AppTheme.primaryBlue
                                     : Colors.green,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  _notifications
-                                              .where(
-                                                (n) => !(n['isRead'] ?? false),
-                                              )
-                                              .length >
-                                          0
+                                  _notifications.any(
+                                        (n) => !(n['isRead'] ?? false),
+                                      )
                                       ? 'You have ${_notifications.where((n) => !(n['isRead'] ?? false)).length} new notifications'
                                       : '✨ All notifications read!',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color:
-                                        _notifications
-                                                .where(
-                                                  (n) =>
-                                                      !(n['isRead'] ?? false),
-                                                )
-                                                .length >
-                                            0
+                                        _notifications.any(
+                                          (n) => !(n['isRead'] ?? false),
+                                        )
                                         ? AppTheme.primaryBlue
                                         : Colors.green,
                                     fontWeight: FontWeight.w600,

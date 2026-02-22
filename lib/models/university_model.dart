@@ -45,6 +45,17 @@ class University {
   final String? ifscCode;
   final String? branch;
 
+  // Asset URLs
+  final String? logoUrl;
+  final String? coverUrl;
+  final String? accreditationCertificateUrl;
+
+  // Additional Details
+  final Map<String, String>? socialLinks;
+  final Map<String, dynamic>? authorizedPerson;
+  final Map<String, dynamic>? entranceTest;
+  final List<String> accreditations;
+
   // SaaS Specific Fields
   final CommissionModel? commissionModel;
   final bool isActive;
@@ -67,6 +78,13 @@ class University {
     this.accountNumber,
     this.ifscCode,
     this.branch,
+    this.logoUrl,
+    this.coverUrl,
+    this.accreditationCertificateUrl,
+    this.socialLinks,
+    this.authorizedPerson,
+    this.entranceTest,
+    this.accreditations = const [],
     this.commissionModel,
     this.isActive = true,
   });
@@ -94,6 +112,17 @@ class University {
       accountNumber: json['accountNumber'],
       ifscCode: json['ifscCode'],
       branch: json['branch'],
+      logoUrl: json['logoUrl'] ?? json['logo'],
+      coverUrl: json['coverUrl'] ?? json['backgroundImage'],
+      accreditationCertificateUrl:
+          json['accreditationCertificateUrl'] ??
+          json['accreditationCertificate'],
+      socialLinks: json['socialLinks'] != null
+          ? Map<String, String>.from(json['socialLinks'])
+          : null,
+      authorizedPerson: json['authorizedPerson'],
+      entranceTest: json['entranceTest'],
+      accreditations: List<String>.from(json['accreditations'] ?? []),
       commissionModel: json['commissionModel'] != null
           ? CommissionModel.fromJson(json['commissionModel'])
           : null,
@@ -120,6 +149,13 @@ class University {
       'accountNumber': accountNumber,
       'ifscCode': ifscCode,
       'branch': branch,
+      'logoUrl': logoUrl,
+      'coverUrl': coverUrl,
+      'accreditationCertificateUrl': accreditationCertificateUrl,
+      'socialLinks': socialLinks,
+      'authorizedPerson': authorizedPerson,
+      'entranceTest': entranceTest,
+      'accreditations': accreditations,
       'commissionModel': commissionModel?.toJson(),
       'isActive': isActive,
     };
@@ -143,6 +179,13 @@ class University {
     String? accountNumber,
     String? ifscCode,
     String? branch,
+    String? logoUrl,
+    String? coverUrl,
+    String? accreditationCertificateUrl,
+    Map<String, String>? socialLinks,
+    Map<String, dynamic>? authorizedPerson,
+    Map<String, dynamic>? entranceTest,
+    List<String>? accreditations,
     CommissionModel? commissionModel,
     bool? isActive,
   }) {
@@ -164,6 +207,14 @@ class University {
       accountNumber: accountNumber ?? this.accountNumber,
       ifscCode: ifscCode ?? this.ifscCode,
       branch: branch ?? this.branch,
+      logoUrl: logoUrl ?? this.logoUrl,
+      coverUrl: coverUrl ?? this.coverUrl,
+      accreditationCertificateUrl:
+          accreditationCertificateUrl ?? this.accreditationCertificateUrl,
+      socialLinks: socialLinks ?? this.socialLinks,
+      authorizedPerson: authorizedPerson ?? this.authorizedPerson,
+      entranceTest: entranceTest ?? this.entranceTest,
+      accreditations: accreditations ?? this.accreditations,
       commissionModel: commissionModel ?? this.commissionModel,
       isActive: isActive ?? this.isActive,
     );

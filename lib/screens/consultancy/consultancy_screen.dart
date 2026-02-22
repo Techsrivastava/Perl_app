@@ -72,6 +72,30 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
     });
   }
 
+  Future<void> _toggleStatus(Consultancy consultancy) async {
+    final newStatus = consultancy.status == AppConstants.statusActive
+        ? AppConstants.statusInactive
+        : AppConstants.statusActive;
+
+    try {
+      await ConsultancyService.updateConsultancy(consultancy.id, {
+        'status': newStatus,
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Status updated to $newStatus')));
+        _loadConsultancies(); // Refresh list
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to update status: $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Calculate statistics (on _consultancies or _filteredConsultancies? Usually full list for stats)
@@ -430,6 +454,30 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  TextButton.icon(
+                    onPressed: () => _toggleStatus(consultancy),
+                    icon: Icon(
+                      consultancy.status == AppConstants.statusActive
+                          ? Icons.block
+                          : Icons.check_circle_outline,
+                      size: 16,
+                      color: consultancy.status == AppConstants.statusActive
+                          ? AppTheme.error
+                          : AppTheme.success,
+                    ),
+                    label: Text(
+                      consultancy.status == AppConstants.statusActive
+                          ? 'Block'
+                          : 'Unblock',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: consultancy.status == AppConstants.statusActive
+                            ? AppTheme.error
+                            : AppTheme.success,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -441,11 +489,10 @@ class _ConsultancyScreenState extends State<ConsultancyScreen> {
                       );
                     },
                     child: const Text(
-                      'View Details',
+                      'Details',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
-                  const SizedBox(width: 8),
                 ],
               ),
             ],

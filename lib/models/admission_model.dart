@@ -52,6 +52,28 @@ class StudentDetails {
     'pinCode': pinCode,
     'studentPhotoPath': studentPhotoPath,
   };
+
+  factory StudentDetails.fromJson(Map<String, dynamic> json) {
+    return StudentDetails(
+      studentFullName: json['studentFullName'],
+      gender: json['gender'],
+      dateOfBirth: json['dateOfBirth'] != null
+          ? DateTime.parse(json['dateOfBirth'])
+          : null,
+      mobileNumber: json['mobileNumber'],
+      alternateMobileNumber: json['alternateMobileNumber'],
+      emailId: json['emailId'],
+      fatherName: json['fatherName'],
+      motherName: json['motherName'],
+      parentContactNumber: json['parentContactNumber'],
+      streetAddress: json['streetAddress'],
+      city: json['city'],
+      district: json['district'],
+      state: json['state'],
+      pinCode: json['pinCode'],
+      studentPhotoPath: json['studentPhotoPath'],
+    );
+  }
 }
 
 class AcademicDetails {
@@ -76,6 +98,16 @@ class AcademicDetails {
     'marksPercentage': marksPercentage,
     'marksheetCertificatePath': marksheetCertificatePath,
   };
+
+  factory AcademicDetails.fromJson(Map<String, dynamic> json) {
+    return AcademicDetails(
+      highestQualification: json['highestQualification'],
+      passingYear: json['passingYear'],
+      schoolCollegeName: json['schoolCollegeName'],
+      marksPercentage: (json['marksPercentage'] ?? 0).toDouble(),
+      marksheetCertificatePath: json['marksheetCertificatePath'],
+    );
+  }
 }
 
 class CourseSelection {
@@ -106,6 +138,18 @@ class CourseSelection {
     'duration': duration,
     'modeOfStudy': modeOfStudy,
   };
+
+  factory CourseSelection.fromJson(Map<String, dynamic> json) {
+    return CourseSelection(
+      universityId: json['universityId'],
+      universityName: json['universityName'],
+      courseId: json['courseId'],
+      courseName: json['courseName'],
+      specialization: json['specialization'],
+      duration: json['duration'],
+      modeOfStudy: json['modeOfStudy'],
+    );
+  }
 }
 
 class FeeDetails {
@@ -264,6 +308,37 @@ class FeeDetails {
     'universityPaymentMode': universityPaymentMode,
     'amountToUniversity': amountToUniversity,
   };
+
+  factory FeeDetails.fromJson(Map<String, dynamic> json) {
+    return FeeDetails(
+      universityFee: (json['universityFee'] ?? 0).toDouble(),
+      displayFee: (json['displayFee'] ?? 0).toDouble(),
+      consultancyShareType: json['consultancyShareType'],
+      consultancyShareValue: (json['consultancyShareValue'] ?? 0).toDouble(),
+      defaultProfit: (json['defaultProfit'] ?? 0).toDouble(),
+      actualFee: (json['actualFee'] ?? 0).toDouble(),
+      admissionBy: json['admissionBy'],
+      agentCode: json['agentCode'],
+      agentName: json['agentName'],
+      agentShareType: json['agentShareType'],
+      agentShareValue: (json['agentShareValue'] ?? 0).toDouble(),
+      agentCommission: (json['agentCommission'] ?? 0).toDouble(),
+      agentExpenses: (json['agentExpenses'] as List?)
+          ?.map((e) => Expense.fromJson(e))
+          .toList(),
+      agentExpensesTotal: (json['agentExpensesTotal'] ?? 0).toDouble(),
+      consultancyExpenses: (json['consultancyExpenses'] as List?)
+          ?.map((e) => Expense.fromJson(e))
+          .toList(),
+      consultancyExpensesTotal: (json['consultancyExpensesTotal'] ?? 0)
+          .toDouble(),
+      actualProfit: (json['actualProfit'] ?? 0).toDouble(),
+      agentTotalPayout: (json['agentTotalPayout'] ?? 0).toDouble(),
+      finalProfit: (json['finalProfit'] ?? 0).toDouble(),
+      universityPaymentMode: json['universityPaymentMode'],
+      amountToUniversity: (json['amountToUniversity'] ?? 0).toDouble(),
+    );
+  }
 }
 
 class Expense {
@@ -278,6 +353,14 @@ class Expense {
     'amount': amount,
     'proofPath': proofPath,
   };
+
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      title: json['title'],
+      amount: (json['amount'] ?? 0).toDouble(),
+      proofPath: json['proofPath'],
+    );
+  }
 }
 
 class Documents {
@@ -305,6 +388,19 @@ class Documents {
     'passportPhotoPath': passportPhotoPath,
     'otherDocumentsPaths': otherDocumentsPaths,
   };
+
+  factory Documents.fromJson(Map<String, dynamic> json) {
+    return Documents(
+      idProofPath: json['idProofPath'],
+      addressProofPath: json['addressProofPath'],
+      transferCertificatePath: json['transferCertificatePath'],
+      migrationCertificatePath: json['migrationCertificatePath'],
+      passportPhotoPath: json['passportPhotoPath'],
+      otherDocumentsPaths: json['otherDocumentsPaths'] != null
+          ? List<String>.from(json['otherDocumentsPaths'])
+          : null,
+    );
+  }
 }
 
 class Declarations {
@@ -312,6 +408,13 @@ class Declarations {
   bool documentsVerified = false;
   bool nonRefundableAgreed = false;
   bool takeResponsibility = false;
+
+  Declarations({
+    this.studentDetailsCorrect = false,
+    this.documentsVerified = false,
+    this.nonRefundableAgreed = false,
+    this.takeResponsibility = false,
+  });
 
   bool get allDeclarationsChecked =>
       studentDetailsCorrect &&
@@ -325,6 +428,14 @@ class Declarations {
     'nonRefundableAgreed': nonRefundableAgreed,
     'takeResponsibility': takeResponsibility,
   };
+
+  factory Declarations.fromJson(Map<String, dynamic> json) {
+    return Declarations()
+      ..studentDetailsCorrect = json['studentDetailsCorrect'] ?? false
+      ..documentsVerified = json['documentsVerified'] ?? false
+      ..nonRefundableAgreed = json['nonRefundableAgreed'] ?? false
+      ..takeResponsibility = json['takeResponsibility'] ?? false;
+  }
 }
 
 class AdmissionForm {
@@ -345,6 +456,8 @@ class AdmissionForm {
 
   AdmissionForm({
     this.admissionId,
+    this.studentId,
+    this.agentId,
     this.status = 'draft',
     this.studentDetails,
     this.academicDetails,
@@ -364,6 +477,42 @@ class AdmissionForm {
     feeDetails ??= FeeDetails();
     documents ??= Documents();
     declarations ??= Declarations();
+  }
+
+  factory AdmissionForm.fromJson(Map<String, dynamic> json) {
+    return AdmissionForm(
+      admissionId: json['admissionId'] ?? json['_id'],
+      studentId: json['studentId'],
+      agentId: json['agentId'],
+      status: json['status'] ?? 'draft',
+      studentDetails: json['studentDetails'] != null
+          ? StudentDetails.fromJson(json['studentDetails'])
+          : null,
+      academicDetails: json['academicDetails'] != null
+          ? AcademicDetails.fromJson(json['academicDetails'])
+          : null,
+      courseSelection: json['courseSelection'] != null
+          ? CourseSelection.fromJson(json['courseSelection'])
+          : null,
+      feeDetails: json['feeDetails'] != null
+          ? FeeDetails.fromJson(json['feeDetails'])
+          : null,
+      documents: json['documents'] != null
+          ? Documents.fromJson(json['documents'])
+          : null,
+      declarations: json['declarations'] != null
+          ? Declarations.fromJson(json['declarations'])
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      submittedAt: json['submittedAt'] != null
+          ? DateTime.parse(json['submittedAt'])
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() => {

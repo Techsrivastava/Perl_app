@@ -72,7 +72,6 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
   // Custom Test
   final _customTestNameController = TextEditingController();
   final _customTestDescriptionController = TextEditingController();
-  final bool _hasCustomTest = false;
 
   // Files
   File? _logoFile;
@@ -109,12 +108,31 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     _ifscCodeController.text = widget.university.ifscCode ?? '';
     _branchController.text = widget.university.branch ?? '';
 
-    // Initialize authorize person fields (add these fields to university model if not present)
-    _authorizePersonNameController.text = '';
-    _firmNameController.text = '';
-    _authorizePersonDetailsController.text = '';
-    _authorizePersonPhoneController.text = '';
-    _authorizePersonEmailController.text = '';
+    // Initialize authorize person fields
+    final authPerson = widget.university.authorizedPerson ?? {};
+    _authorizePersonNameController.text = authPerson['name'] ?? '';
+    _firmNameController.text = authPerson['firmName'] ?? '';
+    _authorizePersonDetailsController.text = authPerson['designation'] ?? '';
+    _authorizePersonPhoneController.text = authPerson['phone'] ?? '';
+    _authorizePersonEmailController.text = authPerson['email'] ?? '';
+    _alternateEmailController.text = authPerson['alternateEmail'] ?? '';
+    _alternateContactController.text = authPerson['alternatePhone'] ?? '';
+    _departmentNameController.text = authPerson['department'] ?? '';
+    _officeLandlineController.text = authPerson['landline'] ?? '';
+    _remarksController.text = authPerson['remarks'] ?? '';
+
+    // Initialize social links
+    final socials = widget.university.socialLinks ?? {};
+    _googleMapsLinkController.text = socials['googleMaps'] ?? '';
+    _facebookLinkController.text = socials['facebook'] ?? '';
+    _twitterLinkController.text = socials['twitter'] ?? '';
+    _linkedinLinkController.text = socials['linkedin'] ?? '';
+    _instagramLinkController.text = socials['instagram'] ?? '';
+
+    // Initialize entrance test
+    final test = widget.university.entranceTest ?? {};
+    _customTestNameController.text = test['name'] ?? '';
+    _customTestDescriptionController.text = test['description'] ?? '';
 
     _selectedType = widget.university.type;
     _selectedFacilities = List.from(widget.university.facilities);
@@ -153,20 +171,6 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
     _customTestNameController.dispose();
     _customTestDescriptionController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickQRCode() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-      if (result != null) {
-        setState(() => _qrCodeFile = File(result.files.single.path!));
-      }
-    } catch (e) {
-      debugPrint('Error picking QR code: $e');
-    }
   }
 
   Future<void> _pickIDProof() async {
@@ -303,25 +307,43 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
           'ifscCode': _ifscCodeController.text,
           'branch': _branchController.text,
           'type': _selectedType,
+          'facilities': _selectedFacilities,
+          'accreditations': _selectedAccreditations,
 
-          // Additional fields for authorized person etc. if supported by backend
-          // Currently backend University model might not have all these fields separately,
-          // or they are part of 'description' or new fields I should adding.
-          // I added file URLs.
-          // Let's add the file URLs.
-          if (logoUrl != null) 'logo': logoUrl,
-          if (bgUrl != null) 'backgroundImage': bgUrl,
-          if (certUrl != null) 'accreditationCertificate': certUrl,
-          if (authLetterUrl != null) 'authorizationLetter': authLetterUrl,
-          if (idProofUrl != null) 'idProof': idProofUrl,
-          if (digSignUrl != null) 'digitalSignature': digSignUrl,
-          if (qrUrl != null) 'qrCode': qrUrl,
-          // Note: Authorized person photo URL field might be missing in University backend model
-          // I added 'logo', 'backgroundImage', etc.
-          // Let's assume 'logo' is the main one.
+          'authorizedPerson': {
+            'name': _authorizePersonNameController.text,
+            'firmName': _firmNameController.text,
+            'designation': _authorizePersonDetailsController.text,
+            'phone': _authorizePersonPhoneController.text,
+            'email': _authorizePersonEmailController.text,
+            'alternateEmail': _alternateEmailController.text,
+            'alternatePhone': _alternateContactController.text,
+            'department': _departmentNameController.text,
+            'landline': _officeLandlineController.text,
+            'remarks': _remarksController.text,
+            if (authPhotoUrl != null) 'photo': authPhotoUrl,
+          },
 
-          // Social Links (if backend supports)
-          // 'socialLinks': ...
+          'socialLinks': {
+            'googleMaps': _googleMapsLinkController.text,
+            'facebook': _facebookLinkController.text,
+            'twitter': _twitterLinkController.text,
+            'linkedin': _linkedinLinkController.text,
+            'instagram': _instagramLinkController.text,
+          },
+
+          'entranceTest': {
+            'name': _customTestNameController.text,
+            'description': _customTestDescriptionController.text,
+          },
+
+          if (logoUrl != null) 'logoUrl': logoUrl,
+          if (bgUrl != null) 'coverUrl': bgUrl,
+          if (certUrl != null) 'accreditationCertificateUrl': certUrl,
+          if (authLetterUrl != null) 'authorizationLetterUrl': authLetterUrl,
+          if (idProofUrl != null) 'idProofUrl': idProofUrl,
+          if (digSignUrl != null) 'digitalSignatureUrl': digSignUrl,
+          if (qrUrl != null) 'qrCodeUrl': qrUrl,
         };
 
         await UniversityService.updateUniversity(
@@ -1006,6 +1028,66 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                     ],
                   ),
 
+                  // Social Media & Presence Section
+                  _buildSection(
+                    title: 'Social Media & Presence',
+                    children: [
+                      CustomTextField(
+                        label: 'Google Maps Link',
+                        hint: 'Paste Google Maps location URL',
+                        controller: _googleMapsLinkController,
+                        icon: Icons.location_on,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        label: 'Facebook Page URL',
+                        hint: 'https://facebook.com/university',
+                        controller: _facebookLinkController,
+                        icon: Icons.facebook,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        label: 'LinkedIn Profile/Page URL',
+                        hint: 'https://linkedin.com/school/university',
+                        controller: _linkedinLinkController,
+                        icon: Icons.work,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        label: 'Instagram Professional URL',
+                        hint: 'https://instagram.com/university',
+                        controller: _instagramLinkController,
+                        icon: Icons.camera_alt,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        label: 'Twitter / X URL',
+                        hint: 'https://x.com/university',
+                        controller: _twitterLinkController,
+                        icon: Icons.tag,
+                      ),
+                    ],
+                  ),
+
+                  // Entrance Test Section
+                  _buildSection(
+                    title: 'Entrance Test Information',
+                    children: [
+                      CustomTextField(
+                        label: 'Test Name',
+                        hint: 'e.g., University Joint Entrance Exam 2024',
+                        controller: _customTestNameController,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        label: 'Test Description/Guidelines',
+                        hint: 'Enter details about the entrance test...',
+                        controller: _customTestDescriptionController,
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+
                   // Facilities Section
                   _buildSection(
                     title: 'Facilities & Services',
@@ -1038,8 +1120,8 @@ class _EditUniversityScreenState extends State<EditUniversityScreen> {
                                 }
                               });
                             },
-                            selectedColor: AppTheme.primaryBlue.withOpacity(
-                              0.1,
+                            selectedColor: AppTheme.primaryBlue.withValues(
+                              alpha: 0.1,
                             ),
                             checkmarkColor: AppTheme.primaryBlue,
                             labelStyle: TextStyle(

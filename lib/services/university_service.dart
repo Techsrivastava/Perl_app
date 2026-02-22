@@ -80,4 +80,26 @@ class UniversityService {
 
     throw Exception(response['message'] ?? 'Failed to update university');
   }
+
+  /// Update current university profile
+  static Future<University> updateMyUniversity(
+    Map<String, dynamic> universityData,
+  ) async {
+    final token = await AuthService.getToken();
+    if (token == null) throw Exception('Not authenticated');
+
+    final response = await ApiService.patch(
+      '/universities/me',
+      universityData,
+      token: token,
+    );
+
+    if (response['success'] == true) {
+      return University.fromJson(response['data']);
+    }
+
+    throw Exception(
+      response['message'] ?? 'Failed to update university profile',
+    );
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/services/agent_service.dart';
+import 'package:educonnect/services/admission_service.dart';
+import 'package:educonnect/services/commission_service.dart';
 
 class AdmissionApplicationScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -22,6 +24,7 @@ class _AdmissionApplicationScreenState
   final _agentCodeController = TextEditingController();
   final _expenseTitleController = TextEditingController();
   final _expenseAmountController = TextEditingController();
+  bool _isLoading = false;
 
   String _admissionBy = 'Consultancy'; // Consultancy | Agent
   final String _universityPaymentMode =
@@ -142,6 +145,22 @@ class _AdmissionApplicationScreenState
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          if (_isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -550,41 +569,49 @@ class _AdmissionApplicationScreenState
     );
   }
 
-  void _calculateFinancials() {
+  Future<void> _calculateFinancials() async {
     double actualFee = double.tryParse(_actualFeeController.text) ?? 0;
-    _actualProfit = actualFee - _universityFee;
 
-    if (_admissionBy == 'Agent' &&
-        _agentShareType != null &&
-        _agentShareValue != null) {
-      if (_agentShareType == 'percent') {
-        _agentCommission = _actualProfit * (_agentShareValue! / 100);
-      } else if (_agentShareType == 'flat') {
-        _agentCommission = _agentShareValue!;
+    try {
+      final commissionResult = await CommissionService.calculateCommission(
+        courseId: widget.course['id'] ?? widget.course['_id'] ?? '',
+        displayFee: _displayFee,
+        actualFee: actualFee,
+        agentCode: _admissionBy == 'Agent' ? _agentCodeController.text : null,
+      );
+
+      if (mounted) {
+        setState(() {
+          _actualProfit = (commissionResult['consultancy_commission'] ?? 0)
+              .toDouble();
+          _agentCommission = (commissionResult['agent_commission'] ?? 0)
+              .toDouble();
+
+          _agentExpensesTotal = _agentExpenses.fold<double>(
+            0,
+            (sum, e) => sum + (e['amount'] ?? 0),
+          );
+          _consultancyExpensesTotal = _consultancyExpenses.fold<double>(
+            0,
+            (sum, e) => sum + (e['amount'] ?? 0),
+          );
+          _agentTotalPayout = _agentCommission + _agentExpensesTotal;
+
+          // Net profit sync
+          _finalProfit =
+              (commissionResult['net_profit'] ?? 0).toDouble() -
+              _consultancyExpensesTotal;
+
+          if (_universityPaymentMode == 'Share Deduct') {
+            _amountToUniversity = (commissionResult['university_share'] ?? 0)
+                .toDouble();
+          } else {
+            _amountToUniversity = actualFee;
+          }
+        });
       }
-    } else {
-      _agentCommission = 0;
-    }
-
-    _agentExpensesTotal = _agentExpenses.fold<double>(
-      0,
-      (sum, e) => sum + (e['amount'] ?? 0),
-    );
-    _consultancyExpensesTotal = _consultancyExpenses.fold<double>(
-      0,
-      (sum, e) => sum + (e['amount'] ?? 0),
-    );
-    _agentTotalPayout = _agentCommission + _agentExpensesTotal;
-    _finalProfit =
-        _actualProfit -
-        _agentCommission -
-        _agentExpensesTotal -
-        _consultancyExpensesTotal;
-
-    if (_universityPaymentMode == 'Share Deduct') {
-      _amountToUniversity = _universityFee;
-    } else {
-      _amountToUniversity = actualFee;
+    } catch (e) {
+      debugPrint('Error calculating commission: $e');
     }
   }
 
@@ -691,8 +718,9 @@ class _AdmissionApplicationScreenState
               if (v == null || v.isEmpty) return 'Required';
               double? val = double.tryParse(v);
               if (val == null) return 'Enter valid amount';
-              if (val < _universityFee)
+              if (val < _universityFee) {
                 return 'Must be ≥ university fee (₹${_universityFee.toStringAsFixed(0)})';
+              }
               return null;
             },
           ),
@@ -1789,7 +1817,7 @@ class _AdmissionApplicationScreenState
         setState(() => _currentStep++);
       }
     } else {
-      _submitApplication();
+      if (!_isLoading) _submitApplication();
     }
   }
 
@@ -1807,56 +1835,86 @@ class _AdmissionApplicationScreenState
     return true;
   }
 
-  void _submitApplication() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+  Future<void> _submitApplication() async {
+    setState(() => _isLoading = true);
+    try {
+      final admissionData = {
+        'studentName': _nameController.text,
+        'studentEmail': _emailController.text,
+        'studentPhone': _mobileController.text,
+        'courseId': widget.course['id'] ?? widget.course['_id'],
+        'universityId':
+            widget.course['universityId'], // Assuming it's in course map
+        'admissionBy': _admissionBy,
+        'agentCode': _admissionBy == 'Agent' ? _agentCodeController.text : null,
+        'actualFee': double.tryParse(_actualFeeController.text) ?? 0,
+        'expenses': {
+          'agent': _agentExpenses,
+          'consultancy': _consultancyExpenses,
+        },
+        'status': 'Pending',
+      };
+
+      final result = await AdmissionService.submitAdmission(admissionData);
+
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 48,
+                ),
               ),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 48,
+              const SizedBox(height: 16),
+              const Text(
+                'Application Submitted!',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Application Submitted!',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Application ID: APP${DateTime.now().millisecondsSinceEpoch}',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Your application has been submitted successfully. You will receive a confirmation email shortly.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
+              const SizedBox(height: 8),
+              Text(
+                'Application ID: ${result['id'] ?? result['_id']}',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Your application has been submitted successfully.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text('Back to Home'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Back to Courses'),
-          ),
-        ],
-      ),
-    );
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Widget _buildSectionTitle(String title) {

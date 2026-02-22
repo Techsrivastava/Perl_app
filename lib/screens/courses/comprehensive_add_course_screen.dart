@@ -11,9 +11,6 @@ import 'package:educonnect/services/course_service.dart';
 import 'package:educonnect/services/document_service.dart';
 import 'package:educonnect/services/auth_service.dart';
 import 'package:educonnect/services/university_service.dart';
-import 'package:educonnect/services/course_service.dart';
-import 'package:educonnect/services/document_service.dart';
-import 'package:educonnect/services/auth_service.dart';
 
 class ComprehensiveAddCourseScreen extends StatefulWidget {
   const ComprehensiveAddCourseScreen({super.key});

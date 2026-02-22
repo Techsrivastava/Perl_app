@@ -4,7 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/widgets/custom_button.dart';
 import 'package:educonnect/widgets/custom_text_field.dart';
-import 'package:educonnect/services/auth_service.dart';
+import '../../services/university_service.dart';
+import '../../services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,7 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isInitLoading = true;
   File? _profileImage;
   File? _backgroundImage;
-  Map<String, dynamic>? _user;
 
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final user = await AuthService.getUser();
       if (user != null && mounted) {
         setState(() {
-          _user = user;
           _universityNameController.text = user['name'] ?? '';
           _emailController.text = user['email'] ?? '';
           _phoneController.text = user['phone'] ?? '';
@@ -107,21 +106,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Prepare payload mapping to University model
+        final payload = {
+          'name': _universityNameController.text.trim(),
+          'contactEmail': _emailController.text.trim(),
+          'contactPhone': _phoneController.text.trim(),
+          'address': _addressController.text.trim(),
+          'website': _websiteController.text.trim(),
+        };
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isEditing = false;
-        });
+        // Call the actual API via UniversityService
+        await UniversityService.updateMyUniversity(payload);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // Note: If you have actual file upload APIs for background/profile image,
+        // call them here separately. Since they aren't fully defined yet in
+        // university routes, we will leave the UI state as is for now.
+
+        // _loadUserData(); // Optionally reload from server
+
+        if (mounted) {
+          setState(() {
+            _isEditing = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully'),
+              backgroundColor: AppTheme.success,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error updating profile: $e'),
+              backgroundColor: AppTheme.error,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }

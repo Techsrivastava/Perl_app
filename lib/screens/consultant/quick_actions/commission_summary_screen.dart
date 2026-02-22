@@ -77,6 +77,20 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         backgroundColor: AppTheme.success,
         foregroundColor: Colors.white,
         actions: [
+          if (_isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
@@ -92,6 +106,31 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_errorMessage != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             // Summary Cards
             _buildSummarySection(totalEarned, totalPaid, totalPending),
             const SizedBox(height: 12),
@@ -318,8 +357,8 @@ class _CommissionSummaryScreenState extends State<CommissionSummaryScreen> {
           spacing: 8,
           runSpacing: 8,
           children: summary.entries.map((entry) {
-            final color = AppTheme.primaryBlue.withOpacity(
-              0.1 + (entry.value / 100000).clamp(0, 0.5),
+            final color = AppTheme.primaryBlue.withValues(
+              alpha: (0.1 + (entry.value / 100000).clamp(0, 0.5)).toDouble(),
             );
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

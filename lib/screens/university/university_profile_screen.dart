@@ -154,33 +154,41 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
     );
   }
 
-  Widget _buildSocialMediaButton(
-    IconData icon,
-    String platform,
-    String action,
-    Color color,
-  ) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        // TODO: Open respective link
-        debugPrint('Opening $platform');
-      },
-      icon: Icon(icon, size: 20),
-      label: Text(action),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 44),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+  Widget _buildSocialMediaButton({
+    required IconData icon,
+    required String platform,
+    required String? url,
+    required Color color,
+  }) {
+    if (url == null || url.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          // In a real app, use url_launcher
+          debugPrint('Opening $platform: $url');
+        },
+        icon: Icon(icon, size: 20),
+        label: Text('Visit $platform'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(double.infinity, 44),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     );
   }
 
-  Widget _buildDocumentButton(String title, IconData icon) {
+  Widget _buildDocumentButton(String title, String? url, IconData icon) {
     return OutlinedButton.icon(
-      onPressed: () {
-        // TODO: View certificate
-      },
+      onPressed: url != null && url.isNotEmpty
+          ? () {
+              // TODO: Implement viewing/downloading URL
+              debugPrint('Viewing document: $url');
+            }
+          : null,
       icon: Icon(icon, size: 18),
       label: Text(title),
       style: OutlinedButton.styleFrom(
@@ -319,11 +327,25 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.school,
-                        color: AppTheme.primaryBlue,
-                        size: 40,
-                      ),
+                      child: university.logoUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                university.logoUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(
+                                      Icons.school,
+                                      color: AppTheme.primaryBlue,
+                                      size: 40,
+                                    ),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.school,
+                              color: AppTheme.primaryBlue,
+                              size: 40,
+                            ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -387,153 +409,176 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
         const SizedBox(height: 16),
 
         // Social Media Links
-        _buildInfoCard(
-          title: 'Social Media & Links',
-          children: [
-            _buildSocialMediaButton(
-              Icons.location_on,
-              'Google Maps',
-              'View Location',
-              Colors.red,
-            ),
-            const SizedBox(height: 8),
-            _buildSocialMediaButton(
-              Icons.facebook,
-              'Facebook',
-              'Visit Page',
-              const Color(0xFF1877F2),
-            ),
-            const SizedBox(height: 8),
-            _buildSocialMediaButton(
-              Icons.tag,
-              'Twitter/X',
-              'Follow Us',
-              const Color(0xFF1DA1F2),
-            ),
-            const SizedBox(height: 8),
-            _buildSocialMediaButton(
-              Icons.work,
-              'LinkedIn',
-              'Connect',
-              const Color(0xFF0A66C2),
-            ),
-            const SizedBox(height: 8),
-            _buildSocialMediaButton(
-              Icons.camera_alt,
-              'Instagram',
-              'Follow',
-              const Color(0xFFE4405F),
-            ),
-          ],
-        ),
+        if (university.socialLinks != null &&
+            university.socialLinks!.isNotEmpty)
+          _buildInfoCard(
+            title: 'Social Media & Links',
+            children: [
+              _buildSocialMediaButton(
+                icon: Icons.location_on,
+                platform: 'Google Maps',
+                url: university.socialLinks!['googleMaps'],
+                color: Colors.red,
+              ),
+              _buildSocialMediaButton(
+                icon: Icons.facebook,
+                platform: 'Facebook',
+                url: university.socialLinks!['facebook'],
+                color: const Color(0xFF1877F2),
+              ),
+              _buildSocialMediaButton(
+                icon: Icons.tag,
+                platform: 'Twitter/X',
+                url: university.socialLinks!['twitter'],
+                color: const Color(0xFF1DA1F2),
+              ),
+              _buildSocialMediaButton(
+                icon: Icons.work,
+                platform: 'LinkedIn',
+                url: university.socialLinks!['linkedin'],
+                color: const Color(0xFF0A66C2),
+              ),
+              _buildSocialMediaButton(
+                icon: Icons.camera_alt,
+                platform: 'Instagram',
+                url: university.socialLinks!['instagram'],
+                color: const Color(0xFFE4405F),
+              ),
+            ],
+          ),
 
         // Entrance Test Info
-        _buildInfoCard(
-          title: 'Entrance Test Information',
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.amber.shade200),
+        if (university.entranceTest != null)
+          _buildInfoCard(
+            title: 'Entrance Test Information',
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.assignment,
+                      color: Colors.amber.shade700,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            university.entranceTest!['name'] ?? 'Entrance Test',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.charcoal,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            university.entranceTest!['description'] ??
+                                'Custom entrance examination required for admission',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
+            ],
+          ),
+
+        // Accreditations
+        if (university.accreditations.isNotEmpty ||
+            university.accreditationCertificateUrl != null)
+          _buildInfoCard(
+            title: 'Accreditations & Certificates',
+            children: [
+              if (university.accreditations.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: university.accreditations
+                      .map((a) => _buildChip(a, color: Colors.blue.shade700))
+                      .toList(),
+                ),
+              if (university.accreditations.isNotEmpty)
+                const SizedBox(height: 12),
+              if (university.accreditationCertificateUrl != null)
+                _buildDocumentButton(
+                  'Accreditation Certificate',
+                  university.accreditationCertificateUrl,
+                  Icons.verified,
+                ),
+            ],
+          ),
+
+        // Authorized Person
+        if (university.authorizedPerson != null)
+          _buildInfoCard(
+            title: 'Authorized Person',
+            children: [
+              Row(
                 children: [
-                  Icon(
-                    Icons.assignment,
-                    color: Colors.amber.shade700,
-                    size: 24,
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: university.authorizedPerson!['photo'] != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              university.authorizedPerson!['photo'],
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Colors.grey.shade400,
+                          ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'University Entrance Test',
-                          style: TextStyle(
+                          university.authorizedPerson!['name'] ?? 'N/A',
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppTheme.charcoal,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Custom entrance examination required for admission',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          university.authorizedPerson!['designation'] ??
+                              'Authorized Person',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-
-        // Accreditations
-        _buildInfoCard(
-          title: 'Accreditations & Certificates',
-          children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildChip('NAAC A+', color: Colors.green.shade700),
-                _buildChip('UGC Approved', color: Colors.blue.shade700),
-                _buildChip('ISO Certified', color: Colors.purple.shade700),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildDocumentButton('Accreditation Certificate', Icons.verified),
-          ],
-        ),
-
-        // Authorized Person
-        _buildInfoCard(
-          title: 'Authorized Person',
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 30,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Dr. John Doe',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.charcoal,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Registrar',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+            ],
+          ),
 
         const SizedBox(height: 16),
 
@@ -777,7 +822,10 @@ class _UniversityProfileScreenState extends State<UniversityProfileScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.download, size: 20),
-            onPressed: () {}, // TODO: Implement download
+            onPressed: () {
+              // In real app, open URL
+              debugPrint('Downloading: $documentName');
+            },
             color: AppTheme.primaryBlue,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),

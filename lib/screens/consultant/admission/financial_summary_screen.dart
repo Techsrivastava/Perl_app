@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/models/admission_model.dart';
+import 'package:educonnect/services/auth_service.dart';
+import 'package:educonnect/services/api_service.dart';
 import 'fee_module.dart';
 
 class FinancialSummaryScreen extends StatefulWidget {
@@ -14,6 +16,11 @@ class FinancialSummaryScreen extends StatefulWidget {
 
 class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
   late List<bool> declarations;
+  Map<String, dynamic>? currentUser;
+  bool isSuperAdmin = false;
+  double? consultantOverride;
+  double? agentOverride;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -24,6 +31,17 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
       widget.admissionForm.declarations?.nonRefundableAgreed ?? false,
       widget.admissionForm.declarations?.takeResponsibility ?? false,
     ];
+    _loadUser();
+  }
+
+  void _loadUser() async {
+    final user = await AuthService.getUser();
+    if (mounted) {
+      setState(() {
+        currentUser = user;
+        isSuperAdmin = user?['role'] == 'SUPER_ADMIN';
+      });
+    }
   }
 
   double _calculateConsultancyNetProfit() {
@@ -32,7 +50,7 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
     );
   }
 
-  void _submitAdmission() {
+  void _submitAdmission() async {
     if (!widget.admissionForm.declarations!.allDeclarationsChecked) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -41,51 +59,66 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
       );
       return;
     }
-    // Mark timestamps and status
-    widget.admissionForm.status = 'submitted';
-    widget.admissionForm.submittedAt = DateTime.now();
-    widget.admissionForm.updatedAt = DateTime.now();
 
-    // Build ledger payloads using FeeModule
-    final admissionId =
-        widget.admissionForm.admissionId ??
-        'TEMP_${DateTime.now().millisecondsSinceEpoch}';
-    final consultancyLedger = FeeModule.buildConsultancyLedger(
-      admissionId,
-      widget.admissionForm,
-    );
-    final agentLedger = FeeModule.buildAgentLedger(
-      admissionId,
-      widget.admissionForm,
-    );
-    final universityLedger = FeeModule.buildUniversityLedger(
-      admissionId,
-      widget.admissionForm,
-    );
+    setState(() => isLoading = true);
 
-    // TODO: Replace prints with API calls to persist ledgers
-    print('--- Admission Submitted (JSON) ---');
-    print(widget.admissionForm.toJson());
-    print('--- Consultancy Ledger Payload ---');
-    print(consultancyLedger);
-    if (agentLedger.isNotEmpty) {
-      print('--- Agent Ledger Payload ---');
-      print(agentLedger);
+    try {
+      final token = await AuthService.getToken();
+
+      // 1. Create/Identify Student
+      // For simplicity, we create a student record if not already present
+      final studentResponse = await ApiService.createStudent({
+        'name': widget.admissionForm.studentDetails?.studentFullName,
+        'email': widget.admissionForm.studentDetails?.emailId,
+        'phone': widget.admissionForm.studentDetails?.mobileNumber,
+      }, token: token);
+
+      final studentId = studentResponse['id'] ?? studentResponse['_id'];
+
+      // 2. Create Admission
+      final admissionResponse = await ApiService.createAdmission({
+        'student': studentId,
+        'course': widget.admissionForm.courseSelection?.courseId,
+        'agentId': widget.admissionForm.feeDetails?.admissionBy == 'Agent'
+            ? widget.admissionForm.agentId
+            : null,
+      }, token: token);
+
+      final admissionId = admissionResponse['id'] ?? admissionResponse['_id'];
+
+      // 3. If Super Admin and overrides provided, confirm immediately
+      if (isSuperAdmin &&
+          (consultantOverride != null || agentOverride != null)) {
+        await ApiService.updateAdmissionStatus(
+          admissionId,
+          'CONFIRMED',
+          consultantPercent: consultantOverride,
+          agentPercent: agentOverride,
+          token: token,
+        );
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Admission submitted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // navigate back to dashboard after a short delay
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
-    print('--- University Ledger Payload ---');
-    print(universityLedger);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Admission submitted successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    // navigate back to dashboard after a short delay
-    Future.delayed(const Duration(milliseconds: 800), () {
-      Navigator.of(context).popUntil((route) => route.isFirst);
-    });
   }
 
   void _saveAsDraft() {
@@ -277,14 +310,12 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
                       // list agent expenses
                       if (fee.agentExpenses != null &&
                           fee.agentExpenses!.isNotEmpty)
-                        ...fee.agentExpenses!
-                            .map(
-                              (e) => _buildSummaryRow(
-                                e.title ?? 'Expense',
-                                '₹${(e.amount ?? 0).toStringAsFixed(0)}',
-                              ),
-                            )
-                            ,
+                        ...fee.agentExpenses!.map(
+                          (e) => _buildSummaryRow(
+                            e.title ?? 'Expense',
+                            '₹${(e.amount ?? 0).toStringAsFixed(0)}',
+                          ),
+                        ),
                     ],
                     const Divider(),
                     _buildFinancialRow(
@@ -326,14 +357,12 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
                     const SizedBox(height: 8),
                     if (fee.consultancyExpenses != null &&
                         fee.consultancyExpenses!.isNotEmpty)
-                      ...fee.consultancyExpenses!
-                          .map(
-                            (e) => _buildSummaryRow(
-                              e.title ?? 'Expense',
-                              '₹${(e.amount ?? 0).toStringAsFixed(0)}',
-                            ),
-                          )
-                          ,
+                      ...fee.consultancyExpenses!.map(
+                        (e) => _buildSummaryRow(
+                          e.title ?? 'Expense',
+                          '₹${(e.amount ?? 0).toStringAsFixed(0)}',
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -374,6 +403,74 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Super Admin Commission Overrides
+            if (isSuperAdmin) ...[
+              Text(
+                'Super Admin Overrides',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red.shade700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.admin_panel_settings,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Manual Commission Split (%)',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              labelText: 'Consultant %',
+                              hintText: 'e.g. 60',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (val) =>
+                                consultantOverride = double.tryParse(val),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              labelText: 'Agent %',
+                              hintText: 'e.g. 40',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (val) =>
+                                agentOverride = double.tryParse(val),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+
             // Payment Mode Info
             if (widget.admissionForm.feeDetails?.universityPaymentMode != null)
               Container(
@@ -398,7 +495,10 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
                             ),
                           ),
                           Text(
-                            widget.admissionForm.feeDetails!.universityPaymentMode ??
+                            widget
+                                    .admissionForm
+                                    .feeDetails!
+                                    .universityPaymentMode ??
                                 'N/A',
                             style: const TextStyle(fontSize: 14),
                           ),
@@ -454,34 +554,37 @@ class _FinancialSummaryScreenState extends State<FinancialSummaryScreen> {
             const SizedBox(height: 24),
 
             // Submit Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _saveAsDraft,
-                    icon: const Icon(Icons.save),
-                    label: const Text('Save as Draft'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: const BorderSide(color: AppTheme.primaryBlue),
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _saveAsDraft,
+                      icon: const Icon(Icons.save),
+                      label: const Text('Save as Draft'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: AppTheme.primaryBlue),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _submitAdmission,
-                    icon: const Icon(Icons.send),
-                    label: const Text('Submit Admission'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: AppTheme.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _submitAdmission,
+                      icon: const Icon(Icons.send),
+                      label: const Text('Submit Admission'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: AppTheme.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             const SizedBox(height: 16),
           ],
         ),

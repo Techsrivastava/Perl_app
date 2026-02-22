@@ -13,7 +13,6 @@ class OneTimeFeeTemplateScreen extends StatefulWidget {
 
 class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
   List<Map<String, dynamic>> _feeTemplates = [];
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -22,7 +21,7 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
   }
 
   Future<void> _loadTemplates() async {
-    setState(() => _isLoading = true);
+    setState(() {});
     try {
       var templates = await FeeTemplateService.getTemplates();
       if (templates.isEmpty) {
@@ -71,12 +70,11 @@ class _OneTimeFeeTemplateScreenState extends State<OneTimeFeeTemplateScreen> {
       if (mounted) {
         setState(() {
           _feeTemplates = templates;
-          _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {});
         _showSnackBar('Error loading templates: $e', Colors.red);
       }
     }

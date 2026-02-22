@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../config/theme.dart';
 import '../../../services/agent_service.dart';
+import '../../../services/university_service.dart';
 import '../../../models/agent_model.dart';
 import 'edit_agent_form.dart';
 
@@ -16,6 +17,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
   late TabController _tabController;
   String _searchQuery = '';
   List<Agent> _allAgents = [];
+  List<String> _availableUniversities = [];
   bool _isLoading = true;
 
   @override
@@ -31,9 +33,13 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
   Future<void> _loadAgents() async {
     try {
       final agentsData = await AgentService.getAgents();
+      final universitiesData = await UniversityService.getUniversities();
       if (mounted) {
         setState(() {
           _allAgents = agentsData.map((data) => Agent.fromJson(data)).toList();
+          _availableUniversities = universitiesData
+              .map((u) => u['name'] as String)
+              .toList();
           _isLoading = false;
         });
       }
@@ -42,48 +48,59 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to load agents: $e')));
+        ).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
       }
     }
   }
 
-  Future<void> _addAgent() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final agentData = {
-      'name': _agentNameController.text.trim(),
-      'firmName': _firmNameController.text.trim(),
-      'mobile': _mobileController.text
-          .trim(), // Use 'phone' key in backend? No, I updated backend to accept phone as req.body.phone
-      'phone': _mobileController.text.trim(),
-      'email': _emailController.text.trim(),
-      'password': _passwordController.text.trim(),
-      'address': _addressController.text.trim(),
-      'city': _cityController.text.trim(),
-      'state': _selectedState,
-      'pincode': _pincodeController.text.trim(),
-      // 'commissionPercentage': ... needs a field in form or Logic
-    };
-
-    // Add logic to get commission from form if exists?
-    // The current form doesn't seem to have commission field in the viewed snippet.
-    // Assuming backend defaults or I add it.
-
+  Future<void> _addAgent(Map<String, dynamic> agentData) async {
     try {
-      await AgentService.createAgent(agentData);
+      final response = await AgentService.createAgent(agentData);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Agent added successfully')),
+          const SnackBar(
+            content: Text('Agent added successfully'),
+            backgroundColor: Colors.green,
+          ),
         );
         _loadAgents();
-        _formKey.currentState!.reset(); // Reset form
-        setState(() => _tabController.index = 0); // Switch to list tab
+        _formKey.currentState!.reset();
+        _agentNameController.clear();
+        _firmNameController.clear();
+        _mobileController.clear();
+        _emailController.clear();
+        _passwordController.clear();
+        setState(() => _tabController.index = 0);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error adding agent: $e')));
+      }
+    }
+  }
+
+  Future<void> _toggleBlockAgent(Agent agent) async {
+    try {
+      final updatedData = {'blocked': !agent.blocked};
+      await AgentService.updateAgent(agent.id, updatedData);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Agent ${agent.blocked ? 'unblocked' : 'blocked'} successfully',
+            ),
+            backgroundColor: agent.blocked ? Colors.green : Colors.red,
+          ),
+        );
+        _loadAgents();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error updating agent: $e')));
       }
     }
   }
@@ -121,8 +138,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
 
       // Filter by status for other tabs if they map to specific statuses
       // For now, mapping some tabs to statuses
-      if (tabIndex == 1)
+      if (tabIndex == 1) {
         return matchesSearch; // Add Agent tab - shown as form anyway
+      }
       return matchesSearch;
     }).toList();
   }
@@ -662,9 +680,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => agent.blocked
-                        ? _unblockAgent(agent)
-                        : _blockAgent(agent),
+                    onPressed: () => _toggleBlockAgent(agent),
                     icon: Icon(
                       agent.blocked ? Icons.check_circle : Icons.block,
                       size: 16,
@@ -986,7 +1002,25 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   child: ElevatedButton.icon(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _saveAgent();
+                        _addAgent({
+                          'name': _agentNameController.text.trim(),
+                          'firmName': _firmNameController.text.trim(),
+                          'email': _emailController.text.trim(),
+                          'phone': _mobileController.text.trim(),
+                          'password': _passwordController.text.trim(),
+                          'altPhone': _altContactController.text.trim(),
+                          'address': _addressController.text.trim(),
+                          'city': _cityController.text.trim(),
+                          'state': _selectedState,
+                          'pincode': _pincodeController.text.trim(),
+                          'idProofType': _idProofType,
+                          'bankDetails': {
+                            'accountNo': _accountNoController.text.trim(),
+                            'ifsc': _ifscController.text.trim(),
+                            'upi': _upiController.text.trim(),
+                          },
+                          'remarks': _remarksController.text.trim(),
+                        });
                       }
                     },
                     icon: const Icon(Icons.save),
@@ -1004,112 +1038,6 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
             const SizedBox(height: 32),
           ],
         ),
-      ),
-    );
-  }
-
-  void _saveAgent() {
-    final newAgent = {
-      'agent_id': 'AGT200${_allAgents.length + 1}',
-      'agent_name': _agentNameController.text,
-      'firm_name': _firmNameController.text.isEmpty
-          ? 'Self'
-          : _firmNameController.text,
-      'mobile': _mobileController.text,
-      'email': _emailController.text,
-      'city': _cityController.text,
-      'state': _selectedState,
-      'status': 'Active',
-      'joined_date': DateTime.now().toString().substring(0, 10),
-      'assigned_universities': [],
-      'assigned_courses': 0,
-      'commission_type': 'Percentage',
-      'commission_value': 0,
-      'total_leads': 0,
-      'verified_admissions': 0,
-      'pending_admissions': 0,
-      'total_earnings': 0,
-      'last_login': 'Never',
-      'permissions': {
-        'student_management': true,
-        'add_student': false,
-        'edit_student': false,
-        'view_reports': false,
-        'download_reports': false,
-      },
-      'blocked': false,
-    };
-
-    setState(() {
-      _allAgents.add(Agent.fromJson(newAgent));
-      _tabController.index = 0; // Go to All Agents tab
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${_agentNameController.text} added successfully!'),
-        backgroundColor: Colors.green,
-        action: SnackBarAction(
-          label: 'VIEW',
-          textColor: Colors.white,
-          onPressed: () => setState(() => _tabController.index = 0),
-        ),
-      ),
-    );
-
-    // Send credentials dialog
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 12),
-            Text('Agent Added Successfully'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Agent ID: ${newAgent['agent_id']}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text('Login credentials will be sent to:'),
-            Text('📧 ${_emailController.text}'),
-            Text('📱 ${_mobileController.text}'),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'Next: Assign universities and set commission',
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              setState(() => _tabController.index = 2); // Go to Assign tab
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryBlue,
-            ),
-            child: const Text('Assign Now'),
-          ),
-        ],
       ),
     );
   }
@@ -1144,14 +1072,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
 
   // Tab 3: Assign Universities/Courses
   Agent? _selectedAgentForAssign;
-  final List<String> _availableUniversities = [
-    'Sunrise University',
-    'MIT University',
-    'Global Tech University',
-    'Healthcare Hub',
-    'Career Institute',
-  ];
-  List<String> _selectedUniversities = [];
+  List<String> _selectedUniversitiesForAssign = [];
 
   Widget _buildAssignTab() {
     return SingleChildScrollView(
@@ -1203,9 +1124,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   onChanged: (agent) {
                     setState(() {
                       _selectedAgentForAssign = agent;
-                      // Note: Agent model doesn't have assigned_universities field
-                      // Keep empty for now, will need backend API update
-                      _selectedUniversities = [];
+                      _selectedUniversitiesForAssign = List<String>.from(
+                        agent?.assignedUniversities ?? [],
+                      );
                     });
                   },
                 ),
@@ -1219,7 +1140,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   const SizedBox(height: 12),
 
                   ..._availableUniversities.map((university) {
-                    final isAssigned = _selectedUniversities.contains(
+                    final isAssigned = _selectedUniversitiesForAssign.contains(
                       university,
                     );
                     return CheckboxListTile(
@@ -1237,9 +1158,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                       onChanged: (val) {
                         setState(() {
                           if (val == true) {
-                            _selectedUniversities.add(university);
+                            _selectedUniversitiesForAssign.add(university);
                           } else {
-                            _selectedUniversities.remove(university);
+                            _selectedUniversitiesForAssign.remove(university);
                           }
                         });
                       },
@@ -1304,29 +1225,36 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: This feature needs backend API implementation
-                        // Agent model doesn't have assigned_universities/assigned_courses yet
-                        // Will need to call AgentService.updateAgentAssignments() when ready
-
-                        // setState(() {
-                        //   // This would require backend update
-                        //   // and Agent model extension
-                        // });
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${_selectedUniversities.length} universities will be assigned to ${_selectedAgentForAssign!.name}',
+                      onPressed: () async {
+                        if (_selectedAgentForAssign == null) return;
+                        setState(() => _isLoading = true);
+                        try {
+                          await AgentService.updateAgent(
+                            _selectedAgentForAssign!.id,
+                            {
+                              'assigned_universities':
+                                  _selectedUniversitiesForAssign,
+                            },
+                          );
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Assignments saved successfully'),
+                              backgroundColor: Colors.green,
                             ),
-                            backgroundColor: Colors.orange,
-                            action: SnackBarAction(
-                              label: 'OK',
-                              textColor: Colors.white,
-                              onPressed: () {},
+                          );
+                          _loadAgents();
+                        } catch (e) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
                             ),
-                          ),
-                        );
+                          );
+                        } finally {
+                          setState(() => _isLoading = false);
+                        }
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Save Assignments'),
@@ -1606,24 +1534,63 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: This feature needs backend API implementation
-                        // Agent model has immutable properties
-                        // Will need to call AgentService.updateAgentCommission() when ready
+                      onPressed: () async {
+                        if (_selectedAgentForCommission == null) return;
+                        setState(() => _isLoading = true);
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Commission updated for ${_selectedAgentForCommission!.name}${_applyToUniversity == 'Specific' ? ' at $_selectedUniversity' : ''}',
+                        try {
+                          final Map<String, dynamic> updateData = {};
+
+                          if (_applyToUniversity == 'All') {
+                            updateData['commission_rule'] = {
+                              'type': _commissionType.toUpperCase(),
+                              _commissionType == 'Percentage'
+                                      ? 'percentage'
+                                      : 'flatAmount':
+                                  double.tryParse(
+                                    _commissionValueController.text,
+                                  ) ??
+                                  0,
+                            };
+                          } else if (_selectedUniversity != null) {
+                            // Backend specific university rule
+                            updateData['university_rules'] = [
+                              {
+                                'universityName': _selectedUniversity,
+                                'type': _commissionType.toUpperCase(),
+                                'value':
+                                    double.tryParse(
+                                      _commissionValueController.text,
+                                    ) ??
+                                    0,
+                              },
+                            ];
+                          }
+
+                          await AgentService.updateAgent(
+                            _selectedAgentForCommission!.id,
+                            updateData,
+                          );
+
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Commission updated successfully'),
+                              backgroundColor: Colors.green,
                             ),
-                            backgroundColor: Colors.orange,
-                            action: SnackBarAction(
-                              label: 'OK',
-                              textColor: Colors.white,
-                              onPressed: () {},
+                          );
+                          _loadAgents();
+                        } catch (e) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
                             ),
-                          ),
-                        );
+                          );
+                        } finally {
+                          setState(() => _isLoading = false);
+                        }
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Save Commission'),
@@ -2031,7 +1998,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
               Expanded(
                 child: _buildActivityCard(
                   'Total Leads',
-                  '63',
+                  _allAgents.fold(0, (sum, a) => sum + a.totalLeads).toString(),
                   Icons.phone_in_talk,
                   Colors.blue,
                 ),
@@ -2040,7 +2007,9 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
               Expanded(
                 child: _buildActivityCard(
                   'Admissions',
-                  '25',
+                  _allAgents
+                      .fold(0, (sum, a) => sum + a.verifiedAdmissions)
+                      .toString(),
                   Icons.check_circle,
                   Colors.green,
                 ),
@@ -2053,7 +2022,7 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
               Expanded(
                 child: _buildActivityCard(
                   'Earnings',
-                  '₹73.5K',
+                  '₹${(_allAgents.fold(0.0, (sum, a) => sum + a.totalEarnings) / 1000).toStringAsFixed(1)}K',
                   Icons.account_balance_wallet,
                   Colors.orange,
                 ),
@@ -2062,7 +2031,10 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
               Expanded(
                 child: _buildActivityCard(
                   'Active Agents',
-                  '3',
+                  _allAgents
+                      .where((a) => a.status == 'Active')
+                      .length
+                      .toString(),
                   Icons.people,
                   Colors.purple,
                 ),
@@ -2418,51 +2390,6 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
     );
   }
 
-  Widget _buildPermissionSwitch(
-    String title,
-    String subtitle,
-    bool value,
-    Function(bool) onChanged,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            activeThumbColor: AppTheme.primaryBlue,
-            onChanged: onChanged,
-          ),
-        ],
-      ),
-    );
-  }
-
   // Tab 7: Blocked Agents
   Widget _buildBlockedTab() {
     final blockedAgents = _allAgents.where((a) => a.blocked == true).toList();
@@ -2535,82 +2462,6 @@ class _AgentManagementScreenState extends State<AgentManagementScreen>
             _loadAgents();
           },
         ),
-      ),
-    );
-  }
-
-  void _blockAgent(Agent agent) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Block Agent'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Are you sure you want to block ${agent.name}?'),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Reason for blocking *',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // setState(() => agent['blocked'] = true); // Agent is immutable here
-              // Real implementation should call API
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${agent.name} blocked successfully'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              _loadAgents(); // Reload to reflect status
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Block Agent'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _unblockAgent(Agent agent) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Unblock Agent'),
-        content: Text('Restore access for ${agent.name}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // setState(() => agent['blocked'] = false);
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${agent.name} unblocked successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              _loadAgents();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            child: const Text('Unblock'),
-          ),
-        ],
       ),
     );
   }

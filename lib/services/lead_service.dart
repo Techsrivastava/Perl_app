@@ -25,6 +25,19 @@ class LeadService {
     throw Exception(response['message'] ?? 'Failed to fetch leads');
   }
 
+  /// Create a new lead
+  static Future<Map<String, dynamic>> createLead(
+    Map<String, dynamic> leadData,
+  ) async {
+    final token = await AuthService.getToken();
+    final response = await ApiService.post('/leads', leadData, token: token);
+
+    if (response['success'] == true) {
+      return response['data'];
+    }
+    throw Exception(response['message'] ?? 'Failed to create lead');
+  }
+
   /// Update a lead
   static Future<void> updateLead(
     String id,

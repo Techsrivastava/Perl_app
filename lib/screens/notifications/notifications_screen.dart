@@ -97,7 +97,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   await NotificationService.markAllAsRead();
                   _loadNotifications();
                 } catch (e) {
-                  if (mounted) {
+                  if (context.mounted) {
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(SnackBar(content: Text('Error: $e')));

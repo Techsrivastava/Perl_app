@@ -102,15 +102,27 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() => _allStudents.remove(student));
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Student deleted successfully'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+            onPressed: () async {
+              try {
+                await StudentService.deleteStudent(student.id);
+                if (context.mounted) {
+                  setState(() => _allStudents.remove(student));
+                  if (ctx.mounted) {
+                    Navigator.pop(ctx);
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Student deleted successfully'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error deleting student: $e')),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
@@ -147,25 +159,40 @@ class _StudentManagementScreenState extends State<StudentManagementScreen>
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                // Create a modified copy of the student with the new status
-                final updatedStudent = student.copyWith(status: 'Applied');
-                // Find the index of the student in the list
-                final index = _allStudents.indexWhere(
-                  (s) => s.id == student.id,
-                );
-                if (index != -1) {
-                  _allStudents[index] = updatedStudent;
+            onPressed: () async {
+              try {
+                // In a real app, 'Forwarding' might mean updating status OR re-submitting.
+                // Based on _forwardToUniversity mockup, it updates status to 'Applied'.
+                // We'll use a hypothetical 'updateAdmissionStatus' or similar if available,
+                // or just follow the mockup's intent with a real service call if it exists.
+                // Assuming we update the student's status which represents their application phase.
+
+                // For now, let's assume StudentService can update status or we refresh the list.
+                // If there's no StudentService.updateStatus, we'll implement it or use reload.
+
+                // Let's check StudentService for updateStudent.
+                await StudentService.updateStudent(student.id, {
+                  'status': 'Applied',
+                });
+
+                if (context.mounted) {
+                  _loadStudents(); // Refresh complete list
+                  if (ctx.mounted) {
+                    Navigator.pop(ctx);
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Application forwarded successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                 }
-              }); // Assuming status is mutable
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Application forwarded successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Error: $e')));
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             child: const Text('Forward'),

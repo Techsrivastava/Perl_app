@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/screens/auth/login_screen.dart';
 import 'package:educonnect/services/auth_service.dart';
+import 'package:educonnect/config/navigation_config.dart';
 
 class AppDrawer extends StatefulWidget {
   final String currentRoute;
@@ -50,6 +51,8 @@ class _AppDrawerState extends State<AppDrawer> {
     }
 
     String email = _user?['email'] ?? '...';
+    String role = _user?['role'] ?? '';
+    final navItems = NavigationConfig.getNavigationForRole(role);
 
     return Drawer(
       child: Column(
@@ -80,8 +83,8 @@ class _AppDrawerState extends State<AppDrawer> {
                         backgroundColor: AppTheme.white,
                         child: CircleAvatar(
                           radius: 33,
-                          backgroundColor: AppTheme.primaryBlue.withOpacity(
-                            0.3,
+                          backgroundColor: AppTheme.primaryBlue.withValues(
+                            alpha: 0.3,
                           ),
                           child: const Icon(
                             Icons.school,
@@ -153,78 +156,27 @@ class _AppDrawerState extends State<AppDrawer> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.dashboard,
-                  title: 'Dashboard',
-                  route: '/dashboard',
-                  isSelected: widget.currentRoute == '/dashboard',
+                ...navItems.map(
+                  (item) => _buildDrawerItem(
+                    context: context,
+                    icon: item.icon,
+                    title: item.title,
+                    route: item.route,
+                    isSelected: widget.currentRoute == item.route,
+                  ),
                 ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.school,
-                  title: 'University Profile',
-                  route: '/university-profile',
-                  isSelected: widget.currentRoute == '/university-profile',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.book,
-                  title: 'Courses',
-                  route: '/courses',
-                  isSelected: widget.currentRoute == '/courses',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.people,
-                  title: 'Student Applications',
-                  route: '/students',
-                  isSelected: widget.currentRoute == '/students',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.business,
-                  title: 'Consultant Reports',
-                  route: '/consultancy',
-                  isSelected: widget.currentRoute == '/consultancy',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.handshake,
-                  title: 'Consultant Share Setup',
-                  route: '/consultant-share-setup',
-                  isSelected: widget.currentRoute == '/consultant-share-setup',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.attach_money,
-                  title: 'Fee & Student Reports',
-                  route: '/fee-student-reports',
-                  isSelected:
-                      widget.currentRoute == '/fee-student-reports' ||
-                      widget.currentRoute == '/fee-reports',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.receipt_long,
-                  title: 'One-Time Fee Template',
-                  route: '/fee-template',
-                  isSelected: widget.currentRoute == '/fee-template',
-                ),
+
                 const Divider(),
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.notifications,
                   title: 'Notifications',
-                  route: '/notifications',
-                  isSelected: widget.currentRoute == '/notifications',
-                ),
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.help,
-                  title: 'Support & Help',
-                  route: '/support',
-                  isSelected: widget.currentRoute == '/support',
+                  route: role == 'CONSULTANT'
+                      ? '/consultant-notifications'
+                      : '/notifications',
+                  isSelected:
+                      widget.currentRoute == '/notifications' ||
+                      widget.currentRoute == '/consultant-notifications',
                 ),
                 _buildDrawerItem(
                   context: context,
@@ -326,14 +278,12 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         onTap: () {
           Navigator.of(context).pop();
-          // Map of routes that should be handled by the parent MainScreen via switching tabs
-          const mainRoutes = [
-            '/dashboard',
-            '/university-profile',
-            '/courses',
-            '/students',
-            '/consultancy',
-          ];
+
+          // Use NavigationConfig to determine if it's a main route
+          final role = _user?['role'] ?? '';
+          final mainRoutes = NavigationConfig.getMainNavigationForRole(
+            role,
+          ).map((e) => e.route).toList();
 
           if (mainRoutes.contains(route)) {
             widget.onNavigate(route);

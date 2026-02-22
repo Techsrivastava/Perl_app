@@ -177,4 +177,46 @@ class ApiService {
     final response = await get(path, token: token);
     return response['data'] as List<dynamic>? ?? [];
   }
+
+  /// Create a new student record
+  static Future<Map<String, dynamic>> createStudent(
+    Map<String, dynamic> studentData, {
+    String? token,
+  }) async {
+    final response = await post('/students', studentData, token: token);
+    return response['data'] ?? response;
+  }
+
+  /// Create a new admission
+  static Future<Map<String, dynamic>> createAdmission(
+    Map<String, dynamic> admissionData, {
+    String? token,
+  }) async {
+    final response = await post('/admissions', admissionData, token: token);
+    return response['data'] ?? response;
+  }
+
+  /// Update admission status (Trigger commission)
+  static Future<Map<String, dynamic>> updateAdmissionStatus(
+    String admissionId,
+    String status, {
+    double? consultantPercent,
+    double? agentPercent,
+    String? token,
+  }) async {
+    final Map<String, dynamic> body = {'status': status};
+    if (consultantPercent != null) {
+      body['consultantPercent'] = consultantPercent;
+    }
+    if (agentPercent != null) {
+      body['agentPercent'] = agentPercent;
+    }
+
+    final response = await patch(
+      '/admissions/$admissionId/status',
+      body,
+      token: token,
+    );
+    return response['data'] ?? response;
+  }
 }

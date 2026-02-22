@@ -97,7 +97,7 @@ class _ConsultantDashboardScreenState extends State<ConsultantDashboardScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await AuthService.logout();
-              if (mounted) {
+              if (context.mounted) {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginScreen()),

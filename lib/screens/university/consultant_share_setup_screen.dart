@@ -150,6 +150,7 @@ class _ConsultantShareSetupScreenState
         setState(() {
           _uploadedDocumentName = result.files.single.name;
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Document uploaded: ${result.files.single.name}'),
@@ -158,6 +159,7 @@ class _ConsultantShareSetupScreenState
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error uploading document: $e'),

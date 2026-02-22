@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../config/theme.dart';
 import 'package:educonnect/services/admission_service.dart';
 import 'package:educonnect/services/fee_service.dart';
-import 'package:intl/intl.dart';
+import 'package:educonnect/services/commission_service.dart';
 import 'package:intl/intl.dart';
 
 // File: fee_payment_management_screen.dart - Complete Implementation
@@ -22,6 +22,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
   bool _isLoading = false;
   List<dynamic> _admissions = [];
   Map<String, List<dynamic>> _paymentsByAdmission = {};
+  Map<String, dynamic> _commissionsByAdmission = {};
 
   // Form Controllers
   final _amountController = TextEditingController();
@@ -31,7 +32,6 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
 
   String? _selectedAdmissionId;
   String? _selectedPaymentMode;
-  DateTime? _selectedDate;
 
   @override
   void initState() {
@@ -46,38 +46,40 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
       final futures = await Future.wait([
         AdmissionService.getAdmissions(),
         FeeService.getPayments(),
+        CommissionService.getTransactions(),
       ]);
 
-      final admissions = futures[0] as List<dynamic>;
-      final payments = futures[1] as List<dynamic>;
+      final admissions = futures[0];
+      final payments = futures[1];
+      final commissionTransactions = futures[2];
 
+      // Map payments to admissions
       final Map<String, List<dynamic>> paymentsMap = {};
       for (var p in payments) {
-        // p['admission'] is an object populated by backend now
         final adId = p['admission']?['_id'] ?? p['admission'];
-        // If populated, it is object. If not, it is ID string.
-        // Backend payment controller populates admission.
-        // But admission._id is the ID.
-
         if (adId is String) {
-          // Handle both cases just in case
           if (!paymentsMap.containsKey(adId)) paymentsMap[adId] = [];
           paymentsMap[adId]!.add(p);
-        } else if (adId != null) {
-          // It's likely an object but we need the ID string?
-          // Wait, typical mongo population:
-          // admission: { _id: "...", ... }
-          // So p['admission']['_id'] is the ID.
-          // We need to match it with admission list IDs.
-          final idStr = p['admission']['_id'];
+        } else if (adId != null && adId is Map && adId['_id'] != null) {
+          final idStr = adId['_id'];
           if (!paymentsMap.containsKey(idStr)) paymentsMap[idStr] = [];
           paymentsMap[idStr]!.add(p);
+        }
+      }
+
+      // Map commissions to admissions
+      final Map<String, dynamic> commissionsMap = {};
+      for (var trans in commissionTransactions) {
+        final adId = trans['admissionId'] ?? trans['admission']?['_id'];
+        if (adId != null) {
+          commissionsMap[adId] = trans;
         }
       }
 
       setState(() {
         _admissions = admissions;
         _paymentsByAdmission = paymentsMap;
+        _commissionsByAdmission = commissionsMap;
         _isLoading = false;
       });
     } catch (e) {
@@ -90,10 +92,12 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
     }
   }
 
-  // Helper to extract fee details from admission/course
   Map<String, dynamic> _getFinancials(dynamic admission) {
     final course = admission['course'];
-    final double totalFee = (course?['displayFee'] ?? 0).toDouble();
+    final double displayFee = (course?['displayFee'] ?? 0).toDouble();
+    final double studentFee = (course?['actualFee'] ?? 0).toDouble();
+    final double margin = studentFee - displayFee;
+
     final String admissionId = admission['_id'];
     final payments = _paymentsByAdmission[admissionId] ?? [];
 
@@ -103,25 +107,34 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
         ) // 'Verified' used in mock, 'SUCCESS' in API
         .fold(0.0, (sum, p) => sum + (p['amount'] ?? 0));
 
-    final double pending = totalFee - paid;
+    final double pending = studentFee - paid;
 
-    // Commission Logic (simplified)
-    // Real logic should use CommissionLedger, but for now we estimate
-    // or if Admission has commission info (it doesn't usually).
-    // We'll use a standard % for display if not available.
-    final double fee = (course?['actualFee'] ?? 0).toDouble();
-    final double profit = (course?['displayFee'] ?? 0) - fee;
-    // Assume consultant gets 60% of profit if not specified
-    final double commission = profit * 0.6;
+    // Use real commission from ledger if available
+    final commissionTrans = _commissionsByAdmission[admissionId];
+    double marginUsed = 0;
+    double consultantSharePercent = 0;
 
-    final double universityShare = paid - commission; // Rough estimate
+    if (commissionTrans != null) {
+      marginUsed = (commissionTrans['consultantShare'] ?? 0).toDouble();
+      consultantSharePercent = (commissionTrans['commissionPercentage'] ?? 0)
+          .toDouble();
+    } else {
+      // Fallback: Default Consultant margin is 60% of the profit (Margin)
+      marginUsed = margin * 0.6;
+      consultantSharePercent = 60;
+    }
+
+    final double universityShare = paid - marginUsed;
 
     return {
-      'total': totalFee,
+      'total': studentFee,
+      'display_fee': displayFee,
       'paid': paid,
       'pending': pending,
-      'commission': commission,
+      'commission': marginUsed,
       'university': universityShare,
+      'commissionPercent': consultantSharePercent,
+      'margin': margin,
     };
   }
 
@@ -142,6 +155,8 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
             (admission['course']?['university'] ?? 'N/A'),
         'course': admission['course']?['name'] ?? 'N/A',
         'total_fee': financials['total'],
+        'display_fee': financials['display_fee'],
+        'margin': financials['margin'],
         'amount_paid': financials['paid'],
         'pending_amount': financials['pending'],
         'status': financials['pending'] <= 0
@@ -155,7 +170,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
         'payment_mode': latestPayment?['paymentMethod'] ?? 'N/A',
         'utr': latestPayment?['transactionId'] ?? 'N/A',
         'agent': admission['agent']?['name'] ?? 'Self',
-        'consultant_share_percent': 60,
+        'consultant_share_percent': financials['commissionPercent'],
         'consultant_share_amount': financials['commission'],
         'university_share': financials['university'],
         '_raw_admission': admission,
@@ -286,7 +301,6 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
       setState(() {
         _selectedAdmissionId = null;
         _selectedPaymentMode = null;
-        _selectedDate = null;
       });
 
       // Refresh data
@@ -734,7 +748,9 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
             decoration: BoxDecoration(
               color: AppTheme.primaryBlue.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.2)),
+              border: Border.all(
+                color: AppTheme.primaryBlue.withValues(alpha: 0.2),
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -769,7 +785,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
             title: 'Student & Payment Details',
             children: [
               DropdownButtonFormField<String>(
-                value: _selectedAdmissionId,
+                initialValue: _selectedAdmissionId,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.person_outline),
                   hintText: 'Select Student *',
@@ -814,7 +830,7 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _selectedPaymentMode,
+                      initialValue: _selectedPaymentMode,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.payments_outlined,
@@ -881,7 +897,6 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                         );
                         if (picked != null) {
                           setState(() {
-                            _selectedDate = picked;
                             _dateController.text = DateFormat(
                               'dd MMM yyyy',
                             ).format(picked);
@@ -1724,7 +1739,9 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: (report['color'] as Color).withValues(alpha: 0.1),
+                            color: (report['color'] as Color).withValues(
+                              alpha: 0.1,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -1807,7 +1824,13 @@ class _FeePaymentManagementScreenState extends State<FeePaymentManagementScreen>
               _buildInfoRow('University', record['university']),
               _buildInfoRow('Course', record['course']),
               const SizedBox(height: 12),
-              _buildInfoRow('Total Fee', '₹${record['total_fee']}'),
+              _buildInfoRow('Actual Fee (Student)', '₹${record['total_fee']}'),
+              _buildInfoRow(
+                'Display Fee (Institute)',
+                '₹${record['display_fee']}',
+              ),
+              _buildInfoRow('Margin (Profit)', '₹${record['margin']}'),
+              const Divider(),
               _buildInfoRow('Amount Paid', '₹${record['amount_paid']}'),
               _buildInfoRow('Pending Amount', '₹${record['pending_amount']}'),
               const SizedBox(height: 12),

@@ -256,7 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
-                          color: AppTheme.mediumGray.withOpacity(0.5),
+                          color: AppTheme.mediumGray.withValues(alpha: 0.5),
                           letterSpacing: 1.5,
                         ),
                       ),

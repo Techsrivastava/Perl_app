@@ -69,4 +69,16 @@ class StudentService {
 
     throw Exception(response['message'] ?? 'Failed to update student');
   }
+
+  /// Delete student
+  static Future<void> deleteStudent(String id) async {
+    final token = await AuthService.getToken();
+    if (token == null) throw Exception('Not authenticated');
+
+    final response = await ApiService.delete('/students/$id', token: token);
+
+    if (response['success'] != true) {
+      throw Exception(response['message'] ?? 'Failed to delete student');
+    }
+  }
 }

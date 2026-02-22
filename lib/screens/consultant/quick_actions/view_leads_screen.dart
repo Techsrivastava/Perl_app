@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/services/lead_service.dart';
+import 'package:educonnect/services/university_service.dart';
+import 'package:educonnect/services/course_service.dart';
+import 'package:educonnect/services/agent_service.dart';
+import '../universities/admission_application_screen.dart';
 
 class ViewLeadsScreen extends StatefulWidget {
   const ViewLeadsScreen({super.key});
@@ -16,13 +20,38 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
   String _searchQuery = '';
 
   List<dynamic> _leads = [];
+  List<dynamic> _universities = [];
+  List<dynamic> _courses = [];
+  List<dynamic> _agents = [];
   bool _isLoading = true;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadLeads();
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    await Future.wait([_loadLeads(), _loadDropdownData()]);
+  }
+
+  Future<void> _loadDropdownData() async {
+    try {
+      final unis = await UniversityService.getUniversities();
+      final courses = await CourseService.getCourses();
+      final agents = await AgentService.getAgents();
+
+      if (mounted) {
+        setState(() {
+          _universities = unis;
+          _courses = courses;
+          _agents = agents;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading dropdown data: $e');
+    }
   }
 
   Future<void> _loadLeads() async {
@@ -88,6 +117,20 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
       appBar: AppBar(
         title: const Text('Leads'),
         actions: [
+          if (_isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: AppTheme.primaryBlue,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            ),
           Container(
             margin: const EdgeInsets.only(right: 16),
             child: ElevatedButton.icon(
@@ -106,6 +149,27 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
       ),
       body: Column(
         children: [
+          if (_errorMessage != null)
+            Container(
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Modern Stats Section
           Container(
             padding: const EdgeInsets.all(20),
@@ -756,19 +820,54 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: ElevatedButton.icon(
-                                onPressed: () {
-                                  setState(() {
-                                    lead['status'] = 'Converted';
-                                  });
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        'Lead converted to admission!',
+                                onPressed: () async {
+                                  try {
+                                    // 1. Update status to Converted
+                                    await LeadService.updateLead(
+                                      lead['_id'] ?? lead['id'],
+                                      {'status': 'Converted'},
+                                    );
+
+                                    if (!context.mounted) return;
+                                    Navigator.pop(context); // Close details
+
+                                    // 2. Refresh leads list
+                                    _loadLeads();
+
+                                    // 3. Find the course object to pass to AdmissionApplicationScreen
+                                    final courseMap = {
+                                      'course_name': lead['course'],
+                                      'university_name': lead['university'],
+                                      'total_fee': 0,
+                                    };
+
+                                    // 4. Navigate to Admission form
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdmissionApplicationScreen(
+                                              course: courseMap,
+                                            ),
                                       ),
-                                      backgroundColor: AppTheme.success,
-                                    ),
-                                  );
+                                    );
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Lead converted! Opening admission form...',
+                                        ),
+                                        backgroundColor: AppTheme.success,
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Error: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 },
                                 icon: const Icon(
                                   Icons.check_circle_outline,
@@ -840,9 +939,9 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final emailController = TextEditingController();
-    String selectedCourse = 'MBA in Marketing';
-    String selectedUniversity = 'Dehradun Business School';
-    String selectedAgent = 'Unassigned';
+    String? selectedCourseId;
+    String? selectedUniversityId;
+    String? selectedAgentId;
     String selectedSource = 'App';
     bool isLoading = false;
 
@@ -921,93 +1020,82 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
 
                       // Course Dropdown
                       DropdownButtonFormField<String>(
-                        initialValue: selectedCourse,
+                        initialValue: selectedCourseId,
                         decoration: const InputDecoration(
-                          labelText: 'Course',
+                          labelText: 'Course *',
                           prefixIcon: Icon(Icons.school_outlined),
                         ),
                         isExpanded: true,
-                        items:
-                            [
-                                  'MBA in Marketing',
-                                  'B.Tech CSE',
-                                  'BBA',
-                                  'M.Tech',
-                                  'B.Com',
-                                ]
-                                .map(
-                                  (course) => DropdownMenuItem(
-                                    value: course,
-                                    child: Text(
-                                      course,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        items: _courses
+                            .map(
+                              (course) => DropdownMenuItem<String>(
+                                value:
+                                    (course['id'] ?? course['_id']) as String,
+                                child: Text(
+                                  (course['name'] ??
+                                          course['course_name'] ??
+                                          'Unknown Course')
+                                      as String,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        validator: (v) => v == null ? 'Required' : null,
                         onChanged: (value) {
-                          setDialogState(() => selectedCourse = value!);
+                          setDialogState(() => selectedCourseId = value);
                         },
                       ),
                       const SizedBox(height: 16),
 
                       // University Dropdown
                       DropdownButtonFormField<String>(
-                        initialValue: selectedUniversity,
+                        initialValue: selectedUniversityId,
                         decoration: const InputDecoration(
-                          labelText: 'University',
+                          labelText: 'University *',
                           prefixIcon: Icon(Icons.business_outlined),
                         ),
                         isExpanded: true,
-                        items:
-                            [
-                                  'Dehradun Business School',
-                                  'Tech University Dehradun',
-                                  'Commerce College',
-                                ]
-                                .map(
-                                  (uni) => DropdownMenuItem(
-                                    value: uni,
-                                    child: Text(
-                                      uni,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        items: _universities
+                            .map(
+                              (uni) => DropdownMenuItem<String>(
+                                value: (uni['id'] ?? uni['_id']) as String,
+                                child: Text(
+                                  (uni['name'] ?? 'Unknown University')
+                                      as String,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        validator: (v) => v == null ? 'Required' : null,
                         onChanged: (value) {
-                          setDialogState(() => selectedUniversity = value!);
+                          setDialogState(() => selectedUniversityId = value);
                         },
                       ),
                       const SizedBox(height: 16),
 
                       // Agent Dropdown
                       DropdownButtonFormField<String>(
-                        initialValue: selectedAgent,
+                        initialValue: selectedAgentId,
                         decoration: const InputDecoration(
                           labelText: 'Assign to Agent',
                           prefixIcon: Icon(Icons.person_add_outlined),
                         ),
                         isExpanded: true,
-                        items:
-                            [
-                                  'Unassigned',
-                                  'Priya Gupta',
-                                  'Raj Kumar',
-                                  'Amit Verma',
-                                ]
-                                .map(
-                                  (agent) => DropdownMenuItem(
-                                    value: agent,
-                                    child: Text(
-                                      agent,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        items: _agents
+                            .map(
+                              (agent) => DropdownMenuItem<String>(
+                                value: (agent['id'] ?? agent['_id']) as String,
+                                child: Text(
+                                  (agent['name'] ?? 'Unknown Agent') as String,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
                         onChanged: (value) {
-                          setDialogState(() => selectedAgent = value!);
+                          setDialogState(() => selectedAgentId = value);
                         },
                       ),
                       const SizedBox(height: 16),
@@ -1022,7 +1110,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         isExpanded: true,
                         items: ['App', 'Manual', 'Admin', 'Website']
                             .map(
-                              (source) => DropdownMenuItem(
+                              (source) => DropdownMenuItem<String>(
                                 value: source,
                                 child: Text(
                                   source,
@@ -1055,16 +1143,16 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                                       if (formKey.currentState!.validate()) {
                                         setDialogState(() => isLoading = true);
                                         try {
-                                          await LeadService.submitPublicLead({
+                                          await LeadService.createLead({
                                             'name': nameController.text,
                                             'email': emailController.text,
                                             'phone': phoneController.text,
-                                            'course':
-                                                selectedCourse, // Be careful if backend expects courseId
-                                            'university':
-                                                selectedUniversity, // Expects uniId?
+                                            'courseId': selectedCourseId,
+                                            'universityId':
+                                                selectedUniversityId,
                                             'source': selectedSource,
-                                            // 'agent': selectedAgent, // submitPublicLead might not support agent assignment directly or might fallback
+                                            if (selectedAgentId != null)
+                                              'agentId': selectedAgentId,
                                           });
 
                                           if (!context.mounted) return;
@@ -1196,7 +1284,7 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                         items:
                             ['Pending', 'In Progress', 'Converted', 'Dropped']
                                 .map(
-                                  (status) => DropdownMenuItem(
+                                  (status) => DropdownMenuItem<String>(
                                     value: status,
                                     child: Text(
                                       status,
@@ -1212,29 +1300,28 @@ class _ViewLeadsScreenState extends State<ViewLeadsScreen> {
                       const SizedBox(height: 16),
 
                       DropdownButtonFormField<String>(
-                        initialValue: selectedAgent,
+                        initialValue:
+                            _agents.any(
+                              (a) => (a['id'] ?? a['_id']) == selectedAgent,
+                            )
+                            ? selectedAgent
+                            : null,
                         decoration: const InputDecoration(
                           labelText: 'Agent',
                           prefixIcon: Icon(Icons.person_add_outlined),
                         ),
                         isExpanded: true,
-                        items:
-                            [
-                                  'Unassigned',
-                                  'Priya Gupta',
-                                  'Raj Kumar',
-                                  'Amit Verma',
-                                ]
-                                .map(
-                                  (agent) => DropdownMenuItem(
-                                    value: agent,
-                                    child: Text(
-                                      agent,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        items: _agents
+                            .map(
+                              (agent) => DropdownMenuItem<String>(
+                                value: (agent['id'] ?? agent['_id']) as String,
+                                child: Text(
+                                  (agent['name'] ?? 'Unknown Agent') as String,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
                         onChanged: (value) {
                           setDialogState(() => selectedAgent = value!);
                         },

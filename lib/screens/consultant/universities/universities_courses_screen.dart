@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:educonnect/config/theme.dart';
+import '../../../config/theme.dart';
+import '../../../services/university_service.dart';
+import '../../../services/course_service.dart';
+import '../../../models/course_model.dart';
+import '../../../models/university_model.dart';
 import 'course_details_screen.dart';
 
 class UniversitiesCoursesScreen extends StatefulWidget {
@@ -13,70 +17,56 @@ class UniversitiesCoursesScreen extends StatefulWidget {
 class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   String _selectedView = 'courses';
   String _searchQuery = '';
-  final List<Map<String, dynamic>> _comparisonList = [];
-  final List<int> _favoriteIds = [];
+  final List<Course> _comparisonList = [];
+  final List<String> _favoriteIds = [];
+  List<Course> _allCourses = [];
+  Map<String, University> _universitiesMap = {};
+  bool _isLoading = true;
+  String? _errorMessage;
 
-  // Sample courses data
-  final List<Map<String, dynamic>> _courses = [
-    {
-      'id': 4101,
-      'university_name': 'MIT University',
-      'course_name': 'Bachelor of Computer Applications (BCA)',
-      'mode': 'Regular',
-      'duration': '3 Years',
-      'total_fee': 150000,
-      'consultant_share': '15%',
-      'location': 'Mumbai, Maharashtra',
-      'type': 'University',
-      'verified': true,
-    },
-    {
-      'id': 4102,
-      'university_name': 'Excellence Education Agency',
-      'course_name': 'Master of Business Administration (MBA)',
-      'mode': 'Distance',
-      'duration': '2 Years',
-      'total_fee': 80000,
-      'consultant_share': '₹5000',
-      'location': 'Delhi, Delhi',
-      'type': 'Agency',
-      'verified': true,
-    },
-    {
-      'id': 4103,
-      'university_name': 'Global Tech University',
-      'course_name': 'B.Sc in Data Science',
-      'mode': 'Online',
-      'duration': '3 Years',
-      'total_fee': 120000,
-      'consultant_share': '12%',
-      'location': 'Bangalore, Karnataka',
-      'type': 'University',
-      'verified': true,
-    },
-    {
-      'id': 4104,
-      'university_name': 'Healthcare Education Hub',
-      'course_name': 'Diploma in Nursing',
-      'mode': 'Regular',
-      'duration': '2 Years',
-      'total_fee': 60000,
-      'consultant_share': '₹3000',
-      'location': 'Pune, Maharashtra',
-      'type': 'Agency',
-      'verified': true,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-  List<Map<String, dynamic>> get _filteredCourses {
-    return _courses.where((course) {
-      return course['course_name'].toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          ) ||
-          course['university_name'].toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
-    }).toList();
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final results = await Future.wait([
+        CourseService.getCourses(),
+        UniversityService.getUniversities(),
+      ]);
+
+      final coursesData = results[0];
+      final universitiesData = results[1];
+
+      if (mounted) {
+        setState(() {
+          _allCourses = coursesData.map((e) => Course.fromJson(e)).toList();
+          _universitiesMap = {
+            for (var e in universitiesData)
+              (e['_id'] ?? e['id']): University.fromJson(e),
+          };
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
+    }
+  }
+
+  University? _getUniversityForCourse(Course course) {
+    return _universitiesMap[course.universityId];
   }
 
   @override
@@ -247,7 +237,30 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   }
 
   Widget _buildCoursesList() {
-    final courses = _filteredCourses;
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Error: $_errorMessage'),
+            ElevatedButton(onPressed: _loadData, child: const Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    final courses = _allCourses.where((c) {
+      final uni = _getUniversityForCourse(c);
+      final search = _searchQuery.toLowerCase();
+      return (c.name?.toLowerCase().contains(search) ?? false) ||
+          (uni?.name.toLowerCase().contains(search) ?? false);
+    }).toList();
 
     if (courses.isEmpty) {
       return Center(
@@ -265,16 +278,20 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: courses.length,
-      itemBuilder: (context, index) => _buildCourseCard(courses[index]),
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: courses.length,
+        itemBuilder: (context, index) => _buildCourseCard(courses[index]),
+      ),
     );
   }
 
-  Widget _buildCourseCard(Map<String, dynamic> course) {
-    bool isFavorite = _favoriteIds.contains(course['id']);
-    bool inComparison = _comparisonList.any((c) => c['id'] == course['id']);
+  Widget _buildCourseCard(Course course) {
+    final university = _getUniversityForCourse(course);
+    bool isFavorite = _favoriteIds.contains(course.id);
+    bool inComparison = _comparisonList.any((c) => c.id == course.id);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -304,20 +321,14 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
             ),
             child: Row(
               children: [
-                Icon(
-                  course['type'] == 'University'
-                      ? Icons.school
-                      : Icons.business,
-                  color: AppTheme.primaryBlue,
-                  size: 20,
-                ),
+                const Icon(Icons.school, color: AppTheme.primaryBlue, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        course['university_name'],
+                        university?.name ?? 'Unknown University',
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -326,27 +337,27 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: course['type'] == 'University'
-                              ? Colors.blue
-                              : Colors.orange,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          course['type'],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
+                      if (university?.type != null) ...[
+                        const SizedBox(height: 2),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            university!.type,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -356,7 +367,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     color: isFavorite ? Colors.red : Colors.grey[400],
                     size: 20,
                   ),
-                  onPressed: () => _toggleFavorite(course['id']),
+                  onPressed: () => _toggleFavorite(course.id!),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -370,7 +381,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  course['course_name'],
+                  course.name ?? 'Unnamed Course',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -385,14 +396,14 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     Icon(Icons.play_lesson, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
-                      course['mode'],
+                      course.modeOfStudy ?? 'Regular',
                       style: TextStyle(fontSize: 11, color: Colors.grey[700]),
                     ),
                     const SizedBox(width: 16),
                     Icon(Icons.schedule, size: 14, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
-                      course['duration'],
+                      course.duration ?? 'N/A',
                       style: TextStyle(fontSize: 11, color: Colors.grey[700]),
                     ),
                   ],
@@ -404,7 +415,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        course['location'],
+                        '${course.city ?? ""}, ${course.state ?? ""}'.trim(),
                         style: TextStyle(fontSize: 11, color: Colors.grey[700]),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -431,7 +442,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Total Fee',
+                              'Display Fee',
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey[600],
@@ -439,7 +450,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '₹${course['total_fee']}',
+                              '₹${course.displayFee ?? course.fees ?? 0}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -465,7 +476,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Your Share',
+                              'Actual Fee',
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey[600],
@@ -473,7 +484,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              course['consultant_share'],
+                              '₹${course.actualFee ?? 0}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -545,8 +556,8 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
   }
 
   Widget _buildFavoritesList() {
-    final favorites = _courses
-        .where((c) => _favoriteIds.contains(c['id']))
+    final favorites = _allCourses
+        .where((c) => _favoriteIds.contains(c.id))
         .toList();
 
     if (favorites.isEmpty) {
@@ -643,7 +654,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course['course_name'],
+                      course.name ?? 'Unknown',
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -652,7 +663,8 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      course['university_name'],
+                      _getUniversityForCourse(course)?.name ??
+                          'Unknown University',
                       style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -674,7 +686,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
     );
   }
 
-  void _toggleFavorite(int id) {
+  void _toggleFavorite(String id) {
     setState(() {
       if (_favoriteIds.contains(id)) {
         _favoriteIds.remove(id);
@@ -684,10 +696,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
     });
   }
 
-  void _toggleComparison(Map<String, dynamic> course) {
+  void _toggleComparison(Course course) {
     setState(() {
-      if (_comparisonList.any((c) => c['id'] == course['id'])) {
-        _comparisonList.removeWhere((c) => c['id'] == course['id']);
+      if (_comparisonList.any((c) => c.id == course.id)) {
+        _comparisonList.removeWhere((c) => c.id == course.id);
       } else {
         if (_comparisonList.length >= 3) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -700,11 +712,25 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
     });
   }
 
-  void _viewCourseDetails(Map<String, dynamic> course) {
+  void _viewCourseDetails(Course course) {
+    // Convert Course model to Map for backward compatibility with CourseDetailsScreen
+    final courseMap = {
+      'id': course.id,
+      'university_name':
+          _getUniversityForCourse(course)?.name ?? 'Unknown University',
+      'course_name': course.name,
+      'location': '${course.city ?? ""}, ${course.state ?? ""}'.trim(),
+      'duration': course.duration,
+      'total_fee': course.displayFee ?? course.fees ?? 0,
+      'consultant_share': 'N/A', // This might need a real value
+      'mode': course.modeOfStudy,
+      'type': _getUniversityForCourse(course)?.type ?? 'University',
+    };
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CourseDetailsScreen(course: course),
+        builder: (context) => CourseDetailsScreen(course: courseMap),
       ),
     );
   }
@@ -731,7 +757,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     for (var course in _comparisonList)
                       DataColumn(
                         label: Text(
-                          course['course_name'].toString().split('(')[0],
+                          (course.name ?? '').split('(')[0],
                           style: const TextStyle(fontSize: 11),
                         ),
                       ),
@@ -743,7 +769,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         for (var course in _comparisonList)
                           DataCell(
                             Text(
-                              course['university_name'],
+                              _getUniversityForCourse(course)?.name ?? 'N/A',
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
@@ -755,7 +781,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         for (var course in _comparisonList)
                           DataCell(
                             Text(
-                              course['mode'],
+                              course.modeOfStudy ?? 'N/A',
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
@@ -767,7 +793,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         for (var course in _comparisonList)
                           DataCell(
                             Text(
-                              course['duration'],
+                              course.duration ?? 'N/A',
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
@@ -779,7 +805,7 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                         for (var course in _comparisonList)
                           DataCell(
                             Text(
-                              '₹${course['total_fee']}',
+                              '₹${course.displayFee ?? course.fees ?? 0}',
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
@@ -788,10 +814,10 @@ class _UniversitiesCoursesScreenState extends State<UniversitiesCoursesScreen> {
                     DataRow(
                       cells: [
                         const DataCell(Text('Your Share')),
-                        for (var course in _comparisonList)
+                        for (var _ in _comparisonList)
                           DataCell(
                             Text(
-                              course['consultant_share'],
+                              'N/A', // Calculated share if available
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),

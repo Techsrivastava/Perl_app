@@ -1324,8 +1324,8 @@ class _StudentsScreenState extends State<StudentsScreen> {
                                       width: 40,
                                       height: 40,
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryBlue.withOpacity(
-                                          0.1,
+                                        color: AppTheme.primaryBlue.withValues(
+                                          alpha: 0.1,
                                         ),
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(

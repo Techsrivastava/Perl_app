@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/services/auth_service.dart';
+import '../../services/consultant_service.dart';
 
 class ConsultantProfileScreen extends StatefulWidget {
   const ConsultantProfileScreen({super.key});
@@ -158,14 +159,147 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
     super.dispose();
   }
 
-  void _handleSave() {
+  bool _isSaving = false;
+
+  Future<void> _handleSave() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✅ Profile updated successfully!'),
-          backgroundColor: AppTheme.success,
-        ),
-      );
+      setState(() => _isSaving = true);
+      try {
+        // Upload images one by one if they exist
+        String? logoPath, regProofPath, qrPath, chequePath;
+        String? aadharFrontPath,
+            aadharBackPath,
+            panPath,
+            gstPath,
+            agreementPath;
+
+        if (_consultancyLogo != null)
+          logoPath = await ConsultantService.uploadDocument(
+            _consultancyLogo!.path,
+            'consultancyLogo',
+          );
+        if (_registrationProof != null)
+          regProofPath = await ConsultantService.uploadDocument(
+            _registrationProof!.path,
+            'registrationProof',
+          );
+        if (_qrCode != null)
+          qrPath = await ConsultantService.uploadDocument(
+            _qrCode!.path,
+            'qrCode',
+          );
+        if (_cancelledCheque != null)
+          chequePath = await ConsultantService.uploadDocument(
+            _cancelledCheque!.path,
+            'cancelledCheque',
+          );
+
+        if (_aadharFront != null)
+          aadharFrontPath = await ConsultantService.uploadDocument(
+            _aadharFront!.path,
+            'aadharFront',
+          );
+        if (_aadharBack != null)
+          aadharBackPath = await ConsultantService.uploadDocument(
+            _aadharBack!.path,
+            'aadharBack',
+          );
+        if (_panCard != null)
+          panPath = await ConsultantService.uploadDocument(
+            _panCard!.path,
+            'panCard',
+          );
+        if (_gstCertificate != null)
+          gstPath = await ConsultantService.uploadDocument(
+            _gstCertificate!.path,
+            'gstCertificate',
+          );
+        if (_consultantAgreement != null)
+          agreementPath = await ConsultantService.uploadDocument(
+            _consultantAgreement!.path,
+            'consultantAgreement',
+          );
+
+        final payload = {
+          // User base payload
+          'name': _nameController.text.trim(),
+          'phone': _contactController.text.trim(),
+          'address': _addressController.text.trim(),
+          'city': _cityController.text.trim(),
+          'state': _selectedState,
+          'pincode': _pincodeController.text.trim(),
+
+          // Consultant extended fields
+          'businessName': _businessNameController.text.trim(),
+          'registrationType': _registrationType,
+          'registrationNo': _registrationNoController.text.trim(),
+          if (logoPath != null) 'consultancyLogo': logoPath,
+          'consultancyType': _consultancyType,
+          'establishedYear': int.tryParse(
+            _establishedYearController.text.trim(),
+          ),
+          'officeAddress': _officeAddressController.text.trim(),
+          'website': _websiteController.text.trim(),
+          'description': _descriptionController.text.trim(),
+
+          // Bank Details
+          'bankDetails': {
+            'accountHolder': _accountHolderController.text.trim(),
+            'accountNumber': _accountNumberController.text.trim(),
+            'bankName': _bankNameController.text.trim(),
+            'branch': _branchController.text.trim(),
+            'ifscCode': _ifscController.text.trim(),
+            'upiId': _upiController.text.trim(),
+            'panNumber': _panController.text.trim(),
+            if (qrPath != null) 'qrCode': qrPath,
+            if (chequePath != null) 'cancelledCheque': chequePath,
+          },
+
+          // Documents
+          'documents': {
+            'aadharNumber': _aadharNumberController.text.trim(),
+            'panCardNumber': _panNumberController.text.trim(),
+            if (aadharFrontPath != null) 'aadharFront': aadharFrontPath,
+            if (aadharBackPath != null) 'aadharBack': aadharBackPath,
+            if (panPath != null) 'panCard': panPath,
+            if (regProofPath != null) 'registrationProof': regProofPath,
+            if (gstPath != null) 'gstCertificate': gstPath,
+            if (agreementPath != null) 'consultantAgreement': agreementPath,
+          },
+
+          // Settings
+          'settings': {
+            'twoFactorAuth': _twoFactorAuth,
+            'appNotifications': _appNotifications,
+            'emailNotifications': _emailNotifications,
+            'smsNotifications': _smsNotifications,
+            'language': _language,
+            'darkMode': _darkMode,
+          },
+        };
+
+        await ConsultantService.updateMyProfile(payload);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully'),
+              backgroundColor: AppTheme.success,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving profile: $e'),
+              backgroundColor: AppTheme.error,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -765,9 +899,19 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen> {
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _handleSave,
-                            icon: const Icon(Icons.save),
-                            label: const Text('Save Changes'),
+                            onPressed: _isSaving ? null : _handleSave,
+                            icon: _isSaving
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.save),
+                            label: Text(
+                              _isSaving ? 'Saving...' : 'Save Changes',
+                            ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               side: const BorderSide(

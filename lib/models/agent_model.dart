@@ -16,6 +16,8 @@ class Agent {
   final double totalEarnings;
   final String commissionType;
   final double commissionValue;
+  final List<String> assignedUniversities;
+  final List<String> assignedCourses;
   final bool blocked; // Mapped from !isActive
 
   Agent({
@@ -36,6 +38,8 @@ class Agent {
     required this.totalEarnings,
     required this.commissionType,
     required this.commissionValue,
+    required this.assignedUniversities,
+    required this.assignedCourses,
     required this.blocked,
   });
 
@@ -72,6 +76,10 @@ class Agent {
       totalEarnings: (json['total_earnings'] ?? 0).toDouble(),
       commissionType: commType,
       commissionValue: commValue,
+      assignedUniversities: List<String>.from(
+        json['assigned_universities'] ?? [],
+      ),
+      assignedCourses: List<String>.from(json['assigned_courses'] ?? []),
       blocked: json['isActive'] == false, // Simplified mapping
     );
   }

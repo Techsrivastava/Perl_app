@@ -20,12 +20,28 @@ class ConsultancyService {
 
   /// Get single consultancy by ID
   static Future<Consultancy> getConsultancy(String id) async {
-    // We might not have a dedicated endpoint for single consultancy with stats yet
-    // But we can reuse getConsultancies for now or filter
-    // Or if backend supports /users/:id, but that doesn't return stats.
-    // Let's assume for now we use the list.
-    // Or just fetch basic user info if needed.
-    // For now, let's just stick to the list method which is what the screen needs.
-    throw UnimplementedError();
+    final token = await AuthService.getToken();
+    final response = await ApiService.get('/users/$id', token: token);
+
+    if (response['success'] == true) {
+      return Consultancy.fromJson(response['data']);
+    }
+
+    throw Exception(response['message'] ?? 'Failed to load consultancy');
+  }
+
+  /// Update consultancy
+  static Future<Map<String, dynamic>> updateConsultancy(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final token = await AuthService.getToken();
+    final response = await ApiService.patch('/users/$id', data, token: token);
+
+    if (response['success'] == true) {
+      return response['data'];
+    }
+
+    throw Exception(response['message'] ?? 'Failed to update consultancy');
   }
 }

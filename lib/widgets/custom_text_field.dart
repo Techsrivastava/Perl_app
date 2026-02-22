@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final String? initialValue;
   final List<TextInputFormatter>? inputFormatters;
+  final IconData? icon;
 
   const CustomTextField({
     super.key,
@@ -32,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLength,
     this.suffixIcon,
     this.prefixIcon,
+    this.icon,
     this.initialValue,
     this.inputFormatters,
     String? hintText,
@@ -73,7 +75,11 @@ class CustomTextField extends StatelessWidget {
             hintText: hint,
             hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
             suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon,
+            prefixIcon:
+                prefixIcon ??
+                (icon != null
+                    ? Icon(icon, size: 20, color: AppTheme.mediumGray)
+                    : null),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Color(0xFFD1D5DB)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:educonnect/config/theme.dart';
 import 'package:educonnect/services/university_service.dart';
 import 'package:animate_do/animate_do.dart';
+import 'creative_generator_screen.dart';
 
 class MarketingToolsScreen extends StatefulWidget {
   const MarketingToolsScreen({super.key});
@@ -13,6 +14,7 @@ class MarketingToolsScreen extends StatefulWidget {
 class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
   bool _isLoading = true;
   List<dynamic> _universities = [];
+  List<Map<String, dynamic>> _allAssets = [];
   String _selectedCategory = 'All';
 
   final List<String> _categories = ['All', 'Posters', 'Brochures', 'Templates'];
@@ -26,9 +28,31 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
   Future<void> _loadData() async {
     try {
       final universities = await UniversityService.getUniversities();
+
+      // Flatten assets from universities
+      List<Map<String, dynamic>> assets = [];
+      for (var uni in universities) {
+        final docs = List<String>.from(uni['documents'] ?? []);
+        for (var doc in docs) {
+          // Determine category based on filename or dummy mapping
+          String category = 'Brochures'; // Default
+          if (doc.toLowerCase().contains('poster')) category = 'Posters';
+          if (doc.toLowerCase().contains('template')) category = 'Templates';
+
+          assets.add({
+            'universityName': uni['name'],
+            'universityId': uni['_id'] ?? uni['id'],
+            'url': doc,
+            'fileName': doc.split('/').last,
+            'category': category,
+          });
+        }
+      }
+
       if (mounted) {
         setState(() {
           _universities = universities;
+          _allAssets = assets;
           _isLoading = false;
         });
       }
@@ -37,6 +61,11 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  List<Map<String, dynamic>> get _filteredAssets {
+    if (_selectedCategory == 'All') return _allAssets;
+    return _allAssets.where((a) => a['category'] == _selectedCategory).toList();
   }
 
   @override
@@ -52,6 +81,19 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
                 _buildMarketingGrid(),
               ],
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreativeGeneratorScreen(),
+            ),
+          );
+        },
+        backgroundColor: AppTheme.primaryBlue,
+        icon: const Icon(Icons.auto_awesome),
+        label: const Text('Generate Creative'),
+      ),
     );
   }
 
@@ -155,17 +197,17 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
           mainAxisSpacing: 16,
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
-          final university = _universities[index];
+          final asset = _filteredAssets[index];
           return FadeInUp(
-            delay: Duration(milliseconds: 100 * index),
-            child: _buildAssetCard(university),
+            delay: Duration(milliseconds: 100 * (index % 10)),
+            child: _buildAssetCard(asset),
           );
-        }, childCount: _universities.length),
+        }, childCount: _filteredAssets.length),
       ),
     );
   }
 
-  Widget _buildAssetCard(Map<String, dynamic> university) {
+  Widget _buildAssetCard(Map<String, dynamic> asset) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.white,
@@ -191,9 +233,11 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
               ),
               child: Center(
                 child: Hero(
-                  tag: 'uni_logo_${university['_id']}',
+                  tag: 'asset_${asset['url']}',
                   child: Icon(
-                    Icons.school_rounded,
+                    asset['category'] == 'Posters'
+                        ? Icons.image_rounded
+                        : Icons.picture_as_pdf_rounded,
                     size: 60,
                     color: AppTheme.primaryBlue.withValues(alpha: 0.5),
                   ),
@@ -207,7 +251,7 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  university['name'] ?? 'University',
+                  asset['universityName'] ?? 'University',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -218,28 +262,30 @@ class _MarketingToolsScreenState extends State<MarketingToolsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'University Brochure',
+                  asset['fileName'],
                   style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildIconButton(Icons.share_rounded, Colors.green, () {
-                      _shareAsset(university);
+                      _shareAsset(asset);
                     }),
                     _buildIconButton(
                       Icons.download_rounded,
                       AppTheme.primaryBlue,
                       () {
-                        _downloadAsset(university);
+                        _downloadAsset(asset);
                       },
                     ),
                     _buildIconButton(
                       Icons.remove_red_eye_rounded,
                       Colors.orange,
                       () {
-                        _viewAsset(university);
+                        _viewAsset(asset);
                       },
                     ),
                   ],
